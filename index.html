@@ -10,23 +10,49 @@
 
 <header class="navbar">
   <div class="logo">
-    <img src="assetslogo.png" alt="logo">
+    <img src="assets/logo.png">
     <span>Minsu</span>
   </div>
 
-  <nav>
-    <a href="#" class="active">Home</a>
-    <a href="#">Play</a>
-    <a href="#">About us</a>
-    <a href="#">Leaderboards</a>
+  <div class="menu-toggle" id="menu-toggle">☰</div>
+
+  <nav id="nav">
+    <a class="nav-link active" data-tab="home">Home</a>
+    <a class="nav-link" data-tab="play">Play</a>
+    <a class="nav-link" data-tab="about">About us</a>
+    <a class="nav-link" data-tab="leaderboard">Leaderboards</a>
   </nav>
 </header>
 
-<section class="hero">
-  <h2 class="welcome fade-in">Welcome</h2>
-  <h3 class="to fade-in">to our</h3>
-  <h1 class="title fade-in">MINI GAME</h1>
-  <p class="subtitle fade-in">Welcome to our game</p>
+<!-- HOME -->
+<section class="tab-content active" id="home">
+  <div class="hero">
+    <h2 class="welcome fade">Welcome</h2>
+    <h3 class="to fade">to our</h3>
+    <h1 class="title fade">MINI GAME</h1>
+    <p class="subtitle fade">Welcome to our game</p>
+  </div>
+</section>
+
+<!-- PLAY -->
+<section class="tab-content" id="play">
+  <h1>🎮 Game Area</h1>
+  <p>Your game will go here.</p>
+</section>
+
+<!-- ABOUT -->
+<section class="tab-content" id="about">
+  <h1>About This Game</h1>
+  <p>
+    This game was created to provide fun and learning.
+    You can explain your story, purpose, and inspiration here.
+  </p>
+</section>
+
+<!-- LEADERBOARD -->
+<section class="tab-content" id="leaderboard">
+  <h1>🏆 Leaderboard</h1>
+  <ul id="leaderboard-list"></ul>
 </section>
 
 <script src="script.js"></script>
