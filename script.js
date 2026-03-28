@@ -60,3 +60,25 @@ if (list) {
       list.appendChild(li);
     });
 }
+/* FIX TAB VISIBILITY */
+.tab-content {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.tab-content.active {
+  display: block;
+  opacity: 1;
+}
+
+/* FIX NAV CLICK AREA */
+nav a {
+  z-index: 2;
+  position: relative;
+}
+
+/* PREVENT OVERLAY BLOCKING */
+.circle {
+  pointer-events: none;
+}
