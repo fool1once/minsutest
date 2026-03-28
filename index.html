@@ -1,11 +1,213 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Minsu Mini Game</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minsu Mini Game</title>
+
+<style>
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* BODY */
+body {
+  background: linear-gradient(135deg, #b7e4c7, #95d5b2);
+  overflow-x: hidden;
+}
+
+/* NAVBAR */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: rgba(0, 166, 81, 0.9);
+  backdrop-filter: blur(10px);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* LOGO */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo img {
+  width: 50px;
+  border-radius: 50%;
+}
+
+/* NAV */
+nav {
+  display: flex;
+}
+
+nav a {
+  margin: 0 10px;
+  cursor: pointer;
+  padding: 10px 18px;
+  border-radius: 25px;
+  transition: 0.3s;
+}
+
+/* ACTIVE */
+nav a.active {
+  background: white;
+  color: #00a651;
+  box-shadow: 0 0 15px rgba(255,255,255,0.7);
+}
+
+/* HOVER */
+nav a:hover {
+  background: #d8f3dc;
+  color: #00a651;
+  transform: scale(1.05);
+}
+
+/* MOBILE MENU */
+.menu-toggle {
+  display: none;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+/* TABS */
+.tab-content {
+  display: none;
+  opacity: 0;
+  padding: 40px;
+  transition: opacity 0.4s ease;
+}
+
+.tab-content.active {
+  display: block;
+  opacity: 1;
+}
+
+/* HERO */
+.hero {
+  text-align: center;
+  padding-top: 80px;
+  position: relative;
+}
+
+.title {
+  font-size: 120px;
+  font-weight: 900;
+  color: #00a651;
+  text-shadow: 4px 4px white;
+  animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+  from { text-shadow: 4px 4px white; }
+  to { text-shadow: 4px 4px white, 0 0 20px #00ff88; }
+}
+
+.welcome {
+  font-size: 40px;
+  color: #555;
+  font-style: italic;
+}
+
+.to {
+  font-size: 30px;
+  color: #777;
+}
+
+.subtitle {
+  color: #666;
+  margin-top: 10px;
+}
+
+/* FLOATING CIRCLES */
+.circle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.2;
+  animation: float 6s infinite ease-in-out;
+  pointer-events: none;
+}
+
+.circle1 {
+  width: 200px;
+  height: 200px;
+  background: #00a651;
+  top: 10%;
+  left: 5%;
+}
+
+.circle2 {
+  width: 150px;
+  height: 150px;
+  background: #52b788;
+  bottom: 10%;
+  right: 10%;
+}
+
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+/* LEADERBOARD */
+#leaderboard-list {
+  list-style: none;
+  padding: 0;
+}
+
+#leaderboard-list li {
+  background: white;
+  margin: 10px auto;
+  padding: 15px;
+  border-radius: 12px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  transition: 0.3s;
+}
+
+#leaderboard-list li:hover {
+  transform: scale(1.05);
+  background: #d8f3dc;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  nav {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background: #00a651;
+    flex-direction: column;
+    width: 200px;
+    display: none;
+  }
+
+  nav.show {
+    display: flex;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .title {
+    font-size: 60px;
+  }
+}
+</style>
 </head>
+
 <body>
 
 <header class="navbar">
@@ -25,36 +227,80 @@
 </header>
 
 <!-- HOME -->
-<section class="tab-content active" id="home">
+<section id="home" class="tab-content active">
   <div class="hero">
-    <h2 class="welcome fade">Welcome</h2>
-    <h3 class="to fade">to our</h3>
-    <h1 class="title fade">MINI GAME</h1>
-    <p class="subtitle fade">Welcome to our game</p>
+    <div class="circle circle1"></div>
+    <div class="circle circle2"></div>
+
+    <h2 class="welcome">Welcome</h2>
+    <h3 class="to">to our</h3>
+    <h1 class="title">MINI GAME</h1>
+    <p class="subtitle">Welcome to our game</p>
   </div>
 </section>
 
 <!-- PLAY -->
-<section class="tab-content" id="play">
+<section id="play" class="tab-content">
   <h1>🎮 Game Area</h1>
   <p>Your game will go here.</p>
 </section>
 
 <!-- ABOUT -->
-<section class="tab-content" id="about">
+<section id="about" class="tab-content">
   <h1>About This Game</h1>
-  <p>
-    This game was created to provide fun and learning.
-    You can explain your story, purpose, and inspiration here.
-  </p>
+  <p>This game was created for fun and learning. You can describe your project here.</p>
 </section>
 
 <!-- LEADERBOARD -->
-<section class="tab-content" id="leaderboard">
+<section id="leaderboard" class="tab-content">
   <h1>🏆 Leaderboard</h1>
   <ul id="leaderboard-list"></ul>
 </section>
 
-<script src="script.js"></script>
+<script>
+// ELEMENTS
+const links = document.querySelectorAll('.nav-link');
+const tabs = document.querySelectorAll('.tab-content');
+const nav = document.getElementById('nav');
+const toggle = document.getElementById('menu-toggle');
+
+// TAB SWITCH
+links.forEach(link => {
+  link.addEventListener('click', () => {
+
+    const target = document.getElementById(link.dataset.tab);
+    if (!target) return;
+
+    links.forEach(l => l.classList.remove('active'));
+    tabs.forEach(t => t.classList.remove('active'));
+
+    link.classList.add('active');
+    target.classList.add('active');
+
+    nav.classList.remove('show');
+  });
+});
+
+// MOBILE MENU
+toggle.addEventListener('click', () => {
+  nav.classList.toggle('show');
+});
+
+// LEADERBOARD
+const data = [
+  { name: "Player1", score: 10 },
+  { name: "Player2", score: 8 },
+  { name: "Player3", score: 5 }
+];
+
+const list = document.getElementById("leaderboard-list");
+
+data.sort((a,b)=>b.score-a.score).forEach(p=>{
+  const li = document.createElement("li");
+  li.textContent = `${p.name} - ${p.score} pts`;
+  list.appendChild(li);
+});
+</script>
+
 </body>
 </html>
