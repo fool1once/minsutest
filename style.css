@@ -1,1 +1,106 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
 
+body {
+  background: #b9d9c4;
+  color: #333;
+}
+
+/* NAVBAR */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #00a651;
+  padding: 15px 30px;
+  color: white;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo img {
+  width: 40px;
+}
+
+nav a {
+  margin: 0 15px;
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+  position: relative;
+}
+
+nav a.active {
+  background: #cde8d6;
+  color: #00a651;
+  padding: 10px 20px;
+  border-radius: 20px;
+}
+
+/* HERO */
+.hero {
+  text-align: center;
+  margin-top: 80px;
+}
+
+.welcome {
+  font-size: 40px;
+  font-style: italic;
+  color: #7d7d7d;
+}
+
+.to {
+  font-size: 30px;
+  color: #7d7d7d;
+}
+
+.title {
+  font-size: 120px;
+  font-weight: 900;
+  color: #00a651;
+  text-shadow: 4px 4px 0px #ffffff;
+}
+
+.subtitle {
+  margin-top: 10px;
+  color: #7d7d7d;
+}
+
+/* FADE ANIMATION */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 1s ease;
+}
+
+.fade-in.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+  .title {
+    font-size: 60px;
+  }
+
+  .welcome {
+    font-size: 25px;
+  }
+
+  .to {
+    font-size: 20px;
+  }
+
+  nav {
+    display: none;
+  }
+}
