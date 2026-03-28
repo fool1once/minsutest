@@ -1,13 +1,7 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-}
-
 body {
+  margin: 0;
+  font-family: Arial, sans-serif;
   background: #b9d9c4;
-  color: #333;
 }
 
 /* NAVBAR */
@@ -16,7 +10,7 @@ body {
   justify-content: space-between;
   align-items: center;
   background: #00a651;
-  padding: 15px 30px;
+  padding: 15px 20px;
   color: white;
 }
 
@@ -30,77 +24,110 @@ body {
   width: 40px;
 }
 
+/* NAV LINKS */
+nav {
+  display: flex;
+}
+
 nav a {
-  margin: 0 15px;
-  text-decoration: none;
-  color: white;
-  font-weight: 500;
-  position: relative;
+  margin: 0 10px;
+  cursor: pointer;
+  padding: 10px 15px;
+  border-radius: 20px;
+  transition: 0.3s;
 }
 
 nav a.active {
+  background: white;
+  color: #00a651;
+}
+
+nav a:hover {
   background: #cde8d6;
   color: #00a651;
-  padding: 10px 20px;
-  border-radius: 20px;
+}
+
+/* MOBILE MENU */
+.menu-toggle {
+  display: none;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+/* TABS */
+.tab-content {
+  display: none;
+  padding: 40px;
+  animation: fadeSlide 0.5s ease;
+}
+
+.tab-content.active {
+  display: block;
 }
 
 /* HERO */
 .hero {
   text-align: center;
-  margin-top: 80px;
-}
-
-.welcome {
-  font-size: 40px;
-  font-style: italic;
-  color: #7d7d7d;
-}
-
-.to {
-  font-size: 30px;
-  color: #7d7d7d;
 }
 
 .title {
   font-size: 120px;
-  font-weight: 900;
   color: #00a651;
-  text-shadow: 4px 4px 0px #ffffff;
+  text-shadow: 4px 4px white;
+}
+
+.welcome {
+  font-size: 40px;
+  color: gray;
+  font-style: italic;
+}
+
+.to {
+  font-size: 30px;
+  color: gray;
 }
 
 .subtitle {
-  margin-top: 10px;
-  color: #7d7d7d;
+  color: gray;
 }
 
-/* FADE ANIMATION */
-.fade-in {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 1s ease;
+/* ANIMATION */
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.fade-in.show {
-  opacity: 1;
-  transform: translateY(0);
+.fade {
+  animation: fadeSlide 1s ease;
 }
 
-/* MOBILE RESPONSIVE */
+/* MOBILE */
 @media (max-width: 768px) {
+  nav {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background: #00a651;
+    flex-direction: column;
+    width: 200px;
+    display: none;
+  }
+
+  nav.show {
+    display: flex;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
   .title {
     font-size: 60px;
-  }
-
-  .welcome {
-    font-size: 25px;
-  }
-
-  .to {
-    font-size: 20px;
-  }
-
-  nav {
-    display: none;
   }
 }
