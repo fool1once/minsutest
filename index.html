@@ -3,18 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Minsu Filipino Quiz</title>
+<title>Filipino Quiz Game</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif;}
-
 body{
   background:linear-gradient(135deg,#081c15,#1b4332,#2d6a4f);
   color:white;
   overflow-x:hidden;
 }
 
-/* NAV */
+/* NAVIGATION */
 .navbar{
   display:flex;
   justify-content:space-between;
@@ -41,7 +40,6 @@ nav a.active{
 /* TABS */
 .tab{display:none;padding:30px;}
 .tab.active{display:block;animation:fade .4s;}
-
 @keyframes fade{
   from{opacity:0;transform:translateY(10px);}
   to{opacity:1;}
@@ -49,29 +47,9 @@ nav a.active{
 
 /* HERO */
 .hero{text-align:center;margin-top:80px;}
-.title{
-  font-size:70px;
-  text-shadow:0 0 25px #00ff88;
-}
-
-input{
-  padding:12px;
-  border:none;
-  border-radius:10px;
-  margin-top:15px;
-}
-
-.btn{
-  padding:12px 25px;
-  margin-top:15px;
-  border:none;
-  border-radius:25px;
-  background:#00ff88;
-  cursor:pointer;
-  font-weight:bold;
-  transition:.3s;
-}
-
+.title{font-size:60px;text-shadow:0 0 20px #00ff88;}
+input{padding:12px;border:none;border-radius:10px;margin-top:15px;}
+.btn{padding:12px 25px;margin-top:15px;border:none;border-radius:25px;background:#00ff88;cursor:pointer;font-weight:bold;transition:.3s;}
 .btn:hover{transform:scale(1.05);}
 
 /* GAME BOX */
@@ -84,7 +62,6 @@ input{
   backdrop-filter:blur(12px);
   box-shadow:0 0 20px rgba(0,255,136,0.3);
 }
-
 .answers button{
   display:block;
   width:100%;
@@ -97,7 +74,6 @@ input{
   cursor:pointer;
   transition:.2s;
 }
-
 .answers button:hover{background:#74c69d;}
 
 /* TIMER BAR */
@@ -120,16 +96,13 @@ input{
 }
 
 /* MOBILE */
-@media(max-width:768px){
-  .title{font-size:40px;}
-}
+@media(max-width:768px){.title{font-size:40px;}}
 </style>
 </head>
-
 <body>
 
 <header class="navbar">
-  <h2>Minsu Quiz</h2>
+  <h2>Filipino Quiz</h2>
   <nav>
     <a class="link active" data-tab="home">Home</a>
     <a class="link" data-tab="play">Play</a>
@@ -141,9 +114,11 @@ input{
 <section id="home" class="tab active">
   <div class="hero">
     <h1 class="title">FILIPINO QUIZ</h1>
-    <input id="name" placeholder="Enter your name">
+    <input id="playerName" placeholder="Enter your name">
     <br>
     <button class="btn" onclick="startGame()">Start Game</button>
+    <br>
+    <button class="btn" onclick="showAdminButton()">Admin Access</button>
   </div>
 </section>
 
@@ -161,16 +136,16 @@ input{
 <section id="leader" class="tab">
   <h2>🏆 Leaderboard</h2>
   <ul id="leaderboard"></ul>
+  <button class="btn" onclick="adminReset()" id="adminResetBtn" style="display:none;">Reset Leaderboard</button>
 </section>
 
 <audio id="correct" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
 <audio id="wrong" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
 
 <script>
-// NAV
+// NAVIGATION
 const links=document.querySelectorAll('.link');
 const tabs=document.querySelectorAll('.tab');
-
 links.forEach(l=>{
   l.onclick=()=>{
     links.forEach(x=>x.classList.remove('active'));
@@ -180,48 +155,47 @@ links.forEach(l=>{
   }
 });
 
-// 50+ QUESTIONS
+// 15 UNIQUE QUESTIONS
 const questions=[
-{q:"Pinakamaliit na yunit ng wika?",a:["Ponema","Sintaks","Diskurso","Teksto"],c:0},
-{q:"Pag-aaral ng kahulugan?",a:["Semantika","Ponolohiya","Morpolohiya","Pragmatika"],c:0},
-{q:"Ayos ng pangungusap?",a:["Sintaks","Semantika","Ponolohiya","Diskurso"],c:0},
-{q:"Pagbuo ng salita?",a:["Morpolohiya","Sintaks","Semantika","Ponolohiya"],c:0},
-{q:"Utos na pangungusap?",a:["Pautos","Patanong","Padamdam","Pasalaysay"],c:0},
-
-// AUTO GENERATE MORE QUESTIONS
+{q:"Ano ang tawag sa pinakamaliit na yunit ng wika?",a:["Ponema","Morpema","Sintaks","Diskurso"],c:0},
+{q:"Ano ang pag-aaral ng kahulugan ng salita?",a:["Ponolohiya","Semantika","Sintaks","Pragmatika"],c:1},
+{q:"Ano ang ayos ng pangungusap?",a:["Sintaks","Diskurso","Ponema","Morpema"],c:0},
+{q:"Ano ang paraan ng pagbuo ng salita?",a:["Morpolohiya","Sintaks","Semantika","Ponolohiya"],c:0},
+{q:"Ano ang tawag sa pangungusap na nagbibigay utos?",a:["Pautos","Patanong","Padamdam","Pasalaysay"],c:0},
+{q:"Ano ang pokus ng pandiwa na tumutukoy sa simuno?",a:["Pokus ng Aktor","Pokus ng Layon","Pokus ng Tagatanggap","Pokus ng Ganapan"],c:0},
+{q:"Ano ang tawag sa pag-aaral ng tunog ng wika?",a:["Ponolohiya","Semantika","Morpema","Sintaks"],c:0},
+{q:"Ano ang tawag sa pag-aaral ng kaayusan ng salita at pangungusap?",a:["Sintaks","Semantika","Ponolohiya","Pragmatika"],c:0},
+{q:"Ano ang tawag sa paggamit ng wika sa lipunan?",a:["Pragmatika","Ponolohiya","Morpolohiya","Diskurso"],c:0},
+{q:"Ano ang tawag sa pinakamalawak na yunit ng wika?",a:["Diskurso","Sintaks","Ponema","Morpema"],c:0},
+{q:"Ano ang tawag sa salita o yunit na may kahulugan?",a:["Morpema","Ponema","Sintaks","Diskurso"],c:0},
+{q:"Ano ang gamit ng pandiwa sa pangungusap?",a:["Nagpapahayag ng kilos","Nagpapakita ng tunog","Nagpapakita ng ayos","Nagpapahayag ng diskurso"],c:0},
+{q:"Ano ang tawag sa tanong na pangungusap?",a:["Patanong","Pautos","Pasalaysay","Padamdam"],c:0},
+{q:"Ano ang tawag sa pangungusap na nagpapahayag ng damdamin?",a:["Padamdam","Pasalaysay","Pautos","Patanong"],c:0},
+{q:"Ano ang tawag sa pangungusap na nagsasalaysay?",a:["Pasalaysay","Padamdam","Pautos","Patanong"],c:0}
 ];
-
-for(let i=1;i<=45;i++){
-  questions.push({
-    q:`Filipino Question ${i}?`,
-    a:["Sagot A","Sagot B","Sagot C","Sagot D"],
-    c:Math.floor(Math.random()*4)
-  });
-}
 
 // GAME STATE
 let i=0,score=0,timer,player="",time=10;
 
-// START
+// START GAME
 function startGame(){
-  player=document.getElementById('name').value;
-  if(!player) return alert("Enter name!");
-
+  player=document.getElementById('playerName').value.trim();
+  if(!player) return alert("Enter your name!");
   document.querySelector('[data-tab="play"]').click();
   i=0;score=0;
   loadQ();
 }
 
-// LOAD Q
+// LOAD QUESTION
 function loadQ(){
   clearInterval(timer);
   time=10;
+  document.getElementById('bar').style.width="100%";
 
   let q=questions[i];
   document.getElementById('q').innerText=q.q;
   let ans=document.getElementById('ans');
   ans.innerHTML="";
-
   q.a.forEach((choice,index)=>{
     let btn=document.createElement('button');
     btn.innerText=choice;
@@ -232,11 +206,11 @@ function loadQ(){
   timer=setInterval(()=>{
     time--;
     document.getElementById('bar').style.width=(time*10)+"%";
-    if(time<=0) next();
+    if(time<=0) nextQ();
   },1000);
 }
 
-// CHECK
+// CHECK ANSWER
 function check(index){
   let q=questions[i];
   if(index===q.c){
@@ -245,25 +219,24 @@ function check(index){
   } else {
     document.getElementById('wrong').play();
   }
-  next();
+  nextQ();
 }
 
-// NEXT
-function next(){
+// NEXT QUESTION
+function nextQ(){
+  clearInterval(timer);
   i++;
   document.getElementById('score').innerText=score;
-
   if(i<questions.length){
     loadQ();
   } else {
-    clearInterval(timer);
     saveScore();
     alert("Game Over! Score: "+score);
     document.querySelector('[data-tab="leader"]').click();
   }
 }
 
-// SAVE
+// SAVE SCORE
 function saveScore(){
   let data=JSON.parse(localStorage.getItem("scores"))||[];
   data.push({name:player,score});
@@ -271,22 +244,45 @@ function saveScore(){
   loadBoard();
 }
 
-// LOAD BOARD
+// LOAD LEADERBOARD
 function loadBoard(){
   let data=JSON.parse(localStorage.getItem("scores"))||[];
   data.sort((a,b)=>b.score-a.score);
-
   let list=document.getElementById("leaderboard");
   list.innerHTML="";
-  data.slice(0,10).forEach(p=>{
+  data.forEach(p=>{
     let li=document.createElement("li");
     li.innerText=`${p.name} - ${p.score}`;
     list.appendChild(li);
   });
 }
 
+// ADMIN RESET
+function adminReset(){
+  const password=prompt("Enter admin password to reset leaderboard:");
+  const ADMIN_PASSWORD="admin123"; // change this to your password
+  if(password===ADMIN_PASSWORD){
+    localStorage.removeItem("scores");
+    loadBoard();
+    alert("Leaderboard has been reset by admin!");
+  } else {
+    alert("Incorrect password!");
+  }
+}
+
+// ADMIN BUTTON VISIBILITY
+function showAdminButton(){
+  const password=prompt("Enter admin password:");
+  const ADMIN_PASSWORD="admin123"; // same password
+  if(password===ADMIN_PASSWORD){
+    document.getElementById("adminResetBtn").style.display="inline-block";
+    alert("Admin access granted!");
+  } else {
+    alert("Wrong password!");
+  }
+}
+
 loadBoard();
 </script>
-
 </body>
 </html>
