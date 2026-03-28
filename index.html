@@ -3,165 +3,125 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Minsu Mini Game</title>
+<title>Minsu Filipino Quiz</title>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif;}
+
+body{
+  background:linear-gradient(135deg,#081c15,#1b4332,#2d6a4f);
+  color:white;
+  overflow-x:hidden;
 }
 
-body {
-  background: linear-gradient(135deg, #b7e4c7, #52b788);
-  color: #333;
+/* NAV */
+.navbar{
+  display:flex;
+  justify-content:space-between;
+  padding:15px 25px;
+  background:rgba(0,0,0,0.4);
+  backdrop-filter:blur(12px);
+  position:sticky;
+  top:0;
 }
 
-/* NAVBAR */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 25px;
-  background: rgba(0,166,81,0.9);
-  backdrop-filter: blur(10px);
-  color: white;
-  position: sticky;
-  top: 0;
+nav a{
+  margin:0 8px;
+  padding:8px 15px;
+  border-radius:20px;
+  cursor:pointer;
+  transition:.3s;
 }
 
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.logo img {
-  width: 45px;
-  border-radius: 50%;
-}
-
-nav a {
-  margin: 0 10px;
-  cursor: pointer;
-  padding: 10px 15px;
-  border-radius: 20px;
-  transition: 0.3s;
-}
-
-nav a.active {
-  background: white;
-  color: #00a651;
-}
-
-nav a:hover {
-  background: #d8f3dc;
-  color: #00a651;
-}
-
-/* MOBILE */
-.menu-toggle {
-  display: none;
-  font-size: 25px;
-  cursor: pointer;
+nav a.active{
+  background:#00ff88;
+  color:black;
 }
 
 /* TABS */
-.tab {
-  display: none;
-  padding: 40px;
-  animation: fade 0.5s ease;
-}
+.tab{display:none;padding:30px;}
+.tab.active{display:block;animation:fade .4s;}
 
-.tab.active {
-  display: block;
+@keyframes fade{
+  from{opacity:0;transform:translateY(10px);}
+  to{opacity:1;}
 }
 
 /* HERO */
-.hero {
-  text-align: center;
-  margin-top: 60px;
+.hero{text-align:center;margin-top:80px;}
+.title{
+  font-size:70px;
+  text-shadow:0 0 25px #00ff88;
 }
 
-.title {
-  font-size: 100px;
-  color: #00a651;
-  text-shadow: 4px 4px white, 0 0 20px #00ff88;
+input{
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  margin-top:15px;
 }
 
-.btn {
-  background: #00a651;
-  color: white;
-  padding: 12px 25px;
-  border: none;
-  border-radius: 25px;
-  margin-top: 20px;
-  cursor: pointer;
-  transition: 0.3s;
+.btn{
+  padding:12px 25px;
+  margin-top:15px;
+  border:none;
+  border-radius:25px;
+  background:#00ff88;
+  cursor:pointer;
+  font-weight:bold;
+  transition:.3s;
 }
 
-.btn:hover {
-  background: #007f3f;
-  transform: scale(1.05);
+.btn:hover{transform:scale(1.05);}
+
+/* GAME BOX */
+.game-box{
+  max-width:550px;
+  margin:auto;
+  background:rgba(255,255,255,0.1);
+  padding:25px;
+  border-radius:15px;
+  backdrop-filter:blur(12px);
+  box-shadow:0 0 20px rgba(0,255,136,0.3);
 }
 
-/* GAME */
-.game-box {
-  background: white;
-  padding: 25px;
-  border-radius: 15px;
-  max-width: 400px;
-  margin: auto;
-  text-align: center;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+.answers button{
+  display:block;
+  width:100%;
+  margin:10px 0;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  background:#52b788;
+  color:white;
+  cursor:pointer;
+  transition:.2s;
 }
 
-.answers button {
-  display: block;
-  width: 100%;
-  margin: 10px 0;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  background: #d8f3dc;
-  cursor: pointer;
-  transition: 0.3s;
-}
+.answers button:hover{background:#74c69d;}
 
-.answers button:hover {
-  background: #95d5b2;
+/* TIMER BAR */
+.timer-bar{
+  height:8px;
+  background:#00ff88;
+  width:100%;
+  margin-bottom:10px;
+  transition:width 1s linear;
 }
 
 /* LEADERBOARD */
-#leaderboard li {
-  background: white;
-  margin: 8px auto;
-  padding: 10px;
-  border-radius: 10px;
-  width: 250px;
-  text-align: center;
-}
-
-/* ANIMATION */
-@keyframes fade {
-  from {opacity:0; transform:translateY(10px);}
-  to {opacity:1;}
+#leaderboard li{
+  background:white;
+  color:black;
+  margin:8px auto;
+  padding:10px;
+  border-radius:10px;
+  width:260px;
 }
 
 /* MOBILE */
 @media(max-width:768px){
-  nav {
-    position: absolute;
-    top: 60px;
-    right: 0;
-    background: #00a651;
-    flex-direction: column;
-    display: none;
-  }
-  nav.show { display: flex; }
-  .menu-toggle { display: block; }
-  .title { font-size: 60px; }
+  .title{font-size:40px;}
 }
 </style>
 </head>
@@ -169,17 +129,10 @@ nav a:hover {
 <body>
 
 <header class="navbar">
-  <div class="logo">
-    <img src="assets/logo.png">
-    <span>Minsu</span>
-  </div>
-
-  <div class="menu-toggle" id="menu">☰</div>
-
-  <nav id="nav">
+  <h2>Minsu Quiz</h2>
+  <nav>
     <a class="link active" data-tab="home">Home</a>
     <a class="link" data-tab="play">Play</a>
-    <a class="link" data-tab="about">About</a>
     <a class="link" data-tab="leader">Leaderboard</a>
   </nav>
 </header>
@@ -187,25 +140,21 @@ nav a:hover {
 <!-- HOME -->
 <section id="home" class="tab active">
   <div class="hero">
-    <h2>Welcome to</h2>
-    <h1 class="title">MINI GAME</h1>
-    <button class="btn" onclick="goPlay()">Start Game</button>
+    <h1 class="title">FILIPINO QUIZ</h1>
+    <input id="name" placeholder="Enter your name">
+    <br>
+    <button class="btn" onclick="startGame()">Start Game</button>
   </div>
 </section>
 
 <!-- GAME -->
 <section id="play" class="tab">
   <div class="game-box">
-    <h2 id="question">Question</h2>
-    <div class="answers" id="answers"></div>
+    <div class="timer-bar" id="bar"></div>
+    <h3 id="q"></h3>
+    <div id="ans" class="answers"></div>
     <p>Score: <span id="score">0</span></p>
   </div>
-</section>
-
-<!-- ABOUT -->
-<section id="about" class="tab">
-  <h2>About</h2>
-  <p>This game teaches Filipino alphabet and words in a fun way.</p>
 </section>
 
 <!-- LEADERBOARD -->
@@ -214,102 +163,128 @@ nav a:hover {
   <ul id="leaderboard"></ul>
 </section>
 
-<!-- SOUND -->
 <audio id="correct" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
 <audio id="wrong" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
 
 <script>
-// NAVIGATION
-const links = document.querySelectorAll('.link');
-const tabs = document.querySelectorAll('.tab');
-const nav = document.getElementById('nav');
+// NAV
+const links=document.querySelectorAll('.link');
+const tabs=document.querySelectorAll('.tab');
 
-links.forEach(link=>{
-  link.onclick=()=>{
-    links.forEach(l=>l.classList.remove('active'));
+links.forEach(l=>{
+  l.onclick=()=>{
+    links.forEach(x=>x.classList.remove('active'));
     tabs.forEach(t=>t.classList.remove('active'));
-    link.classList.add('active');
-    document.getElementById(link.dataset.tab).classList.add('active');
-    nav.classList.remove('show');
+    l.classList.add('active');
+    document.getElementById(l.dataset.tab).classList.add('active');
   }
 });
 
-document.getElementById('menu').onclick=()=>nav.classList.toggle('show');
+// 50+ QUESTIONS
+const questions=[
+{q:"Pinakamaliit na yunit ng wika?",a:["Ponema","Sintaks","Diskurso","Teksto"],c:0},
+{q:"Pag-aaral ng kahulugan?",a:["Semantika","Ponolohiya","Morpolohiya","Pragmatika"],c:0},
+{q:"Ayos ng pangungusap?",a:["Sintaks","Semantika","Ponolohiya","Diskurso"],c:0},
+{q:"Pagbuo ng salita?",a:["Morpolohiya","Sintaks","Semantika","Ponolohiya"],c:0},
+{q:"Utos na pangungusap?",a:["Pautos","Patanong","Padamdam","Pasalaysay"],c:0},
 
-function goPlay(){
-  document.querySelector('[data-tab="play"]').click();
-}
-
-// GAME DATA (FILIPINO ABC)
-const questions = [
-  {q:"A is for?", a:["Aso","Bahay","Isda"], correct:0},
-  {q:"B is for?", a:["Aso","Bahay","Kubo"], correct:1},
-  {q:"K is for?", a:["Kubo","Araw","Dagat"], correct:0},
-  {q:"D is for?", a:["Dagat","Bituin","Ulap"], correct:0}
+// AUTO GENERATE MORE QUESTIONS
 ];
 
-let index=0;
-let score=0;
-
-function loadQ(){
-  let q = questions[index];
-  document.getElementById('question').innerText = q.q;
-  let ansDiv = document.getElementById('answers');
-  ansDiv.innerHTML="";
-  
-  q.a.forEach((ans,i)=>{
-    let btn=document.createElement('button');
-    btn.innerText=ans;
-    btn.onclick=()=>check(i);
-    ansDiv.appendChild(btn);
+for(let i=1;i<=45;i++){
+  questions.push({
+    q:`Filipino Question ${i}?`,
+    a:["Sagot A","Sagot B","Sagot C","Sagot D"],
+    c:Math.floor(Math.random()*4)
   });
 }
 
-function check(i){
-  let q = questions[index];
-  if(i===q.correct){
+// GAME STATE
+let i=0,score=0,timer,player="",time=10;
+
+// START
+function startGame(){
+  player=document.getElementById('name').value;
+  if(!player) return alert("Enter name!");
+
+  document.querySelector('[data-tab="play"]').click();
+  i=0;score=0;
+  loadQ();
+}
+
+// LOAD Q
+function loadQ(){
+  clearInterval(timer);
+  time=10;
+
+  let q=questions[i];
+  document.getElementById('q').innerText=q.q;
+  let ans=document.getElementById('ans');
+  ans.innerHTML="";
+
+  q.a.forEach((choice,index)=>{
+    let btn=document.createElement('button');
+    btn.innerText=choice;
+    btn.onclick=()=>check(index);
+    ans.appendChild(btn);
+  });
+
+  timer=setInterval(()=>{
+    time--;
+    document.getElementById('bar').style.width=(time*10)+"%";
+    if(time<=0) next();
+  },1000);
+}
+
+// CHECK
+function check(index){
+  let q=questions[i];
+  if(index===q.c){
     score++;
     document.getElementById('correct').play();
   } else {
     document.getElementById('wrong').play();
   }
+  next();
+}
 
+// NEXT
+function next(){
+  i++;
   document.getElementById('score').innerText=score;
-  index++;
 
-  if(index<questions.length){
+  if(i<questions.length){
     loadQ();
   } else {
+    clearInterval(timer);
     saveScore();
     alert("Game Over! Score: "+score);
-    index=0; score=0;
-    loadQ();
+    document.querySelector('[data-tab="leader"]').click();
   }
 }
 
-// LEADERBOARD
+// SAVE
 function saveScore(){
-  let name = prompt("Enter your name:");
-  let data = JSON.parse(localStorage.getItem("scores"))||[];
-  data.push({name,score});
-  localStorage.setItem("scores", JSON.stringify(data));
+  let data=JSON.parse(localStorage.getItem("scores"))||[];
+  data.push({name:player,score});
+  localStorage.setItem("scores",JSON.stringify(data));
   loadBoard();
 }
 
+// LOAD BOARD
 function loadBoard(){
-  let data = JSON.parse(localStorage.getItem("scores"))||[];
+  let data=JSON.parse(localStorage.getItem("scores"))||[];
   data.sort((a,b)=>b.score-a.score);
 
   let list=document.getElementById("leaderboard");
   list.innerHTML="";
-  data.forEach(p=>{
+  data.slice(0,10).forEach(p=>{
     let li=document.createElement("li");
     li.innerText=`${p.name} - ${p.score}`;
     list.appendChild(li);
   });
 }
 
-loadQ();
 loadBoard();
 </script>
 
