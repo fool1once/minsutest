@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Minsu Quiz</title>
+<title>Mini Game Quiz</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
 
 body{
   background:linear-gradient(135deg,#b7e4c7,#95d5b2);
@@ -16,28 +16,43 @@ body{
 /* PARTICLES */
 #particles{
   position:fixed;
-  width:100%;
-  height:100%;
+  top:0;left:0;
+  width:100%;height:100%;
   z-index:-1;
+}
+
+/* SHAKE EFFECT */
+.shake{
+  animation:shake 0.3s;
+}
+@keyframes shake{
+  0%{transform:translate(2px,2px);}
+  25%{transform:translate(-2px,0);}
+  50%{transform:translate(2px,-2px);}
+  75%{transform:translate(-1px,2px);}
+  100%{transform:translate(0,0);}
 }
 
 /* NAV */
 .navbar{
   display:flex;
   justify-content:space-between;
-  padding:15px 25px;
+  align-items:center;
+  padding:15px 30px;
   background:#00a651;
   color:white;
 }
 
 .logo{display:flex;align-items:center;gap:10px;}
-.logo img{width:40px;border-radius:50%;}
+.logo img{width:40px;height:40px;border-radius:50%;}
 
 nav a{
   margin:0 10px;
-  padding:8px 15px;
+  padding:10px 18px;
   border-radius:20px;
   cursor:pointer;
+  color:white;
+  transition:.3s;
 }
 nav a.active{
   background:#d8f3dc;
@@ -45,27 +60,33 @@ nav a.active{
 }
 
 /* TABS */
-.tab{display:none;padding:30px;}
-.tab.active{display:block;}
+.tab{display:none;padding:40px;}
+.tab.active{display:block;animation:fade .5s;}
+@keyframes fade{
+  from{opacity:0;transform:translateY(10px);}
+  to{opacity:1;}
+}
 
 /* HERO */
 .hero{text-align:center;margin-top:60px;}
 
 .big{
-  font-size:90px;
+  font-size:110px;
+  font-weight:900;
   color:#00a651;
-  text-shadow:0 0 15px #00ff88;
+  text-shadow:
+    0 0 10px #00ff88,
+    0 0 20px #00ff88,
+    4px 4px 0 #fff;
 }
 
-/* INPUT */
 input{
   padding:12px;
   border:none;
   border-radius:10px;
-  margin-top:15px;
+  margin-top:20px;
 }
 
-/* BUTTON */
 .btn{
   padding:12px 25px;
   margin-top:10px;
@@ -74,73 +95,72 @@ input{
   background:#00a651;
   color:white;
   cursor:pointer;
+  transition:.3s;
+  box-shadow:0 0 10px rgba(0,255,136,0.4);
+}
+.btn:hover{
+  transform:scale(1.08);
+  box-shadow:0 0 20px rgba(0,255,136,0.9);
 }
 
 /* GAME */
 .game-box{
-  max-width:550px;
+  max-width:500px;
+  margin:auto;
+  background:white;
+  padding:25px;
+  border-radius:15px;
+  box-shadow:0 0 20px rgba(0,255,136,0.3);
+}
+
+.answers button{
+  display:block;
+  width:100%;
+  margin:10px 0;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  background:#52b788;
+  color:white;
+  cursor:pointer;
+}
+
+.timer-bar{
+  height:8px;
+  background:#00a651;
+  margin-bottom:10px;
+  transition:0.3s;
+}
+
+/* TIMER DANGER */
+.timer-danger{
+  background:#ff4d4d !important;
+  box-shadow:0 0 10px red;
+}
+
+/* PROGRESS */
+#progress{
+  font-size:14px;
+  margin-bottom:10px;
+}
+
+/* LEADERBOARD */
+#leaderboard li{
+  background:white;
+  margin:8px auto;
+  padding:10px;
+  border-radius:10px;
+  width:250px;
+}
+
+.about-box{
+  max-width:700px;
   margin:auto;
   background:white;
   padding:25px;
   border-radius:15px;
 }
 
-/* ✅ FIXED ANSWERS */
-.answers button{
-  display:block;
-  width:100%;
-  margin:10px 0;
-  padding:12px;
-  border:none;
-  border-radius:10px;
-  background:#52b788;
-  color:white;
-  font-size:15px;
-  cursor:pointer;
-  transition:.2s;
-}
-.answers button:hover{
-  transform:scale(1.03);
-  box-shadow:0 0 10px #00ff88;
-}
-
-/* TIMER */
-.timer-bar{
-  height:8px;
-  background:#00a651;
-  margin-bottom:10px;
-}
-.timer-danger{
-  background:red !important;
-}
-
-/* SHAKE */
-.shake{animation:shake 0.3s;}
-@keyframes shake{
-  0%{transform:translate(2px,2px);}
-  50%{transform:translate(-2px,-2px);}
-  100%{transform:translate(0,0);}
-}
-
-/* LEADERBOARD */
-#leaderboard li{
-  margin:10px auto;
-  padding:12px;
-  width:260px;
-  border-radius:10px;
-  background:white;
-  text-align:center;
-}
-
-/* TOP 3 */
-#leaderboard li:nth-child(1){background:gold;}
-#leaderboard li:nth-child(2){background:silver;}
-#leaderboard li:nth-child(3){background:#cd7f32;}
-
-/* MOBILE */
-@media(max-width:768px){
-  .big{font-size:50px;}
-}
 </style>
 </head>
 
@@ -161,7 +181,6 @@ input{
   </nav>
 </header>
 
-<!-- HOME -->
 <section id="home" class="tab active">
   <div class="hero">
     <h1 class="big">MINI GAME</h1>
@@ -171,27 +190,29 @@ input{
   </div>
 </section>
 
-<!-- ABOUT -->
 <section id="about" class="tab">
-  <h2>Created by: Jhon Benedict Zulueta</h2>
-  <p>This game was created to combine learning and programming.</p>
+  <div class="about-box">
+    <h2>About</h2>
+    <p>Created by: Jhon Benedict Zulueta</p>
+    <p>This project combines learning and programming.</p>
+  </div>
 </section>
 
-<!-- GAME -->
 <section id="play" class="tab">
   <div class="game-box" id="gameBox">
     <div class="timer-bar" id="bar"></div>
     <p id="progress"></p>
     <h3 id="q"></h3>
-    <div id="ans" class="answers"></div>
+    <div id="ans"></div>
     <p>Score: <span id="score">0</span></p>
   </div>
 </section>
 
-<!-- LEADERBOARD -->
 <section id="leader" class="tab">
   <h2>🏆 Leaderboards</h2>
   <ul id="leaderboard"></ul>
+  <button class="btn" onclick="showAdminButton()">Admin</button>
+  <button class="btn" id="adminResetBtn" onclick="adminReset()" style="display:none;">Reset</button>
 </section>
 
 <script>
@@ -199,7 +220,6 @@ input{
 /* NAV */
 const links=document.querySelectorAll('.link');
 const tabs=document.querySelectorAll('.tab');
-
 links.forEach(l=>{
   l.onclick=()=>{
     links.forEach(x=>x.classList.remove('active'));
@@ -209,12 +229,43 @@ links.forEach(l=>{
   }
 });
 
+/* PARTICLES */
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let particles=[];
+for(let i=0;i<60;i++){
+  particles.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    r:Math.random()*3+1,
+    dx:Math.random()-0.5,
+    dy:Math.random()-0.5
+  });
+}
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle="rgba(0,166,81,0.3)";
+    ctx.fill();
+    p.x+=p.dx;
+    p.y+=p.dy;
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+
 /* SOUND */
 const correctSound=new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");
 const wrongSound=new Audio("https://www.soundjay.com/buttons/sounds/button-10.mp3");
 
 /* QUESTIONS */
-const original=[ ...JSON.parse(JSON.stringify([
+const original=[/* same 15 */ 
 {q:"Ano ang tawag sa pinakamaliit na yunit ng wika?",a:["Ponema","Morpema","Sintaks","Diskurso"],c:0},
 {q:"Ano ang pag-aaral ng kahulugan ng salita?",a:["Ponolohiya","Semantika","Sintaks","Pragmatika"],c:1},
 {q:"Ano ang ayos ng pangungusap?",a:["Sintaks","Diskurso","Ponema","Morpema"],c:0},
@@ -222,7 +273,7 @@ const original=[ ...JSON.parse(JSON.stringify([
 {q:"Ano ang tawag sa pangungusap na nagbibigay utos?",a:["Pautos","Patanong","Padamdam","Pasalaysay"],c:0},
 {q:"Ano ang pokus ng pandiwa na tumutukoy sa simuno?",a:["Pokus ng Aktor","Pokus ng Layon","Pokus ng Tagatanggap","Pokus ng Ganapan"],c:0},
 {q:"Ano ang tawag sa pag-aaral ng tunog ng wika?",a:["Ponolohiya","Semantika","Morpema","Sintaks"],c:0},
-{q:"Ano ang tawag sa pag-aaral ng kaayusan ng salita?",a:["Sintaks","Semantika","Ponolohiya","Pragmatika"],c:0},
+{q:"Ano ang tawag sa pag-aaral ng kaayusan ng salita at pangungusap?",a:["Sintaks","Semantika","Ponolohiya","Pragmatika"],c:0},
 {q:"Ano ang tawag sa paggamit ng wika sa lipunan?",a:["Pragmatika","Ponolohiya","Morpolohiya","Diskurso"],c:0},
 {q:"Ano ang tawag sa pinakamalawak na yunit ng wika?",a:["Diskurso","Sintaks","Ponema","Morpema"],c:0},
 {q:"Ano ang tawag sa salita o yunit na may kahulugan?",a:["Morpema","Ponema","Sintaks","Diskurso"],c:0},
@@ -230,12 +281,12 @@ const original=[ ...JSON.parse(JSON.stringify([
 {q:"Ano ang tawag sa tanong na pangungusap?",a:["Patanong","Pautos","Pasalaysay","Padamdam"],c:0},
 {q:"Ano ang tawag sa pangungusap na nagpapahayag ng damdamin?",a:["Padamdam","Pasalaysay","Pautos","Patanong"],c:0},
 {q:"Ano ang tawag sa pangungusap na nagsasalaysay?",a:["Pasalaysay","Padamdam","Pautos","Patanong"],c:0}
-]))];
+];
 
 let questions=[];
 function shuffle(){questions=[...original].sort(()=>Math.random()-0.5);}
 
-let i=0,score=0,time=10,timer,player="";
+let i=0,score=0,timer,time=10,player="";
 
 function startGame(){
   player=document.getElementById('playerName').value.trim();
@@ -243,7 +294,9 @@ function startGame(){
 
   shuffle();
 
-  document.querySelector('[data-tab="play"]').click();
+  links.forEach(x=>x.classList.remove('active'));
+  tabs.forEach(t=>t.classList.remove('active'));
+  document.getElementById("play").classList.add('active');
 
   i=0;score=0;
   loadQ();
@@ -253,19 +306,19 @@ function loadQ(){
   clearInterval(timer);
   time=10;
 
-  let bar=document.getElementById('bar');
+  const bar=document.getElementById('bar');
   bar.style.width="100%";
   bar.classList.remove("timer-danger");
 
   document.getElementById('q').innerText=questions[i].q;
   document.getElementById('progress').innerText=`Question ${i+1}/15`;
 
-  let ans=document.getElementById('ans');
+  const ans=document.getElementById('ans');
   ans.innerHTML="";
 
-  questions[i].a.forEach((choice,index)=>{
+  questions[i].a.forEach((c,index)=>{
     let btn=document.createElement('button');
-    btn.innerText=choice;
+    btn.innerText=c;
     btn.onclick=()=>check(index,btn);
     ans.appendChild(btn);
   });
@@ -312,15 +365,14 @@ function nextQ(){
   }
 }
 
+/* LEADERBOARD */
 function saveScore(){
   let data=JSON.parse(localStorage.getItem("scores"))||[];
   let exist=data.find(p=>p.name.toLowerCase()===player.toLowerCase());
 
   if(exist){
     if(score>exist.score) exist.score=score;
-  } else {
-    data.push({name:player,score});
-  }
+  } else data.push({name:player,score});
 
   localStorage.setItem("scores",JSON.stringify(data));
   loadBoard();
@@ -337,6 +389,19 @@ function loadBoard(){
     li.innerText=`${p.name} - ${p.score}`;
     list.appendChild(li);
   });
+}
+
+function showAdminButton(){
+  if(prompt("Admin password")==="admin123"){
+    document.getElementById("adminResetBtn").style.display="block";
+  }
+}
+
+function adminReset(){
+  if(prompt("Password?")==="admin123"){
+    localStorage.removeItem("scores");
+    loadBoard();
+  }
 }
 
 loadBoard();
