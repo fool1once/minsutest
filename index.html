@@ -13,6 +13,16 @@ body{
   overflow-x:hidden;
 }
 
+/* PARTICLES CANVAS */
+#particles{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:-1;
+}
+
 /* NAV */
 .navbar{
   display:flex;
@@ -23,28 +33,17 @@ body{
   color:white;
 }
 
-.logo{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo img{width:40px;height:40px;border-radius:50%;}
 
-.logo img{
-  width:40px;
-  height:40px;
-  border-radius:50%;
-}
-
-/* NAV LINKS */
 nav a{
   margin:0 10px;
   padding:10px 18px;
   border-radius:20px;
   cursor:pointer;
-  transition:.3s;
   color:white;
+  transition:.3s;
 }
-
 nav a.active{
   background:#d8f3dc;
   color:#00a651;
@@ -53,7 +52,6 @@ nav a.active{
 /* TABS */
 .tab{display:none;padding:40px;}
 .tab.active{display:block;animation:fade .5s;}
-
 @keyframes fade{
   from{opacity:0;transform:translateY(10px);}
   to{opacity:1;}
@@ -66,13 +64,16 @@ nav a.active{
   font-size:110px;
   font-weight:900;
   color:#00a651;
-  text-shadow:4px 4px 0 #fff,8px 8px 20px rgba(0,0,0,0.2);
+  text-shadow:
+    0 0 10px #00ff88,
+    0 0 20px #00ff88,
+    4px 4px 0 #fff,
+    8px 8px 20px rgba(0,0,0,0.2);
 }
 
 .small{color:#777;font-style:italic;}
 .subtitle{color:#555;margin-top:10px;}
 
-/* INPUT */
 input{
   padding:12px;
   border:none;
@@ -90,21 +91,21 @@ input{
   color:white;
   cursor:pointer;
   transition:.3s;
+  box-shadow:0 0 10px rgba(0,255,136,0.4);
 }
-
 .btn:hover{
   transform:scale(1.08);
-  box-shadow:0 0 15px rgba(0,166,81,0.6);
+  box-shadow:0 0 20px rgba(0,255,136,0.9);
 }
 
-/* GAME BOX */
+/* GAME */
 .game-box{
   max-width:500px;
   margin:auto;
   background:white;
   padding:25px;
   border-radius:15px;
-  box-shadow:0 5px 20px rgba(0,0,0,0.1);
+  box-shadow:0 0 20px rgba(0,255,136,0.3);
 }
 
 .answers button{
@@ -117,12 +118,23 @@ input{
   background:#52b788;
   color:white;
   cursor:pointer;
+  transition:.2s;
+}
+.answers button:hover{
+  box-shadow:0 0 15px rgba(0,255,136,0.7);
+  transform:scale(1.03);
 }
 
 .timer-bar{
   height:8px;
   background:#00a651;
   margin-bottom:10px;
+}
+
+#progress{
+  font-size:14px;
+  margin-bottom:10px;
+  color:#555;
 }
 
 /* LEADERBOARD */
@@ -144,17 +156,6 @@ input{
   line-height:1.6;
 }
 
-/* FLOATING DESIGN */
-.circle{
-  position:absolute;
-  border-radius:50%;
-  opacity:0.2;
-  filter:blur(40px);
-}
-
-.c1{width:200px;height:200px;background:#00a651;top:10%;left:5%;}
-.c2{width:150px;height:150px;background:#52b788;bottom:10%;right:10%;}
-
 @media(max-width:768px){
   .big{font-size:60px;}
 }
@@ -162,6 +163,8 @@ input{
 </head>
 
 <body>
+
+<canvas id="particles"></canvas>
 
 <header class="navbar">
   <div class="logo">
@@ -176,12 +179,8 @@ input{
   </nav>
 </header>
 
-<!-- HOME -->
 <section id="home" class="tab active">
   <div class="hero">
-    <div class="circle c1"></div>
-    <div class="circle c2"></div>
-
     <p class="small">Welcome</p>
     <p class="small">to our</p>
     <h1 class="big">MINI GAME</h1>
@@ -193,38 +192,24 @@ input{
   </div>
 </section>
 
-<!-- ABOUT -->
 <section id="about" class="tab">
   <div class="about-box">
     <h2>About This Game</h2>
     <p><strong>Created by: Jhon Benedict Zulueta</strong></p>
-    <br>
-    <p>
-      This quiz game was created as part of a learning project to improve both programming 
-      and understanding of the Filipino language. The goal of this game is not only to test 
-      knowledge but also to make learning interactive and enjoyable. 
-    </p>
-    <br>
-    <p>
-      I built this system using HTML, CSS, and JavaScript to practice front-end development, 
-      including handling user interaction, timers, scoring systems, and local storage for 
-      leaderboard tracking. This project reflects my passion for technology and my goal of 
-      becoming better in software development and cybersecurity in the future.
-    </p>
+    <p>This quiz game was made to combine learning and programming while improving Filipino knowledge.</p>
   </div>
 </section>
 
-<!-- GAME -->
 <section id="play" class="tab">
   <div class="game-box">
     <div class="timer-bar" id="bar"></div>
+    <p id="progress">Question 1/15</p>
     <h3 id="q"></h3>
     <div id="ans" class="answers"></div>
     <p>Score: <span id="score">0</span></p>
   </div>
 </section>
 
-<!-- LEADERBOARD -->
 <section id="leader" class="tab">
   <h2>🏆 Leaderboards</h2>
   <ul id="leaderboard"></ul>
@@ -247,8 +232,43 @@ links.forEach(l=>{
   }
 });
 
-/* FULL 15 QUESTIONS (FIXED) */
-const questions=[
+/* PARTICLES */
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let particles=[];
+for(let i=0;i<60;i++){
+  particles.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    r:Math.random()*3+1,
+    dx:Math.random()-0.5,
+    dy:Math.random()-0.5
+  });
+}
+
+function animateParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle="rgba(0,166,81,0.3)";
+    ctx.fill();
+    p.x+=p.dx;
+    p.y+=p.dy;
+  });
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+/* SOUND */
+const correctSound=new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");
+const wrongSound=new Audio("https://www.soundjay.com/buttons/sounds/button-10.mp3");
+
+/* QUESTIONS */
+const originalQuestions=[ ...JSON.parse(JSON.stringify([
 {q:"Ano ang tawag sa pinakamaliit na yunit ng wika?",a:["Ponema","Morpema","Sintaks","Diskurso"],c:0},
 {q:"Ano ang pag-aaral ng kahulugan ng salita?",a:["Ponolohiya","Semantika","Sintaks","Pragmatika"],c:1},
 {q:"Ano ang ayos ng pangungusap?",a:["Sintaks","Diskurso","Ponema","Morpema"],c:0},
@@ -264,14 +284,26 @@ const questions=[
 {q:"Ano ang tawag sa tanong na pangungusap?",a:["Patanong","Pautos","Pasalaysay","Padamdam"],c:0},
 {q:"Ano ang tawag sa pangungusap na nagpapahayag ng damdamin?",a:["Padamdam","Pasalaysay","Pautos","Patanong"],c:0},
 {q:"Ano ang tawag sa pangungusap na nagsasalaysay?",a:["Pasalaysay","Padamdam","Pautos","Patanong"],c:0}
-];
+]))];
+
+let questions=[];
+
+function shuffleQuestions(){
+  questions=[...originalQuestions].sort(()=>Math.random()-0.5);
+}
 
 let i=0,score=0,timer,player="",time=10;
 
 function startGame(){
   player=document.getElementById('playerName').value.trim();
   if(!player) return alert("Enter name!");
-  document.querySelector('[data-tab="play"]').click();
+
+  shuffleQuestions(); // RANDOMIZE
+
+  links.forEach(x=>x.classList.remove('active'));
+  tabs.forEach(t=>t.classList.remove('active'));
+  document.getElementById("play").classList.add('active');
+
   i=0;score=0;
   loadQ();
 }
@@ -283,6 +315,8 @@ function loadQ(){
 
   let q=questions[i];
   document.getElementById('q').innerText=q.q;
+  document.getElementById('progress').innerText="Question "+(i+1)+" / "+questions.length;
+
   let ans=document.getElementById('ans');
   ans.innerHTML="";
 
@@ -301,12 +335,26 @@ function loadQ(){
 }
 
 function check(index){
-  if(index===questions[i].c) score++;
-  nextQ();
+  let correctIndex=questions[i].c;
+  let buttons=document.querySelectorAll('#ans button');
+
+  clearInterval(timer);
+
+  buttons.forEach((b,idx)=>{
+    b.disabled=true;
+    if(idx===correctIndex) b.style.background="#00ff88";
+    if(idx===index && index!==correctIndex) b.style.background="#ff4d4d";
+  });
+
+  if(index===correctIndex){
+    score++;
+    correctSound.play();
+  } else wrongSound.play();
+
+  setTimeout(nextQ,800);
 }
 
 function nextQ(){
-  clearInterval(timer);
   i++;
   document.getElementById('score').innerText=score;
 
@@ -322,7 +370,14 @@ function nextQ(){
 /* LEADERBOARD */
 function saveScore(){
   let data=JSON.parse(localStorage.getItem("scores"))||[];
-  data.push({name:player,score});
+  let existing=data.find(p=>p.name.toLowerCase()===player.toLowerCase());
+
+  if(existing){
+    if(score>existing.score) existing.score=score;
+  } else {
+    data.push({name:player,score});
+  }
+
   localStorage.setItem("scores",JSON.stringify(data));
   loadBoard();
 }
@@ -340,7 +395,6 @@ function loadBoard(){
   });
 }
 
-/* ADMIN */
 function showAdminButton(){
   if(prompt("Admin password")==="admin123"){
     document.getElementById("adminResetBtn").style.display="block";
