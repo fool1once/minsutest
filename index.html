@@ -3,20 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mini Game Quiz</title>
+<title>Minsu Quiz</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif;}
 
 body{
   background:linear-gradient(135deg,#b7e4c7,#95d5b2);
+  overflow-x:hidden;
+}
+
+/* PARTICLES */
+#particles{
+  position:fixed;
+  width:100%;
+  height:100%;
+  z-index:-1;
 }
 
 /* NAV */
 .navbar{
   display:flex;
   justify-content:space-between;
-  padding:15px 30px;
+  padding:15px 25px;
   background:#00a651;
   color:white;
 }
@@ -24,18 +33,36 @@ body{
 .logo{display:flex;align-items:center;gap:10px;}
 .logo img{width:40px;border-radius:50%;}
 
+nav a{
+  margin:0 10px;
+  padding:8px 15px;
+  border-radius:20px;
+  cursor:pointer;
+}
+nav a.active{
+  background:#d8f3dc;
+  color:#00a651;
+}
+
 /* TABS */
-.tab{display:none;padding:40px;}
+.tab{display:none;padding:30px;}
 .tab.active{display:block;}
 
 /* HERO */
 .hero{text-align:center;margin-top:60px;}
 
 .big{
-  font-size:100px;
-  font-weight:900;
+  font-size:90px;
   color:#00a651;
   text-shadow:0 0 15px #00ff88;
+}
+
+/* INPUT */
+input{
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  margin-top:15px;
 }
 
 /* BUTTON */
@@ -49,9 +76,9 @@ body{
   cursor:pointer;
 }
 
-/* GAME BOX */
+/* GAME */
 .game-box{
-  max-width:500px;
+  max-width:550px;
   margin:auto;
   background:white;
   padding:25px;
@@ -59,7 +86,7 @@ body{
 }
 
 /* ✅ FIXED ANSWERS */
-#ans button{
+.answers button{
   display:block;
   width:100%;
   margin:10px 0;
@@ -72,10 +99,9 @@ body{
   cursor:pointer;
   transition:.2s;
 }
-
-#ans button:hover{
+.answers button:hover{
   transform:scale(1.03);
-  box-shadow:0 0 10px rgba(0,255,136,0.6);
+  box-shadow:0 0 10px #00ff88;
 }
 
 /* TIMER */
@@ -84,89 +110,111 @@ body{
   background:#00a651;
   margin-bottom:10px;
 }
-
-/* LEADERBOARD COOL DESIGN */
-#leaderboard{
-  list-style:none;
-  padding:0;
+.timer-danger{
+  background:red !important;
 }
 
+/* SHAKE */
+.shake{animation:shake 0.3s;}
+@keyframes shake{
+  0%{transform:translate(2px,2px);}
+  50%{transform:translate(-2px,-2px);}
+  100%{transform:translate(0,0);}
+}
+
+/* LEADERBOARD */
 #leaderboard li{
-  margin:12px auto;
-  padding:15px;
-  width:280px;
-  border-radius:12px;
-  background:white;
-  font-weight:bold;
-  text-align:center;
-  transition:.3s;
-}
-
-/* TOP 3 STYLING */
-#leaderboard li:nth-child(1){
-  background:linear-gradient(45deg,#ffd700,#fff4b3);
-  box-shadow:0 0 20px gold;
-}
-#leaderboard li:nth-child(2){
-  background:linear-gradient(45deg,#c0c0c0,#eaeaea);
-  box-shadow:0 0 15px silver;
-}
-#leaderboard li:nth-child(3){
-  background:linear-gradient(45deg,#cd7f32,#f5c6a5);
-  box-shadow:0 0 15px #cd7f32;
-}
-
-#leaderboard li:hover{
-  transform:scale(1.05);
-}
-
-/* INPUT */
-input{
-  padding:10px;
+  margin:10px auto;
+  padding:12px;
+  width:260px;
   border-radius:10px;
-  border:none;
+  background:white;
+  text-align:center;
 }
 
+/* TOP 3 */
+#leaderboard li:nth-child(1){background:gold;}
+#leaderboard li:nth-child(2){background:silver;}
+#leaderboard li:nth-child(3){background:#cd7f32;}
+
+/* MOBILE */
+@media(max-width:768px){
+  .big{font-size:50px;}
+}
 </style>
 </head>
 
 <body>
+
+<canvas id="particles"></canvas>
 
 <header class="navbar">
   <div class="logo">
     <img src="assets/logo.png">
     <h3>Minsu</h3>
   </div>
+
+  <nav>
+    <a class="link active" data-tab="home">Home</a>
+    <a class="link" data-tab="about">About Us</a>
+    <a class="link" data-tab="leader">Leaderboards</a>
+  </nav>
 </header>
 
+<!-- HOME -->
 <section id="home" class="tab active">
   <div class="hero">
     <h1 class="big">MINI GAME</h1>
-    <input id="playerName" placeholder="Enter name">
+    <input id="playerName" placeholder="Enter your name">
     <br>
     <button class="btn" onclick="startGame()">Start Game</button>
   </div>
 </section>
 
+<!-- ABOUT -->
+<section id="about" class="tab">
+  <h2>Created by: Jhon Benedict Zulueta</h2>
+  <p>This game was created to combine learning and programming.</p>
+</section>
+
+<!-- GAME -->
 <section id="play" class="tab">
-  <div class="game-box">
+  <div class="game-box" id="gameBox">
     <div class="timer-bar" id="bar"></div>
     <p id="progress"></p>
     <h3 id="q"></h3>
-    <div id="ans"></div>
+    <div id="ans" class="answers"></div>
     <p>Score: <span id="score">0</span></p>
   </div>
 </section>
 
+<!-- LEADERBOARD -->
 <section id="leader" class="tab">
-  <h2 style="text-align:center;">🏆 Leaderboard</h2>
+  <h2>🏆 Leaderboards</h2>
   <ul id="leaderboard"></ul>
 </section>
 
 <script>
 
+/* NAV */
+const links=document.querySelectorAll('.link');
+const tabs=document.querySelectorAll('.tab');
+
+links.forEach(l=>{
+  l.onclick=()=>{
+    links.forEach(x=>x.classList.remove('active'));
+    tabs.forEach(t=>t.classList.remove('active'));
+    l.classList.add('active');
+    document.getElementById(l.dataset.tab).classList.add('active');
+  }
+});
+
+/* SOUND */
+const correctSound=new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");
+const wrongSound=new Audio("https://www.soundjay.com/buttons/sounds/button-10.mp3");
+
 /* QUESTIONS */
-const questions=[
+const original=[ ...JSON.parse(JSON.stringify([
 {q:"Ano ang tawag sa pinakamaliit na yunit ng wika?",a:["Ponema","Morpema","Sintaks","Diskurso"],c:0},
 {q:"Ano ang pag-aaral ng kahulugan ng salita?",a:["Ponolohiya","Semantika","Sintaks","Pragmatika"],c:1},
 {q:"Ano ang ayos ng pangungusap?",a:["Sintaks","Diskurso","Ponema","Morpema"],c:0},
@@ -182,42 +230,73 @@ const questions=[
 {q:"Ano ang tawag sa tanong na pangungusap?",a:["Patanong","Pautos","Pasalaysay","Padamdam"],c:0},
 {q:"Ano ang tawag sa pangungusap na nagpapahayag ng damdamin?",a:["Padamdam","Pasalaysay","Pautos","Patanong"],c:0},
 {q:"Ano ang tawag sa pangungusap na nagsasalaysay?",a:["Pasalaysay","Padamdam","Pautos","Patanong"],c:0}
-];
+]))];
 
-let i=0,score=0,player="";
+let questions=[];
+function shuffle(){questions=[...original].sort(()=>Math.random()-0.5);}
+
+let i=0,score=0,time=10,timer,player="";
 
 function startGame(){
-  player=document.getElementById('playerName').value;
-  document.getElementById("home").classList.remove("active");
-  document.getElementById("play").classList.add("active");
+  player=document.getElementById('playerName').value.trim();
+  if(!player) return alert("Enter name!");
+
+  shuffle();
+
+  document.querySelector('[data-tab="play"]').click();
+
   i=0;score=0;
   loadQ();
 }
 
 function loadQ(){
-  let q=questions[i];
-  document.getElementById('q').innerText=q.q;
+  clearInterval(timer);
+  time=10;
+
+  let bar=document.getElementById('bar');
+  bar.style.width="100%";
+  bar.classList.remove("timer-danger");
+
+  document.getElementById('q').innerText=questions[i].q;
   document.getElementById('progress').innerText=`Question ${i+1}/15`;
 
   let ans=document.getElementById('ans');
   ans.innerHTML="";
 
-  q.a.forEach((choice,index)=>{
+  questions[i].a.forEach((choice,index)=>{
     let btn=document.createElement('button');
     btn.innerText=choice;
     btn.onclick=()=>check(index,btn);
     ans.appendChild(btn);
   });
+
+  timer=setInterval(()=>{
+    time--;
+    bar.style.width=(time*10)+"%";
+
+    if(time<=3){
+      bar.classList.add("timer-danger");
+      document.getElementById("gameBox").classList.add("shake");
+      setTimeout(()=>document.getElementById("gameBox").classList.remove("shake"),200);
+    }
+
+    if(time<=0) nextQ();
+  },1000);
 }
 
 function check(index,btn){
+  clearInterval(timer);
+
   if(index===questions[i].c){
     score++;
     btn.style.background="#00ff88";
-  }else{
+    correctSound.play();
+  } else {
     btn.style.background="#ff4d4d";
+    wrongSound.play();
   }
-  setTimeout(nextQ,600);
+
+  setTimeout(nextQ,700);
 }
 
 function nextQ(){
@@ -226,18 +305,23 @@ function nextQ(){
 
   if(i<questions.length){
     loadQ();
-  }else{
+  } else {
     saveScore();
-    alert("Game Over! Score: "+score);
-    document.getElementById("play").classList.remove("active");
-    document.getElementById("leader").classList.add("active");
+    alert(`Game Over! Score: ${score}/15`);
+    document.querySelector('[data-tab="leader"]').click();
   }
 }
 
-/* LEADERBOARD */
 function saveScore(){
   let data=JSON.parse(localStorage.getItem("scores"))||[];
-  data.push({name:player,score});
+  let exist=data.find(p=>p.name.toLowerCase()===player.toLowerCase());
+
+  if(exist){
+    if(score>exist.score) exist.score=score;
+  } else {
+    data.push({name:player,score});
+  }
+
   localStorage.setItem("scores",JSON.stringify(data));
   loadBoard();
 }
