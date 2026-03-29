@@ -13,14 +13,24 @@ body{
   overflow-x:hidden;
 }
 
-/* PARTICLES CANVAS */
+/* PARTICLES */
 #particles{
   position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
+  top:0;left:0;
+  width:100%;height:100%;
   z-index:-1;
+}
+
+/* SHAKE EFFECT */
+.shake{
+  animation:shake 0.3s;
+}
+@keyframes shake{
+  0%{transform:translate(2px,2px);}
+  25%{transform:translate(-2px,0);}
+  50%{transform:translate(2px,-2px);}
+  75%{transform:translate(-1px,2px);}
+  100%{transform:translate(0,0);}
 }
 
 /* NAV */
@@ -58,7 +68,7 @@ nav a.active{
 }
 
 /* HERO */
-.hero{text-align:center;margin-top:60px;position:relative;}
+.hero{text-align:center;margin-top:60px;}
 
 .big{
   font-size:110px;
@@ -67,12 +77,8 @@ nav a.active{
   text-shadow:
     0 0 10px #00ff88,
     0 0 20px #00ff88,
-    4px 4px 0 #fff,
-    8px 8px 20px rgba(0,0,0,0.2);
+    4px 4px 0 #fff;
 }
-
-.small{color:#777;font-style:italic;}
-.subtitle{color:#555;margin-top:10px;}
 
 input{
   padding:12px;
@@ -81,7 +87,6 @@ input{
   margin-top:20px;
 }
 
-/* BUTTON */
 .btn{
   padding:12px 25px;
   margin-top:10px;
@@ -118,23 +123,25 @@ input{
   background:#52b788;
   color:white;
   cursor:pointer;
-  transition:.2s;
-}
-.answers button:hover{
-  box-shadow:0 0 15px rgba(0,255,136,0.7);
-  transform:scale(1.03);
 }
 
 .timer-bar{
   height:8px;
   background:#00a651;
   margin-bottom:10px;
+  transition:0.3s;
 }
 
+/* TIMER DANGER */
+.timer-danger{
+  background:#ff4d4d !important;
+  box-shadow:0 0 10px red;
+}
+
+/* PROGRESS */
 #progress{
   font-size:14px;
   margin-bottom:10px;
-  color:#555;
 }
 
 /* LEADERBOARD */
@@ -146,19 +153,14 @@ input{
   width:250px;
 }
 
-/* ABOUT */
 .about-box{
   max-width:700px;
   margin:auto;
   background:white;
   padding:25px;
   border-radius:15px;
-  line-height:1.6;
 }
 
-@media(max-width:768px){
-  .big{font-size:60px;}
-}
 </style>
 </head>
 
@@ -181,11 +183,7 @@ input{
 
 <section id="home" class="tab active">
   <div class="hero">
-    <p class="small">Welcome</p>
-    <p class="small">to our</p>
     <h1 class="big">MINI GAME</h1>
-    <p class="subtitle">Welcome to our game</p>
-
     <input id="playerName" placeholder="Enter your name">
     <br>
     <button class="btn" onclick="startGame()">Start Game</button>
@@ -194,18 +192,18 @@ input{
 
 <section id="about" class="tab">
   <div class="about-box">
-    <h2>About This Game</h2>
-    <p><strong>Created by: Jhon Benedict Zulueta</strong></p>
-    <p>This quiz game was made to combine learning and programming while improving Filipino knowledge.</p>
+    <h2>About</h2>
+    <p>Created by: Jhon Benedict Zulueta</p>
+    <p>This project combines learning and programming.</p>
   </div>
 </section>
 
 <section id="play" class="tab">
-  <div class="game-box">
+  <div class="game-box" id="gameBox">
     <div class="timer-bar" id="bar"></div>
-    <p id="progress">Question 1/15</p>
+    <p id="progress"></p>
     <h3 id="q"></h3>
-    <div id="ans" class="answers"></div>
+    <div id="ans"></div>
     <p>Score: <span id="score">0</span></p>
   </div>
 </section>
@@ -213,8 +211,8 @@ input{
 <section id="leader" class="tab">
   <h2>🏆 Leaderboards</h2>
   <ul id="leaderboard"></ul>
-  <button class="btn" onclick="showAdminButton()">Admin Access</button>
-  <button class="btn" onclick="adminReset()" id="adminResetBtn" style="display:none;">Reset</button>
+  <button class="btn" onclick="showAdminButton()">Admin</button>
+  <button class="btn" id="adminResetBtn" onclick="adminReset()" style="display:none;">Reset</button>
 </section>
 
 <script>
@@ -222,7 +220,6 @@ input{
 /* NAV */
 const links=document.querySelectorAll('.link');
 const tabs=document.querySelectorAll('.tab');
-
 links.forEach(l=>{
   l.onclick=()=>{
     links.forEach(x=>x.classList.remove('active'));
@@ -249,7 +246,7 @@ for(let i=0;i<60;i++){
   });
 }
 
-function animateParticles(){
+function animate(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   particles.forEach(p=>{
     ctx.beginPath();
@@ -259,16 +256,16 @@ function animateParticles(){
     p.x+=p.dx;
     p.y+=p.dy;
   });
-  requestAnimationFrame(animateParticles);
+  requestAnimationFrame(animate);
 }
-animateParticles();
+animate();
 
 /* SOUND */
 const correctSound=new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");
 const wrongSound=new Audio("https://www.soundjay.com/buttons/sounds/button-10.mp3");
 
 /* QUESTIONS */
-const originalQuestions=[ ...JSON.parse(JSON.stringify([
+const original=[/* same 15 */ 
 {q:"Ano ang tawag sa pinakamaliit na yunit ng wika?",a:["Ponema","Morpema","Sintaks","Diskurso"],c:0},
 {q:"Ano ang pag-aaral ng kahulugan ng salita?",a:["Ponolohiya","Semantika","Sintaks","Pragmatika"],c:1},
 {q:"Ano ang ayos ng pangungusap?",a:["Sintaks","Diskurso","Ponema","Morpema"],c:0},
@@ -284,21 +281,18 @@ const originalQuestions=[ ...JSON.parse(JSON.stringify([
 {q:"Ano ang tawag sa tanong na pangungusap?",a:["Patanong","Pautos","Pasalaysay","Padamdam"],c:0},
 {q:"Ano ang tawag sa pangungusap na nagpapahayag ng damdamin?",a:["Padamdam","Pasalaysay","Pautos","Patanong"],c:0},
 {q:"Ano ang tawag sa pangungusap na nagsasalaysay?",a:["Pasalaysay","Padamdam","Pautos","Patanong"],c:0}
-]))];
+];
 
 let questions=[];
+function shuffle(){questions=[...original].sort(()=>Math.random()-0.5);}
 
-function shuffleQuestions(){
-  questions=[...originalQuestions].sort(()=>Math.random()-0.5);
-}
-
-let i=0,score=0,timer,player="",time=10;
+let i=0,score=0,timer,time=10,player="";
 
 function startGame(){
   player=document.getElementById('playerName').value.trim();
   if(!player) return alert("Enter name!");
 
-  shuffleQuestions(); // RANDOMIZE
+  shuffle();
 
   links.forEach(x=>x.classList.remove('active'));
   tabs.forEach(t=>t.classList.remove('active'));
@@ -311,47 +305,51 @@ function startGame(){
 function loadQ(){
   clearInterval(timer);
   time=10;
-  document.getElementById('bar').style.width="100%";
 
-  let q=questions[i];
-  document.getElementById('q').innerText=q.q;
-  document.getElementById('progress').innerText="Question "+(i+1)+" / "+questions.length;
+  const bar=document.getElementById('bar');
+  bar.style.width="100%";
+  bar.classList.remove("timer-danger");
 
-  let ans=document.getElementById('ans');
+  document.getElementById('q').innerText=questions[i].q;
+  document.getElementById('progress').innerText=`Question ${i+1}/15`;
+
+  const ans=document.getElementById('ans');
   ans.innerHTML="";
 
-  q.a.forEach((choice,index)=>{
+  questions[i].a.forEach((c,index)=>{
     let btn=document.createElement('button');
-    btn.innerText=choice;
-    btn.onclick=()=>check(index);
+    btn.innerText=c;
+    btn.onclick=()=>check(index,btn);
     ans.appendChild(btn);
   });
 
   timer=setInterval(()=>{
     time--;
-    document.getElementById('bar').style.width=(time*10)+"%";
+    bar.style.width=(time*10)+"%";
+
+    if(time<=3){
+      bar.classList.add("timer-danger");
+      document.getElementById("gameBox").classList.add("shake");
+      setTimeout(()=>document.getElementById("gameBox").classList.remove("shake"),200);
+    }
+
     if(time<=0) nextQ();
   },1000);
 }
 
-function check(index){
-  let correctIndex=questions[i].c;
-  let buttons=document.querySelectorAll('#ans button');
-
+function check(index,btn){
   clearInterval(timer);
 
-  buttons.forEach((b,idx)=>{
-    b.disabled=true;
-    if(idx===correctIndex) b.style.background="#00ff88";
-    if(idx===index && index!==correctIndex) b.style.background="#ff4d4d";
-  });
-
-  if(index===correctIndex){
+  if(index===questions[i].c){
     score++;
+    btn.style.background="#00ff88";
     correctSound.play();
-  } else wrongSound.play();
+  } else {
+    btn.style.background="#ff4d4d";
+    wrongSound.play();
+  }
 
-  setTimeout(nextQ,800);
+  setTimeout(nextQ,700);
 }
 
 function nextQ(){
@@ -362,7 +360,7 @@ function nextQ(){
     loadQ();
   } else {
     saveScore();
-    alert("Game Over! Score: "+score+"/15");
+    alert(`Game Over! Score: ${score}/15`);
     document.querySelector('[data-tab="leader"]').click();
   }
 }
@@ -370,13 +368,11 @@ function nextQ(){
 /* LEADERBOARD */
 function saveScore(){
   let data=JSON.parse(localStorage.getItem("scores"))||[];
-  let existing=data.find(p=>p.name.toLowerCase()===player.toLowerCase());
+  let exist=data.find(p=>p.name.toLowerCase()===player.toLowerCase());
 
-  if(existing){
-    if(score>existing.score) existing.score=score;
-  } else {
-    data.push({name:player,score});
-  }
+  if(exist){
+    if(score>exist.score) exist.score=score;
+  } else data.push({name:player,score});
 
   localStorage.setItem("scores",JSON.stringify(data));
   loadBoard();
@@ -405,7 +401,6 @@ function adminReset(){
   if(prompt("Password?")==="admin123"){
     localStorage.removeItem("scores");
     loadBoard();
-    alert("Reset done");
   }
 }
 
