@@ -6,20 +6,14 @@
 <title>Mini Game Quiz</title>
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Poppins',sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
 
-/* BODY */
 body{
-  background:#c7e8d4;
+  background:linear-gradient(135deg,#b7e4c7,#95d5b2);
   overflow-x:hidden;
 }
 
-/* NAVBAR */
+/* NAV */
 .navbar{
   display:flex;
   justify-content:space-between;
@@ -41,6 +35,7 @@ body{
   border-radius:50%;
 }
 
+/* NAV LINKS */
 nav a{
   margin:0 10px;
   padding:10px 18px;
@@ -56,15 +51,8 @@ nav a.active{
 }
 
 /* TABS */
-.tab{
-  display:none;
-  padding:40px;
-}
-
-.tab.active{
-  display:block;
-  animation:fade .4s;
-}
+.tab{display:none;padding:40px;}
+.tab.active{display:block;animation:fade .5s;}
 
 @keyframes fade{
   from{opacity:0;transform:translateY(10px);}
@@ -72,31 +60,19 @@ nav a.active{
 }
 
 /* HERO */
-.hero{
-  text-align:center;
-  margin-top:60px;
-}
-
-.small{
-  font-style:italic;
-  color:#888;
-}
+.hero{text-align:center;margin-top:60px;position:relative;}
 
 .big{
   font-size:110px;
   font-weight:900;
   color:#00a651;
-  text-shadow: 
-    4px 4px 0px #ffffff,
-    8px 8px 20px rgba(0,0,0,0.2);
+  text-shadow:4px 4px 0 #fff,8px 8px 20px rgba(0,0,0,0.2);
 }
 
-.subtitle{
-  color:#666;
-  margin-top:10px;
-}
+.small{color:#777;font-style:italic;}
+.subtitle{color:#555;margin-top:10px;}
 
-/* INPUT + BUTTON */
+/* INPUT */
 input{
   padding:12px;
   border:none;
@@ -104,6 +80,7 @@ input{
   margin-top:20px;
 }
 
+/* BUTTON */
 .btn{
   padding:12px 25px;
   margin-top:10px;
@@ -116,7 +93,8 @@ input{
 }
 
 .btn:hover{
-  transform:scale(1.05);
+  transform:scale(1.08);
+  box-shadow:0 0 15px rgba(0,166,81,0.6);
 }
 
 /* GAME BOX */
@@ -156,7 +134,27 @@ input{
   width:250px;
 }
 
-/* MOBILE */
+/* ABOUT */
+.about-box{
+  max-width:700px;
+  margin:auto;
+  background:white;
+  padding:25px;
+  border-radius:15px;
+  line-height:1.6;
+}
+
+/* FLOATING DESIGN */
+.circle{
+  position:absolute;
+  border-radius:50%;
+  opacity:0.2;
+  filter:blur(40px);
+}
+
+.c1{width:200px;height:200px;background:#00a651;top:10%;left:5%;}
+.c2{width:150px;height:150px;background:#52b788;bottom:10%;right:10%;}
+
 @media(max-width:768px){
   .big{font-size:60px;}
 }
@@ -173,7 +171,7 @@ input{
 
   <nav>
     <a class="link active" data-tab="home">Home</a>
-    <a class="link" data-tab="play">Play</a>
+    <a class="link" data-tab="about">About Us</a>
     <a class="link" data-tab="leader">Leaderboards</a>
   </nav>
 </header>
@@ -181,6 +179,9 @@ input{
 <!-- HOME -->
 <section id="home" class="tab active">
   <div class="hero">
+    <div class="circle c1"></div>
+    <div class="circle c2"></div>
+
     <p class="small">Welcome</p>
     <p class="small">to our</p>
     <h1 class="big">MINI GAME</h1>
@@ -189,8 +190,27 @@ input{
     <input id="playerName" placeholder="Enter your name">
     <br>
     <button class="btn" onclick="startGame()">Start Game</button>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="tab">
+  <div class="about-box">
+    <h2>About This Game</h2>
+    <p><strong>Created by: Jhon Benedict Zulueta</strong></p>
     <br>
-    <button class="btn" onclick="showAdminButton()">Admin</button>
+    <p>
+      This quiz game was created as part of a learning project to improve both programming 
+      and understanding of the Filipino language. The goal of this game is not only to test 
+      knowledge but also to make learning interactive and enjoyable. 
+    </p>
+    <br>
+    <p>
+      I built this system using HTML, CSS, and JavaScript to practice front-end development, 
+      including handling user interaction, timers, scoring systems, and local storage for 
+      leaderboard tracking. This project reflects my passion for technology and my goal of 
+      becoming better in software development and cybersecurity in the future.
+    </p>
   </div>
 </section>
 
@@ -208,15 +228,13 @@ input{
 <section id="leader" class="tab">
   <h2>🏆 Leaderboards</h2>
   <ul id="leaderboard"></ul>
+  <button class="btn" onclick="showAdminButton()">Admin Access</button>
   <button class="btn" onclick="adminReset()" id="adminResetBtn" style="display:none;">Reset</button>
 </section>
 
-<audio id="correct" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
-<audio id="wrong" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
-
 <script>
 
-/* NAVIGATION (FIXED & CLEAN) */
+/* NAV */
 const links=document.querySelectorAll('.link');
 const tabs=document.querySelectorAll('.tab');
 
@@ -229,16 +247,27 @@ links.forEach(l=>{
   }
 });
 
-/* QUESTIONS */
+/* FULL 15 QUESTIONS (FIXED) */
 const questions=[
 {q:"Ano ang tawag sa pinakamaliit na yunit ng wika?",a:["Ponema","Morpema","Sintaks","Diskurso"],c:0},
 {q:"Ano ang pag-aaral ng kahulugan ng salita?",a:["Ponolohiya","Semantika","Sintaks","Pragmatika"],c:1},
-{q:"Ano ang ayos ng pangungusap?",a:["Sintaks","Diskurso","Ponema","Morpema"],c:0}
+{q:"Ano ang ayos ng pangungusap?",a:["Sintaks","Diskurso","Ponema","Morpema"],c:0},
+{q:"Ano ang paraan ng pagbuo ng salita?",a:["Morpolohiya","Sintaks","Semantika","Ponolohiya"],c:0},
+{q:"Ano ang tawag sa pangungusap na nagbibigay utos?",a:["Pautos","Patanong","Padamdam","Pasalaysay"],c:0},
+{q:"Ano ang pokus ng pandiwa na tumutukoy sa simuno?",a:["Pokus ng Aktor","Pokus ng Layon","Pokus ng Tagatanggap","Pokus ng Ganapan"],c:0},
+{q:"Ano ang tawag sa pag-aaral ng tunog ng wika?",a:["Ponolohiya","Semantika","Morpema","Sintaks"],c:0},
+{q:"Ano ang tawag sa pag-aaral ng kaayusan ng salita at pangungusap?",a:["Sintaks","Semantika","Ponolohiya","Pragmatika"],c:0},
+{q:"Ano ang tawag sa paggamit ng wika sa lipunan?",a:["Pragmatika","Ponolohiya","Morpolohiya","Diskurso"],c:0},
+{q:"Ano ang tawag sa pinakamalawak na yunit ng wika?",a:["Diskurso","Sintaks","Ponema","Morpema"],c:0},
+{q:"Ano ang tawag sa salita o yunit na may kahulugan?",a:["Morpema","Ponema","Sintaks","Diskurso"],c:0},
+{q:"Ano ang gamit ng pandiwa sa pangungusap?",a:["Nagpapahayag ng kilos","Nagpapakita ng tunog","Nagpapakita ng ayos","Nagpapahayag ng diskurso"],c:0},
+{q:"Ano ang tawag sa tanong na pangungusap?",a:["Patanong","Pautos","Pasalaysay","Padamdam"],c:0},
+{q:"Ano ang tawag sa pangungusap na nagpapahayag ng damdamin?",a:["Padamdam","Pasalaysay","Pautos","Patanong"],c:0},
+{q:"Ano ang tawag sa pangungusap na nagsasalaysay?",a:["Pasalaysay","Padamdam","Pautos","Patanong"],c:0}
 ];
 
 let i=0,score=0,timer,player="",time=10;
 
-/* START */
 function startGame(){
   player=document.getElementById('playerName').value.trim();
   if(!player) return alert("Enter name!");
@@ -247,7 +276,6 @@ function startGame(){
   loadQ();
 }
 
-/* LOAD */
 function loadQ(){
   clearInterval(timer);
   time=10;
@@ -272,31 +300,23 @@ function loadQ(){
   },1000);
 }
 
-/* CHECK */
 function check(index){
-  if(index===questions[i].c){
-    score++;
-    correct.play();
-  } else wrong.play();
+  if(index===questions[i].c) score++;
   nextQ();
 }
 
-/* NEXT */
 function nextQ(){
   clearInterval(timer);
   i++;
-  scoreDisplay();
+  document.getElementById('score').innerText=score;
+
   if(i<questions.length){
     loadQ();
   } else {
     saveScore();
-    alert("Game Over! Score: "+score);
+    alert("Game Over! Score: "+score+"/15");
     document.querySelector('[data-tab="leader"]').click();
   }
-}
-
-function scoreDisplay(){
-  document.getElementById('score').innerText=score;
 }
 
 /* LEADERBOARD */
@@ -313,7 +333,6 @@ function loadBoard(){
 
   let list=document.getElementById("leaderboard");
   list.innerHTML="";
-
   data.forEach(p=>{
     let li=document.createElement("li");
     li.innerText=`${p.name} - ${p.score}`;
@@ -322,17 +341,17 @@ function loadBoard(){
 }
 
 /* ADMIN */
+function showAdminButton(){
+  if(prompt("Admin password")==="admin123"){
+    document.getElementById("adminResetBtn").style.display="block";
+  }
+}
+
 function adminReset(){
   if(prompt("Password?")==="admin123"){
     localStorage.removeItem("scores");
     loadBoard();
     alert("Reset done");
-  }
-}
-
-function showAdminButton(){
-  if(prompt("Admin password")==="admin123"){
-    document.getElementById("adminResetBtn").style.display="block";
   }
 }
 
