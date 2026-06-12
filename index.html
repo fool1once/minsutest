@@ -1,334 +1,521 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Valenzuela FloodWatch & Evacuation Locator</title>
-
-<!-- Bootstrap -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<!-- Leaflet -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-
-<style>
-:root{
-    --primary:#0d6efd;
-    --danger:#dc3545;
-    --warning:#ffc107;
-    --success:#198754;
-}
-
-body{
-    background:#f5f7fb;
-    font-family:'Segoe UI',sans-serif;
-}
-
-.hero{
-    background:linear-gradient(135deg,#0d6efd,#0dcaf0);
-    color:white;
-    padding:80px 20px;
-    text-align:center;
-}
-
-.card{
-    border:none;
-    border-radius:18px;
-    transition:.4s;
-    box-shadow:0 5px 15px rgba(0,0,0,.08);
-}
-
-.card:hover{
-    transform:translateY(-8px);
-}
-
-.fade-up{
-    animation:fadeUp .8s ease forwards;
-}
-
-@keyframes fadeUp{
-    from{
-        opacity:0;
-        transform:translateY(30px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
-
-#map{
-    height:500px;
-    border-radius:15px;
-}
-
-.search-box{
-    max-width:500px;
-    margin:auto;
-}
-
-.result-card{
-    display:none;
-}
-
-footer{
-    background:#0d6efd;
-    color:white;
-    padding:20px;
-    text-align:center;
-    margin-top:50px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Valenzuela FloodWatch • Smart Evacuation Locator</title>
+    
+    <!-- Bootstrap 5 + Icons + Fonts -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * {
+            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+        :root {
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --border-light: #e2e8f0;
+            --accent: #0d6efd;
+            --risk-high: #dc2626;
+            --risk-moderate: #f59e0b;
+            --risk-low: #10b981;
+        }
+        body.dark {
+            --bg-light: #0f172a;
+            --card-bg: #1e293b;
+            --text-dark: #f1f5f9;
+            --border-light: #334155;
+            background: #0f172a;
+        }
+        body {
+            background: var(--bg-light);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+            transition: all 0.2s;
+        }
+        .navbar-glass {
+            background: rgba(13, 110, 253, 0.92);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .hero-modern {
+            background: linear-gradient(125deg, #0d6efd 0%, #0b5ed7 100%);
+            padding: 4rem 1rem;
+            border-radius: 0 0 2rem 2rem;
+            margin-bottom: 2rem;
+            color: white;
+        }
+        .card-modern {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+            transition: all 0.25s;
+        }
+        .card-modern:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+        }
+        .risk-badge {
+            display: inline-block;
+            padding: 0.25rem 1rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .risk-high { background: #fee2e2; color: #b91c1c; }
+        .risk-moderate { background: #fff3e3; color: #b45309; }
+        .risk-low { background: #e0f2fe; color: #0f766e; }
+        body.dark .risk-high { background: #7f1a1a; color: #fecaca; }
+        body.dark .risk-moderate { background: #92400e; color: #fed7aa; }
+        body.dark .risk-low { background: #115e59; color: #ccfbf1; }
+        #map {
+            height: 480px;
+            border-radius: 1.2rem;
+            z-index: 1;
+        }
+        .search-input-group {
+            border-radius: 2rem;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .btn-soft {
+            border-radius: 2rem;
+            padding: 0.6rem 1.8rem;
+            font-weight: 500;
+        }
+        .admin-section {
+            border-left: 3px solid #0d6efd;
+        }
+        .table-responsive-sm table th {
+            font-weight: 600;
+            background: var(--bg-light);
+        }
+        footer {
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-light);
+            color: var(--text-dark);
+        }
+        .announcement-banner {
+            background: #fef9e3;
+            border-left: 6px solid #f59e0b;
+            border-radius: 1rem;
+        }
+        body.dark .announcement-banner {
+            background: #332a1a;
+            color: #ffedd5;
+        }
+        .fade-up {
+            animation: fadeUp 0.5s ease-out;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        .btn-icon {
+            border-radius: 40px;
+            padding: 0.4rem 0.9rem;
+        }
+        .leaflet-popup-content-wrapper {
+            border-radius: 1rem;
+        }
+    </style>
 </head>
 <body>
 
-<!-- Hero -->
-<section class="hero">
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark navbar-glass sticky-top">
     <div class="container">
-        <h1 class="display-4 fw-bold fade-up">
-            Valenzuela FloodWatch
-        </h1>
-        <p class="lead fade-up">
-            Flood Risk Monitoring & Evacuation Center Locator
-        </p>
-    </div>
-</section>
-
-<!-- Search -->
-<section class="container my-5 fade-up">
-    <div class="card p-4">
-        <h3 class="mb-3">Search Barangay</h3>
-
-        <div class="search-box">
-            <input
-                type="text"
-                id="barangaySearch"
-                class="form-control"
-                placeholder="Enter Barangay Name">
-        </div>
-
-        <div class="text-center mt-3">
-            <button
-                class="btn btn-primary px-4"
-                onclick="searchBarangay()">
-                Search
+        <a class="navbar-brand fw-bold" href="#">
+            <i class="bi bi-water fs-4 me-2"></i> Valenzuela FloodWatch
+        </a>
+        <div class="ms-auto d-flex gap-2">
+            <button class="btn btn-outline-light btn-sm rounded-pill" id="themeToggleBtn">
+                <i class="bi bi-moon-stars"></i> <span class="d-none d-sm-inline">Mode</span>
+            </button>
+            <button class="btn btn-outline-light btn-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#settingsModal">
+                <i class="bi bi-gear"></i> <span class="d-none d-sm-inline">Settings</span>
+            </button>
+            <button class="btn btn-light btn-sm rounded-pill text-primary" id="adminLoginBtn">
+                <i class="bi bi-shield-lock"></i> Admin
             </button>
         </div>
     </div>
-</section>
+</nav>
 
-<!-- Result -->
-<section class="container">
-    <div id="resultCard" class="card p-4 result-card">
+<!-- Announcement Banner (dynamic) -->
+<div class="container mt-3" id="announcementContainer"></div>
 
-        <h4 id="barangayName"></h4>
-
-        <hr>
-
-        <p>
-            <strong>Flood Risk:</strong>
-            <span id="riskLevel"></span>
-        </p>
-
-        <p>
-            <strong>Estimated Flood Depth:</strong>
-            <span id="floodDepth"></span>
-        </p>
-
-        <p>
-            <strong>Nearest Evacuation Center:</strong>
-            <span id="evacuationCenter"></span>
-        </p>
-
+<!-- Hero -->
+<section class="hero-modern text-center">
+    <div class="container">
+        <h1 class="display-5 fw-bold animate__fadeInUp">Valenzuela FloodWatch</h1>
+        <p class="lead">Real-time flood risk intelligence & evacuation mapping for 33 barangays</p>
+        <div class="mt-3">
+            <span class="badge bg-light text-dark rounded-pill px-3 py-2"><i class="bi bi-droplet-half me-1"></i> High-risk alerts</span>
+            <span class="badge bg-light text-dark rounded-pill px-3 py-2 ms-2"><i class="bi bi-pin-map"></i> 12 Evac centers</span>
+        </div>
     </div>
 </section>
 
-<!-- Dashboard -->
-<section class="container my-5">
-
+<!-- Main Search + Result -->
+<div class="container fade-up">
     <div class="row g-4">
-
-        <div class="col-md-4">
-            <div class="card p-4 text-center">
-                <h2 class="text-danger">8</h2>
-                <h5>High Risk Barangays</h5>
+        <div class="col-lg-5">
+            <div class="card-modern p-4">
+                <h5 class="fw-semibold"><i class="bi bi-search-heart"></i> Barangay Search</h5>
+                <div class="search-input-group input-group mt-3">
+                    <input type="text" class="form-control border-0 bg-transparent" id="barangaySearch" placeholder="e.g., Malanday, Karuhatan, Marulas" list="barangayList">
+                    <button class="btn btn-primary" id="searchBtn"><i class="bi bi-arrow-right-circle"></i> Locate</button>
+                </div>
+                <datalist id="barangayList"></datalist>
+                <div id="resultCard" class="mt-4" style="display: none;">
+                    <div class="border-top pt-3">
+                        <h4 id="barangayNameDisplay" class="fw-bold"></h4>
+                        <div class="mt-3">
+                            <div class="d-flex justify-content-between"><span>🌊 Flood Risk:</span> <strong id="riskLevelSpan"></strong></div>
+                            <div class="d-flex justify-content-between mt-2"><span>📏 Est. Depth:</span> <strong id="floodDepthSpan"></strong></div>
+                            <div class="d-flex justify-content-between mt-2"><span>🏥 Evacuation Center:</span> <strong id="evacCenterSpan"></strong></div>
+                            <div class="mt-3"><i class="bi bi-geo-alt-fill text-primary"></i> <span id="coordHint"></span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="notFoundMsg" class="alert alert-warning mt-3 d-none">Barangay not found. Try another name.</div>
             </div>
         </div>
-
-        <div class="col-md-4">
-            <div class="card p-4 text-center">
-                <h2 class="text-warning">10</h2>
-                <h5>Moderate Risk Barangays</h5>
+        <div class="col-lg-7">
+            <div class="card-modern p-3">
+                <h5 class="fw-semibold mb-2"><i class="bi bi-bar-chart-steps"></i> Flood Risk Dashboard</h5>
+                <div class="row g-3 text-center">
+                    <div class="col-4">
+                        <div class="p-3 rounded-3" style="background: #fee2e2; color:#b91c1c;">
+                            <h3 class="fw-bold" id="highCount">0</h3>
+                            <span>High Risk</span>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-3 rounded-3" style="background: #fff3e3; color:#b45309;">
+                            <h3 class="fw-bold" id="moderateCount">0</h3>
+                            <span>Moderate Risk</span>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-3 rounded-3" style="background: #e0f2fe; color:#0f766e;">
+                            <h3 class="fw-bold" id="lowCount">0</h3>
+                            <span>Low Risk</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <div class="col-md-4">
-            <div class="card p-4 text-center">
-                <h2 class="text-success">15</h2>
-                <h5>Low Risk Barangays</h5>
-            </div>
-        </div>
-
     </div>
+</div>
 
-</section>
-
-<!-- Map -->
-<section class="container my-5">
-
-    <div class="card p-4">
-
-        <h3 class="mb-3">
-            Interactive Flood Risk Map
-        </h3>
-
+<!-- Map Section -->
+<div class="container my-5 fade-up">
+    <div class="card-modern p-3">
+        <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap">
+            <h5 class="fw-semibold"><i class="bi bi-map"></i> Interactive Flood Risk Map</h5>
+            <small class="text-muted">Legend: 🔴 High 🟠 Moderate 🟢 Low</small>
+        </div>
         <div id="map"></div>
-
     </div>
-
-</section>
+</div>
 
 <!-- Emergency Contacts -->
-<section class="container my-5">
-
-    <div class="card p-4">
-
-        <h3>Emergency Contacts</h3>
-
-        <table class="table mt-3">
-            <thead>
-                <tr>
-                    <th>Agency</th>
-                    <th>Contact</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <tr>
-                    <td>Valenzuela Rescue</td>
-                    <td>911</td>
-                </tr>
-
-                <tr>
-                    <td>Fire Department</td>
-                    <td>160</td>
-                </tr>
-
-                <tr>
-                    <td>Police Station</td>
-                    <td>117</td>
-                </tr>
-
-                <tr>
-                    <td>Disaster Risk Office</td>
-                    <td>(02) 8352-1000</td>
-                </tr>
-            </tbody>
-        </table>
-
+<div class="container mb-4 fade-up">
+    <div class="card-modern p-4">
+        <h5 class="fw-semibold"><i class="bi bi-telephone-inbound"></i> 24/7 Emergency Hotlines</h5>
+        <div class="row mt-3 g-3">
+            <div class="col-md-3"><i class="bi bi-shield-check"></i> Valenzuela Rescue: <strong>911</strong></div>
+            <div class="col-md-3"><i class="bi bi-fire"></i> Fire Dept: <strong>160</strong></div>
+            <div class="col-md-3"><i class="bi bi-building"></i> Police: <strong>117</strong></div>
+            <div class="col-md-3"><i class="bi bi-chat-dots"></i> DRRM Office: <strong>(02) 8352-1000</strong></div>
+        </div>
     </div>
+</div>
 
-</section>
+<!-- Admin Panel (Hidden by default) -->
+<div id="adminPanel" class="container my-5 d-none fade-up">
+    <div class="card-modern border-0 shadow-lg p-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <h4><i class="bi bi-shield-lock-fill"></i> Admin Control Center</h4>
+            <button class="btn btn-outline-danger btn-sm" id="adminLogoutBtn"><i class="bi bi-box-arrow-right"></i> Exit Admin</button>
+        </div>
+        <hr>
+        <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#manageBarangay">Manage Barangays</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#globalSettings">System Settings</button></li>
+        </ul>
+        <div class="tab-content mt-4">
+            <div class="tab-pane fade show active" id="manageBarangay">
+                <div class="mb-4 row g-2">
+                    <div class="col-md-4"><input type="text" id="newBrgyName" class="form-control" placeholder="Barangay name"></div>
+                    <div class="col-md-2"><select id="newRisk" class="form-select"><option value="HIGH">HIGH</option><option value="MODERATE">MODERATE</option><option value="LOW">LOW</option></select></div>
+                    <div class="col-md-2"><input id="newDepth" class="form-control" placeholder="Depth e.g., 0.5-1.2m"></div>
+                    <div class="col-md-3"><input id="newEvac" class="form-control" placeholder="Evacuation Center"></div>
+                    <div class="col-md-2"><input id="newLat" class="form-control" placeholder="Latitude" value="14.70"></div>
+                    <div class="col-md-2"><input id="newLng" class="form-control" placeholder="Longitude" value="120.98"></div>
+                    <div class="col-md-2"><button class="btn btn-primary w-100" id="addBarangayBtn"><i class="bi bi-plus-circle"></i> Add</button></div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead><tr><th>Barangay</th><th>Risk</th><th>Depth</th><th>Evacuation Center</th><th>Coordinates</th><th>Actions</th></tr></thead>
+                        <tbody id="adminTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="globalSettings">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">📢 Global Flood Announcement (appears on top)</label>
+                    <textarea id="globalAnnouncement" class="form-control" rows="2" placeholder="e.g., Yellow rainfall warning: Prepare for possible floods"></textarea>
+                    <button id="saveAnnouncementBtn" class="btn btn-sm btn-outline-primary mt-2">Save Announcement</button>
+                </div>
+                <hr>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">🔐 Admin Password (change secure)</label>
+                    <input type="password" id="adminPasswordSetting" class="form-control" placeholder="New password (min 4 chars)">
+                    <button id="updateAdminPassBtn" class="btn btn-sm btn-outline-secondary mt-2">Update Password</button>
+                    <div class="form-text">Default: admin123</div>
+                </div>
+                <div class="alert alert-info">System data persists in your browser (localStorage). Admin edits reflect instantly on map + dashboard.</div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<footer>
-    © 2026 Valenzuela FloodWatch System
+<footer class="text-center py-4 mt-5">
+    <p class="mb-0">🌧️ Valenzuela FloodWatch System • Real-time evacuation guidance • DRRM Office Official Data</p>
+    <small class="opacity-75">© 2026 — Community Resilience Platform</small>
 </footer>
 
-<!-- Leaflet -->
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<!-- Settings Modal (User) -->
+<div class="modal fade" id="settingsModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-card">
+            <div class="modal-header"><h5 class="modal-title"><i class="bi bi-sliders2"></i> User Preferences</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" id="darkModeSwitch"><label class="form-check-label">Dark Mode (Minimalist)</label></div>
+                <div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="metricSwitch" checked disabled><label>Metric units (meters) — fixed</label></div>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const barangays = {
-    "Malanday":{
-        risk:"HIGH",
-        depth:"0.5 - 1.5 meters",
-        center:"Malanday National High School"
-    },
+// ======================== DATA MODEL ==========================
+const DEFAULT_BARANGAYS = [
+    { name: "Malanday", risk: "HIGH", depth: "0.5 - 1.5 meters", evacCenter: "Malanday National High School", lat: 14.7000, lng: 120.9830 },
+    { name: "Karuhatan", risk: "MODERATE", depth: "0.2 - 0.8 meters", evacCenter: "Karuhatan Elementary School", lat: 14.6760, lng: 120.9820 },
+    { name: "Gen T De Leon", risk: "LOW", depth: "0.1 - 0.3 meters", evacCenter: "Gen T De Leon Gymnasium", lat: 14.7150, lng: 120.9980 },
+    { name: "Marulas", risk: "HIGH", depth: "0.6 - 1.8 meters", evacCenter: "Marulas Covered Court", lat: 14.6550, lng: 120.9720 },
+    { name: "Ugong", risk: "MODERATE", depth: "0.3 - 0.9 meters", evacCenter: "Ugong Barangay Hall", lat: 14.6830, lng: 120.9580 },
+    { name: "Canumay", risk: "LOW", depth: "0.1 - 0.4 meters", evacCenter: "Canumay Elementary School", lat: 14.7270, lng: 120.9900 },
+    { name: "Polo", risk: "HIGH", depth: "0.7 - 1.4 meters", evacCenter: "Polo National High School", lat: 14.6930, lng: 120.9460 }
+];
 
-    "Karuhatan":{
-        risk:"MODERATE",
-        depth:"0.2 - 0.8 meters",
-        center:"Karuhatan Elementary School"
-    },
+let barangaysData = [];
+let mapInstance;
+let markerLayer = L.layerGroup();
+let adminLoggedIn = false;
+let adminPassword = "admin123";  // default
 
-    "Gen T De Leon":{
-        risk:"LOW",
-        depth:"0.1 - 0.3 meters",
-        center:"Gen T De Leon Gymnasium"
-    }
-};
+// utils
+function loadData() {
+    const stored = localStorage.getItem("floodwatch_barangays");
+    if(stored) barangaysData = JSON.parse(stored);
+    else barangaysData = JSON.parse(JSON.stringify(DEFAULT_BARANGAYS));
+    updateStatsUI();
+    updateDatalist();
+}
 
-function searchBarangay(){
+function saveData() {
+    localStorage.setItem("floodwatch_barangays", JSON.stringify(barangaysData));
+    updateStatsUI();
+    refreshMapMarkers();
+    updateDatalist();
+    if(document.getElementById("resultCard").style.display === "block") document.getElementById("resultCard").style.display = "none";
+    renderAdminTable();
+}
 
-    const input =
-    document.getElementById("barangaySearch")
-    .value
-    .trim();
+function updateStatsUI() {
+    let high = barangaysData.filter(b => b.risk === "HIGH").length;
+    let moderate = barangaysData.filter(b => b.risk === "MODERATE").length;
+    let low = barangaysData.filter(b => b.risk === "LOW").length;
+    document.getElementById("highCount").innerText = high;
+    document.getElementById("moderateCount").innerText = moderate;
+    document.getElementById("lowCount").innerText = low;
+}
 
-    const result =
-    barangays[input];
+function updateDatalist() {
+    const datalist = document.getElementById("barangayList");
+    datalist.innerHTML = "";
+    barangaysData.forEach(b => {
+        let opt = document.createElement("option");
+        opt.value = b.name;
+        datalist.appendChild(opt);
+    });
+}
 
-    const card =
-    document.getElementById("resultCard");
+function getBarangayByName(name) {
+    return barangaysData.find(b => b.name.toLowerCase() === name.toLowerCase());
+}
 
-    if(result){
-
-        document.getElementById(
-        "barangayName").innerText=input;
-
-        document.getElementById(
-        "riskLevel").innerText=result.risk;
-
-        document.getElementById(
-        "floodDepth").innerText=result.depth;
-
-        document.getElementById(
-        "evacuationCenter").innerText=result.center;
-
-        card.style.display="block";
-
-        card.scrollIntoView({
-            behavior:"smooth"
-        });
-
-    }else{
-
-        alert(
-        "Barangay not found. Please try again."
-        );
+function searchBarangay() {
+    const input = document.getElementById("barangaySearch").value.trim();
+    const found = getBarangayByName(input);
+    const resultDiv = document.getElementById("resultCard");
+    const notFound = document.getElementById("notFoundMsg");
+    if(found) {
+        notFound.classList.add("d-none");
+        document.getElementById("barangayNameDisplay").innerText = found.name;
+        let riskHtml = `<span class="risk-badge risk-${found.risk.toLowerCase()}">${found.risk}</span>`;
+        document.getElementById("riskLevelSpan").innerHTML = riskHtml;
+        document.getElementById("floodDepthSpan").innerText = found.depth;
+        document.getElementById("evacCenterSpan").innerText = found.evacCenter;
+        document.getElementById("coordHint").innerHTML = `📍 ${found.lat.toFixed(4)}, ${found.lng.toFixed(4)}`;
+        resultDiv.style.display = "block";
+        // pan to marker on map
+        if(mapInstance) mapInstance.setView([found.lat, found.lng], 14);
+        // open popup manually
+        refreshMapMarkers(true, found.name);
+        resultDiv.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    } else {
+        notFound.classList.remove("d-none");
+        resultDiv.style.display = "none";
     }
 }
 
-// Leaflet Map
-const map = L.map('map')
-.setView([14.7000,120.9830],12);
+// MAP
+function refreshMapMarkers(highlightName = null, highlightNameValue = null) {
+    if(!mapInstance) return;
+    markerLayer.clearLayers();
+    barangaysData.forEach(b => {
+        let colorIcon = b.risk === "HIGH" ? "red" : (b.risk === "MODERATE" ? "orange" : "green");
+        let markerHtml = `<div style="background:${colorIcon}; width:12px;height:12px;border-radius:50%;border:2px solid white;"></div>`;
+        let icon = L.divIcon({ html: markerHtml, iconSize: [12,12], className: 'custom-marker' });
+        let marker = L.marker([b.lat, b.lng], { icon: L.divIcon({ html: `<div style="background:${colorIcon}; width:16px;height:16px;border-radius:50%;border:2px solid white;box-shadow:0 0 4px gray;"></div>`, iconSize: [16,16] }) }).addTo(markerLayer);
+        marker.bindPopup(`<b>${b.name}</b><br>🌊 Risk: ${b.risk}<br>📏 Depth: ${b.depth}<br>🏥 Evac: ${b.evacCenter}`);
+        if(highlightNameValue && b.name === highlightNameValue) marker.openPopup();
+    });
+    markerLayer.addTo(mapInstance);
+}
 
-L.tileLayer(
-'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-{
-maxZoom:19
-}).addTo(map);
+function initMap() {
+    mapInstance = L.map('map').setView([14.7000, 120.9830], 12);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>' }).addTo(mapInstance);
+    refreshMapMarkers();
+}
+// Admin Table Render
+function renderAdminTable() {
+    const tbody = document.getElementById("adminTableBody");
+    if(!tbody) return;
+    tbody.innerHTML = "";
+    barangaysData.forEach((b, idx) => {
+        let row = tbody.insertRow();
+        row.insertCell(0).innerText = b.name;
+        row.insertCell(1).innerHTML = `<select class="form-select form-select-sm risk-select" data-idx="${idx}"><option ${b.risk==="HIGH"?"selected":""}>HIGH</option><option ${b.risk==="MODERATE"?"selected":""}>MODERATE</option><option ${b.risk==="LOW"?"selected":""}>LOW</option></select>`;
+        row.insertCell(2).innerHTML = `<input type="text" class="form-control form-control-sm depth-input" value="${b.depth}" data-idx="${idx}">`;
+        row.insertCell(3).innerHTML = `<input type="text" class="form-control form-control-sm evac-input" value="${b.evacCenter}" data-idx="${idx}">`;
+        row.insertCell(4).innerHTML = `<div class="d-flex gap-1"><input class="form-control form-control-sm lat-input" style="width:85px" value="${b.lat}" data-idx="${idx}"><input class="form-control form-control-sm lng-input" style="width:85px" value="${b.lng}" data-idx="${idx}"></div>`;
+        let delBtn = document.createElement("button");
+        delBtn.className = "btn btn-sm btn-outline-danger";
+        delBtn.innerHTML = "<i class='bi bi-trash'></i>";
+        delBtn.onclick = () => { if(confirm(`Delete ${b.name}?`)){ barangaysData.splice(idx,1); saveData(); renderAdminTable(); }};
+        row.insertCell(5).appendChild(delBtn);
+    });
+    // attach live update events
+    document.querySelectorAll(".risk-select").forEach(sel => sel.addEventListener("change", function(e){ let idx = this.dataset.idx; barangaysData[idx].risk = this.value; saveData(); renderAdminTable(); }));
+    document.querySelectorAll(".depth-input").forEach(inp => inp.addEventListener("change", function(e){ let idx = this.dataset.idx; barangaysData[idx].depth = this.value; saveData(); renderAdminTable(); }));
+    document.querySelectorAll(".evac-input").forEach(inp => inp.addEventListener("change", function(e){ let idx = this.dataset.idx; barangaysData[idx].evacCenter = this.value; saveData(); renderAdminTable(); }));
+    document.querySelectorAll(".lat-input").forEach(inp => inp.addEventListener("change", function(e){ let idx = this.dataset.idx; let v = parseFloat(this.value); if(!isNaN(v)) barangaysData[idx].lat = v; saveData(); renderAdminTable(); }));
+    document.querySelectorAll(".lng-input").forEach(inp => inp.addEventListener("change", function(e){ let idx = this.dataset.idx; let v = parseFloat(this.value); if(!isNaN(v)) barangaysData[idx].lng = v; saveData(); renderAdminTable(); }));
+}
 
-// Sample Flood Risk Markers
+// announcements
+function loadAnnouncement() {
+    let ann = localStorage.getItem("floodwatch_announcement") || "⚠️ Stay alert: Monitor water levels and follow evacuation orders when needed.";
+    document.getElementById("announcementContainer").innerHTML = `<div class="alert announcement-banner d-flex align-items-center"><i class="bi bi-megaphone-fill me-3 fs-4"></i><div>${ann}</div></div>`;
+}
+function saveAnnouncement(text) {
+    localStorage.setItem("floodwatch_announcement", text);
+    loadAnnouncement();
+}
 
-L.marker([14.7000,120.9830])
-.addTo(map)
-.bindPopup(
-"<b>Malanday</b><br>High Flood Risk"
-);
-
-L.marker([14.6760,120.9820])
-.addTo(map)
-.bindPopup(
-"<b>Karuhatan</b><br>Moderate Flood Risk"
-);
-
-L.marker([14.7150,120.9980])
-.addTo(map)
-.bindPopup(
-"<b>Gen T De Leon</b><br>Low Flood Risk"
-);
+// Admin password handling
+function checkAdminAuth() {
+    let pwd = prompt("🔐 Admin Access: Enter password");
+    if(pwd === adminPassword) {
+        adminLoggedIn = true;
+        document.getElementById("adminPanel").classList.remove("d-none");
+        renderAdminTable();
+        toastAlert("Admin mode enabled", "success");
+    } else { alert("Wrong password"); adminLoggedIn=false; }
+}
+function toastAlert(msg, type="info") { 
+    let toastDiv = document.createElement("div"); toastDiv.className=`alert alert-${type} position-fixed bottom-0 end-0 m-3 shadow-lg`; toastDiv.style.zIndex="9999"; toastDiv.innerText=msg; document.body.appendChild(toastDiv); setTimeout(()=>toastDiv.remove(),2500);
+}
+// dark mode
+function applyTheme(dark) {
+    if(dark) document.body.classList.add("dark");
+    else document.body.classList.remove("dark");
+    localStorage.setItem("floodwatch_theme", dark ? "dark" : "light");
+}
+// event binding
+document.addEventListener("DOMContentLoaded", () => {
+    loadData();
+    initMap();
+    loadAnnouncement();
+    const savedTheme = localStorage.getItem("floodwatch_theme");
+    if(savedTheme === "dark") applyTheme(true);
+    document.getElementById("themeToggleBtn").addEventListener("click", () => { applyTheme(!document.body.classList.contains("dark")); });
+    document.getElementById("darkModeSwitch")?.addEventListener("change", (e) => applyTheme(e.target.checked));
+    if(document.getElementById("darkModeSwitch")) document.getElementById("darkModeSwitch").checked = document.body.classList.contains("dark");
+    document.getElementById("searchBtn").addEventListener("click", searchBarangay);
+    document.getElementById("barangaySearch").addEventListener("keypress", (e) => { if(e.key === "Enter") searchBarangay(); });
+    document.getElementById("adminLoginBtn").addEventListener("click", () => { if(!adminLoggedIn) checkAdminAuth(); else { document.getElementById("adminPanel").classList.toggle("d-none"); if(!document.getElementById("adminPanel").classList.contains("d-none")) renderAdminTable(); } });
+    document.getElementById("adminLogoutBtn")?.addEventListener("click", () => { adminLoggedIn=false; document.getElementById("adminPanel").classList.add("d-none"); toastAlert("Admin session ended");});
+    document.getElementById("addBarangayBtn")?.addEventListener("click", () => {
+        let name = document.getElementById("newBrgyName").value.trim(); if(!name) return alert("Barangay name required");
+        if(barangaysData.some(b=>b.name.toLowerCase()===name.toLowerCase())) return alert("Duplicate Barangay");
+        let risk = document.getElementById("newRisk").value;
+        let depth = document.getElementById("newDepth").value || "Unknown depth";
+        let evac = document.getElementById("newEvac").value || "Temporary Evac Center";
+        let lat = parseFloat(document.getElementById("newLat").value) || 14.70;
+        let lng = parseFloat(document.getElementById("newLng").value) || 120.98;
+        barangaysData.push({ name, risk, depth, evacCenter: evac, lat, lng });
+        saveData();
+        renderAdminTable();
+        document.getElementById("newBrgyName").value = "";
+        toastAlert(`Added ${name}`, "success");
+    });
+    document.getElementById("saveAnnouncementBtn")?.addEventListener("click", () => {
+        let newAnn = document.getElementById("globalAnnouncement").value;
+        if(newAnn.trim()) saveAnnouncement(newAnn.trim());
+        toastAlert("Announcement updated");
+    });
+    document.getElementById("updateAdminPassBtn")?.addEventListener("click", () => {
+        let newPass = document.getElementById("adminPasswordSetting").value.trim();
+        if(newPass.length >= 4) { adminPassword = newPass; localStorage.setItem("floodwatch_adminPass", adminPassword); toastAlert("Admin password updated"); }
+        else alert("minimum 4 characters");
+    });
+    const storedPass = localStorage.getItem("floodwatch_adminPass");
+    if(storedPass) adminPassword = storedPass;
+    if(localStorage.getItem("floodwatch_announcement") === null) localStorage.setItem("floodwatch_announcement", "🌧️ Current Weather: Intermittent rains. Barangay responders are on standby.");
+    loadAnnouncement();
+    document.getElementById("globalAnnouncement").value = localStorage.getItem("floodwatch_announcement") || "";
+    window.searchBarangay = searchBarangay;
+    renderAdminTable();
+});
 </script>
-
 </body>
 </html>
