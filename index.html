@@ -26,7 +26,6 @@
             color: #1e2a3e;
         }
 
-        /* minimalist & smooth */
         .navbar-brand {
             font-weight: 700;
             letter-spacing: -0.3px;
@@ -82,7 +81,6 @@
             color: #0e7b6e;
         }
 
-        /* map */
         #map {
             height: 460px;
             border-radius: 1.2rem;
@@ -90,7 +88,6 @@
             width: 100%;
         }
 
-        /* search */
         .search-group {
             border-radius: 3rem;
             overflow: hidden;
@@ -110,28 +107,31 @@
             transform: scale(0.97);
         }
 
-        /* admin panel smooth toggle */
-        .admin-panel-wrapper {
-            transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            max-height: 0;
-            opacity: 0;
+        /* admin modal custom styling */
+        .admin-modal-xl .modal-dialog {
+            max-width: 1100px;
+            width: 95%;
+        }
+
+        .modal-content {
+            border-radius: 1.75rem;
+            border: none;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
             overflow: hidden;
-            margin: 0 1rem;
         }
 
-        .admin-panel-wrapper.show {
-            max-height: 1200px;
-            opacity: 1;
-            margin-bottom: 2rem;
+        .modal-header {
+            background: #f8fafc;
+            border-bottom: 1px solid #e9ecef;
+            padding: 1.2rem 1.5rem;
         }
 
-        .admin-card {
-            border-radius: 1.5rem;
-            background: white;
-            border: 1px solid rgba(0, 0, 0, 0.08);
+        .modal-body {
+            padding: 1.5rem;
+            max-height: 70vh;
+            overflow-y: auto;
         }
 
-        /* mobile friendly table */
         .table-responsive-stack {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
@@ -150,28 +150,31 @@
             font-weight: 500;
         }
 
+        /* smooth transitions for modal fade */
+        .modal.fade .modal-dialog {
+            transition: transform 0.25s ease-out, opacity 0.2s;
+        }
+
         @media (max-width: 768px) {
             .hero h1 {
                 font-size: 1.8rem;
             }
-
             .card-soft {
                 padding: 1rem;
             }
-
-            .btn-primary-custom {
-                padding: 0.4rem 1.2rem;
-            }
-
             #map {
                 height: 350px;
+            }
+            .admin-modal-xl .modal-dialog {
+                width: 98%;
+                margin: 1rem auto;
             }
         }
     </style>
 </head>
 <body>
 
-<!-- Navigation (minimal, no dark mode) -->
+<!-- Navigation -->
 <nav class="navbar navbar-expand-lg sticky-top">
     <div class="container">
         <a class="navbar-brand text-white fw-bold" href="#">
@@ -193,7 +196,7 @@
     </div>
 </section>
 
-<!-- Dynamic Announcement Banner (Editable by Admin) -->
+<!-- Dynamic Announcement Banner -->
 <div class="container mt-4" id="announcementArea"></div>
 
 <!-- Search & Results -->
@@ -286,64 +289,68 @@
     </div>
 </div>
 
-<!-- ADMIN PANEL (smooth toggle) -->
-<div id="adminPanelWrapper" class="admin-panel-wrapper">
-    <div class="admin-card p-4 shadow-lg">
-        <div class="d-flex justify-content-between align-items-center flex-wrap border-bottom pb-3 mb-3">
-            <h4 class="fw-semibold"><i class="bi bi-shield-lock-fill text-primary"></i> Admin Control</h4>
-            <button class="btn btn-sm btn-outline-secondary" id="closeAdminPanelBtn"><i class="bi bi-x-lg"></i> Close</button>
-        </div>
-
-        <!-- Tabs: Manage Barangays + Announcement Editor -->
-        <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#brgysTab" type="button" role="tab">📋 Barangays & Evac Centers</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#announceTab" type="button" role="tab">📢 Flood Announcement</button>
-            </li>
-        </ul>
-
-        <div class="tab-content">
-            <!-- Barangay management -->
-            <div class="tab-pane fade show active" id="brgysTab" role="tabpanel">
-                <div class="alert alert-info small py-2">🔐 Exactly 7 barangays preloaded. Edit any field: risk, depth, evacuation center, coordinates.</div>
-                <div class="table-responsive-stack">
-                    <table class="table table-hover align-middle" id="adminBrgyTable">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Barangay</th><th>Risk</th><th>Depth (m)</th><th>Evacuation Center</th><th>Coordinates</th><th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminTableBody"></tbody>
-                    </table>
-                </div>
-                <div class="mt-3 d-flex gap-2 flex-wrap">
-                    <input type="text" id="newBrgyName" class="form-control form-control-sm w-auto" placeholder="New barangay">
-                    <select id="newRiskSelect" class="form-select form-select-sm w-auto"><option>HIGH</option><option>MODERATE</option><option>LOW</option></select>
-                    <input id="newDepthInput" class="form-control form-control-sm w-auto" placeholder="Depth">
-                    <input id="newEvacInput" class="form-control form-control-sm w-auto" placeholder="Evac center">
-                    <input id="newLatInput" class="form-control form-control-sm w-auto" placeholder="Lat" value="14.70" style="width:90px">
-                    <input id="newLngInput" class="form-control form-control-sm w-auto" placeholder="Lng" value="120.98" style="width:90px">
-                    <button class="btn btn-sm btn-primary" id="addBrgyAdminBtn"><i class="bi bi-plus-circle"></i> Add</button>
-                </div>
-                <div class="mt-2 text-muted small">✏️ Click outside or press Enter on fields to auto-save changes.</div>
+<!-- ADMIN MODAL (centered box with X close) -->
+<div class="modal fade" id="adminModal" tabindex="-1" aria-labelledby="adminModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered admin-modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="adminModalLabel">
+                    <i class="bi bi-shield-lock-fill text-primary me-2"></i>Admin Control Center
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <div class="modal-body">
+                <!-- Tabs inside modal -->
+                <ul class="nav nav-tabs mb-4" id="adminModalTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#brgysTabModal" type="button" role="tab">📋 Barangays & Evac Centers</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#announceTabModal" type="button" role="tab">📢 Flood Announcement</button>
+                    </li>
+                </ul>
 
-            <!-- Announcement editor (main admin purpose) -->
-            <div class="tab-pane fade" id="announceTab" role="tabpanel">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">🌊 Live Announcement (shown below hero banner)</label>
-                    <textarea id="globalAnnounceText" rows="3" class="form-control" placeholder="Example: Yellow rainfall alert – Prepare for possible flooding. Evacuation centers are ready."></textarea>
-                    <button id="saveAnnounceBtn" class="btn btn-primary mt-3"><i class="bi bi-save"></i> Publish Announcement</button>
-                </div>
-                <hr>
-                <div class="mt-2 bg-light p-3 rounded-3">
-                    <p class="mb-1"><i class="bi bi-key-fill"></i> <strong>Admin Access</strong></p>
-                    <p class="small">Default password: <kbd>admin123</kbd> — You can change it below.</p>
-                    <div class="input-group mt-2">
-                        <input type="password" id="newAdminPassword" class="form-control" placeholder="New admin password (min 4 chars)">
-                        <button id="changeAdminPassBtn" class="btn btn-outline-secondary">Update Password</button>
+                <div class="tab-content">
+                    <!-- Barangay management tab -->
+                    <div class="tab-pane fade show active" id="brgysTabModal" role="tabpanel">
+                        <div class="alert alert-info small py-2">🔐 Exactly 7 barangays preloaded. Edit any field: risk, depth, evacuation center, coordinates.</div>
+                        <div class="table-responsive-stack">
+                            <table class="table table-hover align-middle" id="adminBrgyTable">
+                                <thead class="table-light">
+                                    <tr><th>Barangay</th><th>Risk</th><th>Depth (m)</th><th>Evacuation Center</th><th>Coordinates</th><th>Actions</th></tr>
+                                </thead>
+                                <tbody id="adminTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="mt-3 d-flex gap-2 flex-wrap align-items-center">
+                            <input type="text" id="newBrgyName" class="form-control form-control-sm w-auto" placeholder="New barangay">
+                            <select id="newRiskSelect" class="form-select form-select-sm w-auto"><option>HIGH</option><option>MODERATE</option><option>LOW</option></select>
+                            <input id="newDepthInput" class="form-control form-control-sm w-auto" placeholder="Depth">
+                            <input id="newEvacInput" class="form-control form-control-sm w-auto" placeholder="Evac center">
+                            <input id="newLatInput" class="form-control form-control-sm w-auto" placeholder="Lat" value="14.70" style="width:90px">
+                            <input id="newLngInput" class="form-control form-control-sm w-auto" placeholder="Lng" value="120.98" style="width:90px">
+                            <button class="btn btn-sm btn-primary" id="addBrgyAdminBtn"><i class="bi bi-plus-circle"></i> Add</button>
+                        </div>
+                        <div class="mt-2 text-muted small">✏️ Click outside or press Enter on fields to auto-save changes.</div>
+                    </div>
+
+                    <!-- Announcement + password tab -->
+                    <div class="tab-pane fade" id="announceTabModal" role="tabpanel">
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">🌊 Live Announcement (shown below hero banner)</label>
+                            <textarea id="globalAnnounceText" rows="3" class="form-control" placeholder="Example: Yellow rainfall alert – Prepare for possible flooding. Evacuation centers are ready."></textarea>
+                            <button id="saveAnnounceBtn" class="btn btn-primary mt-3"><i class="bi bi-save"></i> Publish Announcement</button>
+                        </div>
+                        <hr>
+                        <div class="mt-3 bg-light p-3 rounded-3">
+                            <p class="mb-1"><i class="bi bi-key-fill"></i> <strong>Admin Security</strong></p>
+                            <p class="small">Default password: <kbd>admin123</kbd> — You can change it below.</p>
+                            <div class="input-group mt-2">
+                                <input type="password" id="newAdminPassword" class="form-control" placeholder="New admin password (min 4 chars)">
+                                <button id="changeAdminPassBtn" class="btn btn-outline-secondary">Update Password</button>
+                            </div>
+                            <button id="logoutAdminBtn" class="btn btn-outline-danger btn-sm mt-3"><i class="bi bi-box-arrow-right"></i> Logout from Admin</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -376,9 +383,13 @@
     let mapInstance;
     let markerGroup = L.layerGroup();
     let adminAuthenticated = false;
-    let adminPassword = "admin123";   // default password
+    let adminPassword = "admin123";   // default
 
-    // ---------- Helpers ----------
+    // DOM elements
+    const adminModalEl = document.getElementById('adminModal');
+    let adminModal = null;
+    
+    // Helper: load data from localStorage
     function loadData() {
         const stored = localStorage.getItem("floodwatch_brgy_data");
         if (stored) {
@@ -397,8 +408,8 @@
         updateDashboardStats();
         updateDatalistAndUI();
         refreshMapMarkers();
-        renderAdminTable();
-        // also clear result card if needed
+        if (adminAuthenticated) renderAdminTable();
+        // hide result card if needed
         const resultDiv = document.getElementById("resultCard");
         if (resultDiv) resultDiv.style.display = "none";
     }
@@ -476,7 +487,7 @@
         markerGroup.addTo(mapInstance);
     }
 
-    // Admin Table (editable evac center & all fields)
+    // Admin Table (fully editable)
     function renderAdminTable() {
         const tbody = document.getElementById("adminTableBody");
         if (!tbody) return;
@@ -569,30 +580,37 @@
         loadAnnouncement();
     }
 
-    // Admin panel smooth toggle & auth
-    function showAdminPanel(show) {
-        const wrapper = document.getElementById("adminPanelWrapper");
-        if (show && adminAuthenticated) {
-            wrapper.classList.add("show");
+    // Admin modal logic: authentication + show modal centered
+    function showAdminModal() {
+        if (adminAuthenticated) {
+            // refresh table and modal content then show
             renderAdminTable();
-        } else if (!show) {
-            wrapper.classList.remove("show");
-        } else if (show && !adminAuthenticated) {
+            // load current announcement text into modal textarea
+            const currentAnn = localStorage.getItem("floodwatch_global_announce") || "⚠️ Stay alert: Monitor water levels.";
+            if(document.getElementById("globalAnnounceText")) document.getElementById("globalAnnounceText").value = currentAnn;
+            adminModal.show();
+        } else {
             const pwd = prompt("🔐 Admin Access Required. Enter password:");
             if (pwd === adminPassword) {
                 adminAuthenticated = true;
-                wrapper.classList.add("show");
                 renderAdminTable();
-                // load current announcement into textarea
                 const currentAnn = localStorage.getItem("floodwatch_global_announce") || "⚠️ Stay alert: Monitor water levels.";
                 if(document.getElementById("globalAnnounceText")) document.getElementById("globalAnnounceText").value = currentAnn;
+                adminModal.show();
             } else {
                 alert("Invalid password.");
             }
         }
     }
 
-    // Init map
+    function logoutAdmin() {
+        adminAuthenticated = false;
+        adminModal.hide();
+        // optional: show temporary message
+        alert("Admin logged out. Click Admin button to re-enter.");
+    }
+
+    // Initialize map
     function initMap() {
         mapInstance = L.map('map').setView([14.7000, 120.9830], 12);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -602,7 +620,6 @@
         refreshMapMarkers();
     }
 
-    // Add new barangay (admin)
     function addBarangay() {
         const name = document.getElementById("newBrgyName").value.trim();
         if (!name) return alert("Barangay name required");
@@ -619,7 +636,7 @@
         document.getElementById("newBrgyName").value = "";
         document.getElementById("newDepthInput").value = "";
         document.getElementById("newEvacInput").value = "";
-        renderAdminTable();
+        if (adminAuthenticated) renderAdminTable();
     }
 
     // Event listeners after DOM ready
@@ -628,16 +645,20 @@
         initMap();
         loadAnnouncement();
 
+        // Bootstrap modal init
+        adminModal = new bootstrap.Modal(adminModalEl, { backdrop: 'static', keyboard: false });
+        
+        // Admin button click
+        document.getElementById("adminAccessBtn").addEventListener("click", showAdminModal);
+        
+        // Close modal with X is built-in, we also add logout
+        document.getElementById("logoutAdminBtn")?.addEventListener("click", logoutAdmin);
+        
         // Search events
         document.getElementById("searchBtnAction").addEventListener("click", searchBarangay);
         document.getElementById("barangaySearchInput").addEventListener("keypress", (e) => { if (e.key === "Enter") searchBarangay(); });
         
-        // Admin button
-        const adminBtn = document.getElementById("adminAccessBtn");
-        adminBtn.addEventListener("click", () => showAdminPanel(true));
-        document.getElementById("closeAdminPanelBtn")?.addEventListener("click", () => showAdminPanel(false));
-        
-        // Add barangay
+        // Add barangay inside modal
         document.getElementById("addBrgyAdminBtn")?.addEventListener("click", addBarangay);
         
         // Save announcement
@@ -658,7 +679,7 @@
             } else alert("Minimum 4 characters");
         });
         
-        // Retrieve stored admin password if any
+        // Load stored password if any
         const storedPass = localStorage.getItem("floodwatch_admin_pass");
         if (storedPass) adminPassword = storedPass;
     });
