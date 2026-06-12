@@ -3,463 +3,331 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mini Game Quiz</title>
+<title>Valenzuela FloodWatch & Evacuation Locator</title>
+
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+:root{
+    --primary:#0d6efd;
+    --danger:#dc3545;
+    --warning:#ffc107;
+    --success:#198754;
+}
 
-/* 🌌 FUTURISTIC BACKGROUND (FIXED NO BLACK LINE) */
 body{
-  background:linear-gradient(270deg,#081c15,#1b4332,#2d6a4f,#081c15);
-  background-size:400% 400%;
-  animation:bgMove 20s ease infinite;
-  overflow-x:hidden;
-}
-@keyframes bgMove{
-  0%{background-position:0% 50%;}
-  50%{background-position:100% 50%;}
-  100%{background-position:0% 50%;}
+    background:#f5f7fb;
+    font-family:'Segoe UI',sans-serif;
 }
 
-/* PARTICLES */
-#particles{
-  position:fixed;
-  top:0;left:0;
-  width:100%;height:100%;
-  z-index:-1;
+.hero{
+    background:linear-gradient(135deg,#0d6efd,#0dcaf0);
+    color:white;
+    padding:80px 20px;
+    text-align:center;
 }
 
-/* SHAKE */
-.shake{animation:shake 0.3s;}
-@keyframes shake{
-  0%{transform:translate(2px,2px);}
-  50%{transform:translate(-2px,-2px);}
-  100%{transform:translate(0,0);}
+.card{
+    border:none;
+    border-radius:18px;
+    transition:.4s;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
 }
 
-/* NAV */
-.navbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:15px 30px;
-  background:rgba(0,166,81,0.7);
-  backdrop-filter:blur(10px);
-  color:white;
+.card:hover{
+    transform:translateY(-8px);
 }
 
-.logo{display:flex;align-items:center;gap:10px;}
-.logo img{width:40px;height:40px;border-radius:50%;}
-
-nav a{
-  margin:0 10px;
-  padding:10px 18px;
-  border-radius:20px;
-  cursor:pointer;
-  color:white;
-  transition:.3s;
-}
-nav a.active{
-  background:#d8f3dc;
-  color:#00a651;
-}
-nav a:hover{
-  background:white;
-  color:#00a651;
+.fade-up{
+    animation:fadeUp .8s ease forwards;
 }
 
-/* TABS */
-.tab{display:none;padding:40px;}
-.tab.active{display:block;}
-
-/* HERO */
-.hero{text-align:center;margin-top:60px;}
-.big{
-  font-size:100px;
-  font-weight:900;
-  color:#00ff88;
-  text-shadow:0 0 20px #00ff88,0 0 40px #00ff88,4px 4px 0 #fff;
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(30px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
 }
 
-/* INPUT */
-input{
-  padding:14px;
-  border:none;
-  border-radius:10px;
-  margin-top:20px;
-  width:250px;
+#map{
+    height:500px;
+    border-radius:15px;
 }
 
-/* BUTTON */
-.btn{
-  padding:14px 25px;
-  margin-top:10px;
-  border:none;
-  border-radius:25px;
-  background:linear-gradient(45deg,#00ff88,#00a651);
-  color:white;
-  cursor:pointer;
-  box-shadow:0 0 15px #00ff88;
-}
-.btn:hover{transform:scale(1.08);}
-
-/* GAME */
-.game-box{
-  max-width:500px;
-  margin:auto;
-  background:rgba(255,255,255,0.08);
-  backdrop-filter:blur(12px);
-  padding:25px;
-  border-radius:15px;
-  box-shadow:0 0 25px rgba(0,255,136,0.3);
+.search-box{
+    max-width:500px;
+    margin:auto;
 }
 
-/* ANSWERS */
-.answers button{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  width:100%;
-  margin:10px 0;
-  padding:14px;
-  border:none;
-  border-radius:10px;
-  background:#52b788;
-  color:white;
-  cursor:pointer;
-  font-size:16px;
-}
-.answers button:hover{transform:scale(1.05);}
-
-/* LETTER */
-.letter{
-  font-weight:bold;
-  background:rgba(0,0,0,0.3);
-  padding:5px 10px;
-  border-radius:5px;
+.result-card{
+    display:none;
 }
 
-/* COLORS */
-.correct{background:#00ff88 !important;color:black;}
-.wrong{background:#ff4d4d !important;}
-
-/* TIMER */
-.timer-bar{
-  height:8px;
-  background:#00ff88;
-  margin-bottom:10px;
-}
-.timer-danger{
-  background:#ff4d4d !important;
-}
-
-/* 🔥 IMPROVED LEADERBOARD */
-#leaderboard{
-  list-style:none;
-  padding:0;
-}
-
-#leaderboard li{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:rgba(255,255,255,0.1);
-  margin:10px auto;
-  padding:14px;
-  border-radius:12px;
-  width:280px;
-  color:white;
-  backdrop-filter:blur(10px);
-  box-shadow:0 0 10px rgba(0,255,136,0.3);
-  transition:.3s;
-}
-
-#leaderboard li:hover{
-  transform:scale(1.05);
-  box-shadow:0 0 20px #00ff88;
-}
-
-.rank{font-weight:bold;}
-.player{flex:1;margin-left:10px;}
-.points{color:#00ff88;}
-
-/* TOP 3 GLOW */
-#leaderboard li:nth-child(1){box-shadow:0 0 25px gold;}
-#leaderboard li:nth-child(2){box-shadow:0 0 20px silver;}
-#leaderboard li:nth-child(3){box-shadow:0 0 20px #cd7f32;}
-
-.about-box{
-  max-width:700px;
-  margin:auto;
-  background:rgba(255,255,255,0.1);
-  padding:25px;
-  border-radius:15px;
-  color:white;
-}
-
-/* 📱 MOBILE */
-@media(max-width:768px){
-  .big{font-size:50px;}
-  input,.btn{width:90%;}
+footer{
+    background:#0d6efd;
+    color:white;
+    padding:20px;
+    text-align:center;
+    margin-top:50px;
 }
 </style>
 </head>
-
 <body>
 
-<canvas id="particles"></canvas>
-
-<header class="navbar">
-  <div class="logo">
-    <img src="assets/logo.png">
-    <h3>Minsu</h3>
-  </div>
-
-  <nav>
-    <a class="link active" data-tab="home">Home</a>
-    <a class="link" data-tab="about">About Us</a>
-    <a class="link" data-tab="leader">Leaderboards</a>
-  </nav>
-</header>
-
-<section id="home" class="tab active">
-  <div class="hero">
-    <h1 class="big">MINI GAME</h1>
-    <input id="playerName" placeholder="Enter your name">
-    <br>
-    <button class="btn" onclick="startGame()">Start Game</button>
-  </div>
+<!-- Hero -->
+<section class="hero">
+    <div class="container">
+        <h1 class="display-4 fw-bold fade-up">
+            Valenzuela FloodWatch
+        </h1>
+        <p class="lead fade-up">
+            Flood Risk Monitoring & Evacuation Center Locator
+        </p>
+    </div>
 </section>
 
-<section id="about" class="tab">
-  <div class="about-box">
-    <h2>About</h2>
-    <p>Created by: Jhon Benedict Zulueta</p>
-    <p>This game was created to combine learning and programming while making studying more interactive and competitive.</p>
-  </div>
+<!-- Search -->
+<section class="container my-5 fade-up">
+    <div class="card p-4">
+        <h3 class="mb-3">Search Barangay</h3>
+
+        <div class="search-box">
+            <input
+                type="text"
+                id="barangaySearch"
+                class="form-control"
+                placeholder="Enter Barangay Name">
+        </div>
+
+        <div class="text-center mt-3">
+            <button
+                class="btn btn-primary px-4"
+                onclick="searchBarangay()">
+                Search
+            </button>
+        </div>
+    </div>
 </section>
 
-<section id="play" class="tab">
-  <div class="game-box" id="gameBox">
-    <div class="timer-bar" id="bar"></div>
-    <p id="progress"></p>
-    <h3 id="q"></h3>
-    <div id="ans" class="answers"></div>
-    <p>Score: <span id="score">0</span></p>
-  </div>
+<!-- Result -->
+<section class="container">
+    <div id="resultCard" class="card p-4 result-card">
+
+        <h4 id="barangayName"></h4>
+
+        <hr>
+
+        <p>
+            <strong>Flood Risk:</strong>
+            <span id="riskLevel"></span>
+        </p>
+
+        <p>
+            <strong>Estimated Flood Depth:</strong>
+            <span id="floodDepth"></span>
+        </p>
+
+        <p>
+            <strong>Nearest Evacuation Center:</strong>
+            <span id="evacuationCenter"></span>
+        </p>
+
+    </div>
 </section>
 
-<section id="leader" class="tab">
-  <h2>🏆 Leaderboards</h2>
-  <ul id="leaderboard"></ul>
-  <button class="btn" onclick="showAdminButton()">Admin</button>
-  <button class="btn" id="adminResetBtn" onclick="adminReset()" style="display:none;">Reset</button>
+<!-- Dashboard -->
+<section class="container my-5">
+
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <div class="card p-4 text-center">
+                <h2 class="text-danger">8</h2>
+                <h5>High Risk Barangays</h5>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card p-4 text-center">
+                <h2 class="text-warning">10</h2>
+                <h5>Moderate Risk Barangays</h5>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card p-4 text-center">
+                <h2 class="text-success">15</h2>
+                <h5>Low Risk Barangays</h5>
+            </div>
+        </div>
+
+    </div>
+
 </section>
+
+<!-- Map -->
+<section class="container my-5">
+
+    <div class="card p-4">
+
+        <h3 class="mb-3">
+            Interactive Flood Risk Map
+        </h3>
+
+        <div id="map"></div>
+
+    </div>
+
+</section>
+
+<!-- Emergency Contacts -->
+<section class="container my-5">
+
+    <div class="card p-4">
+
+        <h3>Emergency Contacts</h3>
+
+        <table class="table mt-3">
+            <thead>
+                <tr>
+                    <th>Agency</th>
+                    <th>Contact</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>Valenzuela Rescue</td>
+                    <td>911</td>
+                </tr>
+
+                <tr>
+                    <td>Fire Department</td>
+                    <td>160</td>
+                </tr>
+
+                <tr>
+                    <td>Police Station</td>
+                    <td>117</td>
+                </tr>
+
+                <tr>
+                    <td>Disaster Risk Office</td>
+                    <td>(02) 8352-1000</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+</section>
+
+<footer>
+    © 2026 Valenzuela FloodWatch System
+</footer>
+
+<!-- Leaflet -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
+const barangays = {
+    "Malanday":{
+        risk:"HIGH",
+        depth:"0.5 - 1.5 meters",
+        center:"Malanday National High School"
+    },
 
-/* NAV */
-const links=document.querySelectorAll('.link');
-const tabs=document.querySelectorAll('.tab');
-links.forEach(l=>{
-  l.onclick=()=>{
-    links.forEach(x=>x.classList.remove('active'));
-    tabs.forEach(t=>t.classList.remove('active'));
-    l.classList.add('active');
-    document.getElementById(l.dataset.tab).classList.add('active');
-  }
-});
+    "Karuhatan":{
+        risk:"MODERATE",
+        depth:"0.2 - 0.8 meters",
+        center:"Karuhatan Elementary School"
+    },
 
-/* PARTICLES (FIXED CONTINUOUS FLOAT) */
-const canvas=document.getElementById("particles");
-const ctx=canvas.getContext("2d");
-
-function resize(){
-  canvas.width=window.innerWidth;
-  canvas.height=window.innerHeight;
-}
-resize();
-window.addEventListener("resize",resize);
-
-let particles=[];
-for(let i=0;i<70;i++){
-  particles.push({
-    x:Math.random()*canvas.width,
-    y:Math.random()*canvas.height,
-    r:Math.random()*3+1,
-    dy:Math.random()*0.5+0.2
-  });
-}
-
-function animate(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  particles.forEach(p=>{
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fillStyle="rgba(0,255,136,0.3)";
-    ctx.fill();
-
-    p.y-=p.dy;
-
-    if(p.y<0){
-      p.y=canvas.height;
-      p.x=Math.random()*canvas.width;
+    "Gen T De Leon":{
+        risk:"LOW",
+        depth:"0.1 - 0.3 meters",
+        center:"Gen T De Leon Gymnasium"
     }
-  });
-  requestAnimationFrame(animate);
-}
-animate();
+};
 
-/* SOUND */
-const correctSound=new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");
-const wrongSound=new Audio("https://www.soundjay.com/buttons/sounds/button-10.mp3");
+function searchBarangay(){
 
-/* QUESTIONS + LOGIC (UNCHANGED) */
-const original=[ 
-{q:"Ano ang tawag sa pinakamaliit na yunit ng wika?",a:["Ponema","Morpema","Sintaks","Diskurso"],c:0},
-{q:"Ano ang pag-aaral ng kahulugan ng salita?",a:["Ponolohiya","Semantika","Sintaks","Pragmatika"],c:1},
-{q:"Ano ang ayos ng pangungusap?",a:["Sintaks","Diskurso","Ponema","Morpema"],c:0},
-{q:"Ano ang paraan ng pagbuo ng salita?",a:["Morpolohiya","Sintaks","Semantika","Ponolohiya"],c:0},
-{q:"Ano ang tawag sa pangungusap na nagbibigay utos?",a:["Pautos","Patanong","Padamdam","Pasalaysay"],c:0},
-{q:"Ano ang pokus ng pandiwa na tumutukoy sa simuno?",a:["Pokus ng Aktor","Pokus ng Layon","Pokus ng Tagatanggap","Pokus ng Ganapan"],c:0},
-{q:"Ano ang tawag sa pag-aaral ng tunog ng wika?",a:["Ponolohiya","Semantika","Morpema","Sintaks"],c:0},
-{q:"Ano ang tawag sa pag-aaral ng kaayusan ng salita at pangungusap?",a:["Sintaks","Semantika","Ponolohiya","Pragmatika"],c:0},
-{q:"Ano ang tawag sa paggamit ng wika sa lipunan?",a:["Pragmatika","Ponolohiya","Morpolohiya","Diskurso"],c:0},
-{q:"Ano ang tawag sa pinakamalawak na yunit ng wika?",a:["Diskurso","Sintaks","Ponema","Morpema"],c:0},
-{q:"Ano ang tawag sa salita o yunit na may kahulugan?",a:["Morpema","Ponema","Sintaks","Diskurso"],c:0},
-{q:"Ano ang gamit ng pandiwa sa pangungusap?",a:["Nagpapahayag ng kilos","Nagpapakita ng tunog","Nagpapakita ng ayos","Nagpapahayag ng diskurso"],c:0},
-{q:"Ano ang tawag sa tanong na pangungusap?",a:["Patanong","Pautos","Pasalaysay","Padamdam"],c:0},
-{q:"Ano ang tawag sa pangungusap na nagpapahayag ng damdamin?",a:["Padamdam","Pasalaysay","Pautos","Patanong"],c:0},
-{q:"Ano ang tawag sa pangungusap na nagsasalaysay?",a:["Pasalaysay","Padamdam","Pautos","Patanong"],c:0}
-];
+    const input =
+    document.getElementById("barangaySearch")
+    .value
+    .trim();
 
-let questions=[];
-function shuffle(){questions=[...original].sort(()=>Math.random()-0.5);}
+    const result =
+    barangays[input];
 
-let i=0,score=0,timer,time=10,player="";
+    const card =
+    document.getElementById("resultCard");
 
-function startGame(){
-  player=document.getElementById('playerName').value.trim();
-  if(!player) return alert("Enter name!");
-  shuffle();
-  links.forEach(x=>x.classList.remove('active'));
-  tabs.forEach(t=>t.classList.remove('active'));
-  document.getElementById("play").classList.add('active');
-  i=0;score=0;
-  loadQ();
-}
+    if(result){
 
-function loadQ(){
-  clearInterval(timer);
-  time=10;
+        document.getElementById(
+        "barangayName").innerText=input;
 
-  const bar=document.getElementById('bar');
-  bar.style.width="100%";
-  bar.classList.remove("timer-danger");
+        document.getElementById(
+        "riskLevel").innerText=result.risk;
 
-  document.getElementById('q').innerText=questions[i].q;
-  document.getElementById('progress').innerText=`Question ${i+1}/15`;
+        document.getElementById(
+        "floodDepth").innerText=result.depth;
 
-  const ans=document.getElementById('ans');
-  ans.innerHTML="";
+        document.getElementById(
+        "evacuationCenter").innerText=result.center;
 
-  const letters=["A","B","C","D"];
+        card.style.display="block";
 
-  questions[i].a.forEach((c,index)=>{
-    let btn=document.createElement('button');
-    btn.innerHTML=`<span class="letter">${letters[index]}</span> ${c}`;
-    btn.onclick=()=>check(index,btn);
-    ans.appendChild(btn);
-  });
+        card.scrollIntoView({
+            behavior:"smooth"
+        });
 
-  timer=setInterval(()=>{
-    time--;
-    bar.style.width=(time*10)+"%";
+    }else{
 
-    if(time<=3){
-      bar.classList.add("timer-danger");
-      document.getElementById("gameBox").classList.add("shake");
-      setTimeout(()=>document.getElementById("gameBox").classList.remove("shake"),200);
+        alert(
+        "Barangay not found. Please try again."
+        );
     }
-
-    if(time<=0) nextQ();
-  },1000);
 }
 
-function check(index,btn){
-  clearInterval(timer);
+// Leaflet Map
+const map = L.map('map')
+.setView([14.7000,120.9830],12);
 
-  if(index===questions[i].c){
-    score++;
-    btn.classList.add("correct");
-    correctSound.play();
-  } else {
-    btn.classList.add("wrong");
-    wrongSound.play();
-  }
+L.tileLayer(
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+{
+maxZoom:19
+}).addTo(map);
 
-  setTimeout(nextQ,700);
-}
+// Sample Flood Risk Markers
 
-function nextQ(){
-  i++;
-  document.getElementById('score').innerText=score;
+L.marker([14.7000,120.9830])
+.addTo(map)
+.bindPopup(
+"<b>Malanday</b><br>High Flood Risk"
+);
 
-  if(i<questions.length){
-    loadQ();
-  } else {
-    saveScore();
-    alert(`Game Over! Score: ${score}/15`);
-    document.querySelector('[data-tab="leader"]').click();
-  }
-}
+L.marker([14.6760,120.9820])
+.addTo(map)
+.bindPopup(
+"<b>Karuhatan</b><br>Moderate Flood Risk"
+);
 
-/* 🔥 BETTER LEADERBOARD STRUCTURE */
-function loadBoard(){
-  let data=JSON.parse(localStorage.getItem("scores"))||[];
-  data.sort((a,b)=>b.score-a.score);
-
-  let list=document.getElementById("leaderboard");
-  list.innerHTML="";
-
-  data.forEach((p,index)=>{
-    let li=document.createElement("li");
-    li.innerHTML=`
-      <span class="rank">#${index+1}</span>
-      <span class="player">${p.name}</span>
-      <span class="points">${p.score}</span>
-    `;
-    list.appendChild(li);
-  });
-}
-
-function saveScore(){
-  let data=JSON.parse(localStorage.getItem("scores"))||[];
-  let exist=data.find(p=>p.name.toLowerCase()===player.toLowerCase());
-
-  if(exist){
-    if(score>exist.score) exist.score=score;
-  } else data.push({name:player,score});
-
-  localStorage.setItem("scores",JSON.stringify(data));
-  loadBoard();
-}
-
-function showAdminButton(){
-  if(prompt("Admin password")==="admin123"){
-    document.getElementById("adminResetBtn").style.display="block";
-  }
-}
-
-function adminReset(){
-  if(prompt("Password?")==="admin123"){
-    localStorage.removeItem("scores");
-    loadBoard();
-  }
-}
-
-loadBoard();
-
+L.marker([14.7150,120.9980])
+.addTo(map)
+.bindPopup(
+"<b>Gen T De Leon</b><br>Low Flood Risk"
+);
 </script>
 
 </body>
