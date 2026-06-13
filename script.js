@@ -48,12 +48,31 @@ function saveRelationships() {
     localStorage.setItem("floodwatch_admin_logs", JSON.stringify(adminLogs));
 }
 
+// Show notification
+function showNotification(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification';
+    const bgColor = type === 'success' ? '#28a745' : (type === 'error' ? '#dc3545' : '#17a2b8');
+    toast.innerHTML = `
+        <div style="background: ${bgColor}; color: white; padding: 12px 20px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+            <i class="bi bi-${type === 'success' ? 'check-circle' : (type === 'error' ? 'x-circle' : 'info-circle')}"></i>
+            <span style="margin-left: 10px;">${message}</span>
+        </div>
+    `;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
 // RECORD FUNCTION with FOREIGN KEY
 function recordRiskChange(barangayId, oldRisk, newRisk) {
     const barangay = barangaysData.find(b => b.id === barangayId);
     const historyRecord = {
-        recordId: floodHistory.length + 1,     // PRIMARY KEY ng history
-        barangayId: barangayId,                 // ← FOREIGN KEY (link sa barangay)
+        recordId: floodHistory.length + 1,
+        barangayId: barangayId,
         barangayName: barangay ? barangay.name : "Unknown",
         oldRiskLevel: oldRisk,
         newRiskLevel: newRisk,
@@ -62,19 +81,17 @@ function recordRiskChange(barangayId, oldRisk, newRisk) {
         dateReadable: new Date().toLocaleString('en-PH', { hour12: true })
     };
     
-    floodHistory.unshift(historyRecord); // Add to beginning (newest first)
+    floodHistory.unshift(historyRecord);
     saveRelationships();
     
-    // Show notification
     showNotification(`Risk changed: ${oldRisk} → ${newRisk}`, 'info');
     
-    // Update history table if modal is open
-    if (document.getElementById("historyTableBody") && document.getElementById("historyTabModal").classList.contains('active')) {
+    if (document.getElementById("historyTableBody") && document.getElementById("historyTabModal")?.classList?.contains('active')) {
         renderHistoryTable();
     }
 }
 
-// Log admin action with FOREIGN KEY
+// Log admin action
 function logAdminAction(action, barangayId, details) {
     const logRecord = {
         logId: adminLogs.length + 1,
@@ -91,12 +108,12 @@ function logAdminAction(action, barangayId, details) {
     saveRelationships();
 }
 
-// Get history ng specific barangay (FILTER BY FOREIGN KEY)
+// Get history ng specific barangay
 function getBarangayHistory(barangayId) {
     return floodHistory.filter(record => record.barangayId === barangayId);
 }
 
-// Show history modal for specific barangay
+// Show history modal
 function showBarangayHistoryModal(barangayId) {
     const barangay = barangaysData.find(b => b.id === barangayId);
     const history = getBarangayHistory(barangayId);
@@ -129,7 +146,7 @@ function showBarangayHistoryModal(barangayId) {
     historyModal.show();
 }
 
-// Render history table in admin panel
+// Render history table
 function renderHistoryTable() {
     const tbody = document.getElementById("historyTableBody");
     if (!tbody) return;
@@ -150,7 +167,6 @@ function renderHistoryTable() {
         row.insertCell(5).innerHTML = record.changedBy;
         row.insertCell(6).innerHTML = `<small>${record.dateReadable}</small>`;
         
-        // Click to filter by barangay
         row.style.cursor = "pointer";
         row.onclick = () => showBarangayHistoryModal(record.barangayId);
     });
@@ -166,7 +182,7 @@ function clearAllHistory() {
     }
 }
 
-// Ensure existing data has IDs (PRIMARY KEY)
+// Ensure existing data has IDs
 function ensureIdsExist() {
     if (barangaysData.length > 0 && !barangaysData[0].id) {
         barangaysData = barangaysData.map((item, index) => ({
@@ -177,9 +193,8 @@ function ensureIdsExist() {
     }
 }
 
-// ==================== ORIGINAL FUNCTIONS (MODIFIED) ====================
+// ==================== ORIGINAL FUNCTIONS ====================
 
-// Load data from localStorage
 function loadData() {
     const stored = localStorage.getItem("floodwatch_brgy_data");
     if (stored) {
@@ -233,10 +248,6 @@ function getBarangayByName(name) {
     return barangaysData.find(b => b.name.toLowerCase() === name.toLowerCase());
 }
 
-function getBarangayById(id) {
-    return barangaysData.find(b => b.id === id);
-}
-
 function searchBarangay() {
     const inputVal = document.getElementById("barangaySearchInput").value.trim();
     const found = getBarangayByName(inputVal);
@@ -254,7 +265,6 @@ function searchBarangay() {
         document.getElementById("resultCoords").innerText = `${found.lat.toFixed(4)}, ${found.lng.toFixed(4)}`;
         resultCard.style.display = "block";
         
-        // Show history button
         if (viewHistoryBtn) {
             viewHistoryBtn.style.display = "inline-block";
             viewHistoryBtn.onclick = () => showBarangayHistoryModal(found.id);
@@ -272,9 +282,11 @@ function searchBarangay() {
     }
 }
 
+// ==================== MAP FUNCTION (WORKING) ====================
 function refreshMapMarkers(openPopupFor = false, brgyName = null) {
     if (!mapInstance) return;
     markerGroup.clearLayers();
+    
     barangaysData.forEach(b => {
         let color = b.risk === "HIGH" ? "#dc3545" : (b.risk === "MODERATE" ? "#fd7e14" : "#198754");
         const customIcon = L.divIcon({
@@ -282,6 +294,7 @@ function refreshMapMarkers(openPopupFor = false, brgyName = null) {
             iconSize: [14, 14],
             className: ''
         });
+        
         const marker = L.marker([b.lat, b.lng], { icon: customIcon }).addTo(markerGroup);
         marker.bindPopup(`
             <b>${b.name}</b><br>
@@ -290,11 +303,25 @@ function refreshMapMarkers(openPopupFor = false, brgyName = null) {
             📏 Depth: ${b.depth}<br>
             🏥 Evacuation: ${b.evacCenter}
         `);
-        if (openPopupFor && brgyName && b.name === brgyName) marker.openPopup();
+        
+        if (openPopupFor && brgyName && b.name === brgyName) {
+            marker.openPopup();
+        }
     });
+    
     markerGroup.addTo(mapInstance);
 }
 
+function initMap() {
+    mapInstance = L.map('map').setView([14.7000, 120.9830], 12);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors',
+        maxZoom: 18
+    }).addTo(mapInstance);
+    refreshMapMarkers();
+}
+
+// ==================== ADMIN FUNCTIONS ====================
 function renderAdminTable() {
     const tbody = document.getElementById("adminTableBody");
     if (!tbody) return;
@@ -314,3 +341,200 @@ function renderAdminTable() {
             const oldRisk = barangaysData[idx].risk;
             const newRisk = e.target.value;
             
+            // Record with FOREIGN KEY
+            recordRiskChange(item.id, oldRisk, newRisk);
+            logAdminAction("UPDATE_RISK", item.id, `Changed risk from ${oldRisk} to ${newRisk}`);
+            
+            barangaysData[idx].risk = newRisk;
+            saveData();
+        });
+        row.insertCell(1).appendChild(riskSelect);
+        
+        const depthInput = document.createElement("input");
+        depthInput.type = "text";
+        depthInput.className = "form-control form-control-sm";
+        depthInput.value = item.depth;
+        depthInput.addEventListener("change", (e) => {
+            barangaysData[idx].depth = e.target.value;
+            saveData();
+        });
+        row.insertCell(2).appendChild(depthInput);
+        
+        const evacInput = document.createElement("input");
+        evacInput.type = "text";
+        evacInput.className = "form-control form-control-sm";
+        evacInput.value = item.evacCenter;
+        evacInput.addEventListener("change", (e) => {
+            barangaysData[idx].evacCenter = e.target.value;
+            saveData();
+        });
+        row.insertCell(3).appendChild(evacInput);
+        
+        const coordDiv = document.createElement("div");
+        coordDiv.className = "d-flex gap-1";
+        const latInp = document.createElement("input");
+        latInp.type = "number";
+        latInp.step = "0.0001";
+        latInp.className = "form-control form-control-sm";
+        latInp.style.width = "80px";
+        latInp.value = item.lat;
+        latInp.addEventListener("change", (e) => { 
+            barangaysData[idx].lat = parseFloat(e.target.value) || item.lat; 
+            saveData(); 
+        });
+        const lngInp = document.createElement("input");
+        lngInp.type = "number";
+        lngInp.step = "0.0001";
+        lngInp.className = "form-control form-control-sm";
+        lngInp.style.width = "80px";
+        lngInp.value = item.lng;
+        lngInp.addEventListener("change", (e) => { 
+            barangaysData[idx].lng = parseFloat(e.target.value) || item.lng; 
+            saveData(); 
+        });
+        coordDiv.appendChild(latInp);
+        coordDiv.appendChild(lngInp);
+        row.insertCell(4).appendChild(coordDiv);
+        
+        const actionsCell = row.insertCell(5);
+        
+        const delBtn = document.createElement("button");
+        delBtn.className = "btn btn-sm btn-outline-danger me-1";
+        delBtn.innerHTML = "<i class='bi bi-trash3'></i>";
+        delBtn.onclick = () => {
+            if (confirm(`Remove ${item.name}?`)) {
+                logAdminAction("DELETE_BARANGAY", item.id, `Deleted barangay: ${item.name}`);
+                barangaysData.splice(idx, 1);
+                saveData();
+                renderAdminTable();
+            }
+        };
+        actionsCell.appendChild(delBtn);
+        
+        const historyBtn = document.createElement("button");
+        historyBtn.className = "btn btn-sm btn-info";
+        historyBtn.innerHTML = "<i class='bi bi-clock-history'></i>";
+        historyBtn.onclick = () => showBarangayHistoryModal(item.id);
+        actionsCell.appendChild(historyBtn);
+    });
+}
+
+function loadAnnouncement() {
+    const stored = localStorage.getItem("floodwatch_global_announce");
+    const defaultMsg = "⚠️ Current situation: Intermittent rains expected. Stay tuned for barangay updates. Keep emergency kits ready.";
+    const announcementText = stored ? stored : defaultMsg;
+    const announcementHtml = `<div class="alert announcement-banner d-flex align-items-center p-3 shadow-sm">
+                                <i class="bi bi-megaphone-fill fs-4 me-3"></i>
+                                <div class="fw-medium">${announcementText}</div>
+                              </div>`;
+    document.getElementById("announcementArea").innerHTML = announcementHtml;
+    const textarea = document.getElementById("globalAnnounceText");
+    if (textarea) textarea.value = announcementText;
+}
+
+function saveAnnouncementMessage(msg) {
+    localStorage.setItem("floodwatch_global_announce", msg);
+    loadAnnouncement();
+    showNotification("Announcement published!", "success");
+}
+
+function showAdminModal() {
+    if (adminAuthenticated) {
+        renderAdminTable();
+        renderHistoryTable();
+        const currentAnn = localStorage.getItem("floodwatch_global_announce") || "⚠️ Stay alert: Monitor water levels.";
+        if(document.getElementById("globalAnnounceText")) document.getElementById("globalAnnounceText").value = currentAnn;
+        adminModal.show();
+    } else {
+        const pwd = prompt("🔐 Admin Access Required. Enter password:");
+        if (pwd === adminPassword) {
+            adminAuthenticated = true;
+            renderAdminTable();
+            renderHistoryTable();
+            const currentAnn = localStorage.getItem("floodwatch_global_announce") || "⚠️ Stay alert: Monitor water levels.";
+            if(document.getElementById("globalAnnounceText")) document.getElementById("globalAnnounceText").value = currentAnn;
+            adminModal.show();
+            showNotification("Welcome Admin!", "success");
+        } else {
+            alert("Invalid password.");
+        }
+    }
+}
+
+function logoutAdmin() {
+    adminAuthenticated = false;
+    adminModal.hide();
+    showNotification("Admin logged out", "info");
+}
+
+function addBarangay() {
+    const name = document.getElementById("newBrgyName").value.trim();
+    if (!name) return alert("Barangay name required");
+    if (barangaysData.some(b => b.name.toLowerCase() === name.toLowerCase())) return alert("Barangay already exists");
+    
+    const newId = generateNewId();
+    const risk = document.getElementById("newRiskSelect").value;
+    const depth = document.getElementById("newDepthInput").value.trim() || "0.2 - 0.5 m";
+    const evac = document.getElementById("newEvacInput").value.trim() || "Barangay Evacuation Center";
+    let lat = parseFloat(document.getElementById("newLatInput").value);
+    let lng = parseFloat(document.getElementById("newLngInput").value);
+    if (isNaN(lat)) lat = 14.70;
+    if (isNaN(lng)) lng = 120.98;
+    
+    barangaysData.push({ id: newId, name, risk, depth, evacCenter: evac, lat, lng });
+    
+    logAdminAction("ADD_BARANGAY", newId, `Added new barangay: ${name} with ${risk} risk`);
+    recordRiskChange(newId, "N/A", risk);
+    
+    saveData();
+    
+    document.getElementById("newBrgyName").value = "";
+    document.getElementById("newDepthInput").value = "";
+    document.getElementById("newEvacInput").value = "";
+    document.getElementById("newLatInput").value = "";
+    document.getElementById("newLngInput").value = "";
+    
+    if (adminAuthenticated) renderAdminTable();
+    showNotification(`Barangay ${name} added!`, "success");
+}
+
+// ==================== INITIALIZATION ====================
+document.addEventListener("DOMContentLoaded", () => {
+    loadData();
+    initMap();
+    loadAnnouncement();
+
+    window.adminModal = new bootstrap.Modal(document.getElementById("adminModal"), { backdrop: 'static', keyboard: false });
+    
+    document.getElementById("adminAccessBtn").addEventListener("click", showAdminModal);
+    document.getElementById("logoutAdminHeaderBtn")?.addEventListener("click", logoutAdmin);
+    document.getElementById("logoutAdminTabBtn")?.addEventListener("click", logoutAdmin);
+    document.getElementById("clearHistoryBtn")?.addEventListener("click", clearAllHistory);
+    
+    document.getElementById("searchBtnAction").addEventListener("click", searchBarangay);
+    document.getElementById("barangaySearchInput").addEventListener("keypress", (e) => { 
+        if (e.key === "Enter") searchBarangay(); 
+    });
+    
+    document.getElementById("addBrgyAdminBtn")?.addEventListener("click", addBarangay);
+    
+    document.getElementById("saveAnnounceBtn")?.addEventListener("click", () => {
+        const newMsg = document.getElementById("globalAnnounceText").value;
+        if (newMsg) saveAnnouncementMessage(newMsg);
+        else alert("Message cannot be empty");
+    });
+    
+    document.getElementById("changeAdminPassBtn")?.addEventListener("click", () => {
+        const newPwd = document.getElementById("newAdminPassword").value.trim();
+        if (newPwd.length >= 4) {
+            adminPassword = newPwd;
+            localStorage.setItem("floodwatch_admin_pass", adminPassword);
+            alert("Admin password updated successfully.");
+            document.getElementById("newAdminPassword").value = "";
+            showNotification("Password changed!", "success");
+        } else alert("Minimum 4 characters");
+    });
+    
+    const storedPass = localStorage.getItem("floodwatch_admin_pass");
+    if (storedPass) adminPassword = storedPass;
+});
