@@ -10,10 +10,8 @@
   --neon-cyan: #0ff;
   --neon-purple: #b026ff;
   --dark-bg: #0a0a0a;
-  --card-bg: rgba(10, 10, 10, 0.85);
   --glow-green: 0 0 10px #0f0, 0 0 20px #0f0, 0 0 30px #0f0;
   --glow-cyan: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff;
-  --border-neon: 1px solid var(--neon-green);
   --font-mono: 'Courier New', monospace;
   --font-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -39,7 +37,7 @@ body {
   width: 100%;
   height: 100%;
   z-index: -1;
-  opacity: 0.15;
+  opacity: 0.12;
   pointer-events: none;
 }
 
@@ -48,14 +46,14 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(10px);
+  padding: 0.8rem 2rem;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--neon-green);
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.25);
   max-width: 100vw;
 }
 
@@ -65,6 +63,7 @@ body {
   font-size: 1.5rem;
   text-shadow: var(--glow-green);
   font-weight: bold;
+  letter-spacing: 1px;
 }
 
 .nav-links {
@@ -77,15 +76,31 @@ body {
   color: var(--neon-cyan);
   text-decoration: none;
   font-family: var(--font-mono);
-  font-size: 0.95rem;
+  font-size: 1rem;
   transition: all 0.3s;
   text-shadow: 0 0 5px var(--neon-cyan);
   white-space: nowrap;
+  position: relative;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0%;
+  height: 1px;
+  background: var(--neon-green);
+  transition: width 0.3s;
 }
 
 .nav-links a:hover {
   color: var(--neon-green);
   text-shadow: var(--glow-green);
+}
+
+.nav-links a:hover::after {
+  width: 100%;
 }
 
 .hamburger {
@@ -100,12 +115,13 @@ body {
   height: 2px;
   background: var(--neon-green);
   box-shadow: 0 0 5px var(--neon-green);
+  transition: all 0.3s;
 }
 
 /* ===== SECTIONS ===== */
 .section {
   padding: 4rem 1.5rem;
-  max-width: 1000px;
+  max-width: 900px;
   margin: 0 auto;
   width: 100%;
 }
@@ -115,27 +131,28 @@ body {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
+  gap: 2.5rem;
   min-height: 70vh;
   text-align: center;
+  padding-top: 6rem;
 }
 
-/* Profile picture - neon border */
+/* Profile picture */
 .profile-pic {
-  width: 180px;
-  height: 180px;
+  width: 190px;
+  height: 190px;
   max-width: 100%;
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid var(--neon-green);
   box-shadow: var(--glow-green);
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition: transform 0.4s, box-shadow 0.4s;
   flex-shrink: 0;
 }
 
 .profile-pic:hover {
   transform: scale(1.05) rotate(2deg);
-  box-shadow: 0 0 25px var(--neon-cyan), 0 0 50px var(--neon-cyan);
+  box-shadow: 0 0 30px var(--neon-cyan), 0 0 60px var(--neon-cyan);
 }
 
 .intro-text {
@@ -144,12 +161,20 @@ body {
 }
 
 .glitch {
-  font-size: clamp(2.5rem, 8vw, 4rem);
+  font-size: clamp(3rem, 10vw, 5rem);
   color: var(--neon-green);
   text-shadow: var(--glow-green);
-  position: relative;
   display: inline-block;
-  word-break: break-word;
+  letter-spacing: 2px;
+  animation: glitch 2s infinite;
+}
+
+/* Subtle glitch effect */
+@keyframes glitch {
+  0%, 100% { text-shadow: var(--glow-green); }
+  92% { text-shadow: 2px 0 #ff00c1, -2px 0 #00ffff; }
+  94% { text-shadow: -2px 0 #ff00c1, 2px 0 #00ffff; }
+  96% { text-shadow: none; }
 }
 
 .typing {
@@ -159,37 +184,35 @@ body {
   font-size: clamp(1rem, 4vw, 1.3rem);
   color: var(--neon-cyan);
   text-shadow: 0 0 5px var(--neon-cyan);
-  margin: 1rem 0;
+  margin: 1.5rem 0;
   animation: blink-caret 0.75s step-end infinite;
-  max-width: 100%;
   display: inline-block;
+  max-width: 100%;
 }
 
 @keyframes blink-caret {
-  50% {
-    border-color: transparent;
-  }
+  50% { border-color: transparent; }
 }
 
 /* Section headings */
 .section-title {
   font-family: var(--font-mono);
-  font-size: clamp(2rem, 6vw, 2.5rem);
+  font-size: clamp(1.8rem, 6vw, 2.5rem);
   color: var(--neon-green);
   text-shadow: var(--glow-green);
   text-align: center;
-  margin-bottom: 2rem;
-  word-break: break-word;
+  margin-bottom: 2.5rem;
+  letter-spacing: 1px;
 }
 
 /* Terminal box */
 .terminal-box {
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.8);
   border: 1px solid var(--neon-green);
-  padding: 1.5rem;
-  border-radius: 5px;
+  padding: 2rem;
+  border-radius: 8px;
   font-family: var(--font-mono);
-  box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2);
+  box-shadow: inset 0 0 15px rgba(0, 255, 0, 0.15), 0 0 20px rgba(0, 255, 0, 0.2);
   max-width: 100%;
   margin: 0 auto;
   word-wrap: break-word;
@@ -199,17 +222,42 @@ body {
 .terminal-output {
   color: var(--neon-green);
   font-size: 0.95rem;
-  line-height: 1.7;
+  line-height: 1.8;
 }
 
 .terminal-output p {
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.4rem;
+  text-align: left; /* keep achievements left aligned */
 }
 
-.category {
-  color: var(--neon-cyan);
-  text-shadow: 0 0 5px var(--neon-cyan);
+/* Category badges - cleaner than // */
+.category-badge {
+  display: inline-block;
+  color: #000;
+  background: var(--neon-cyan);
+  padding: 0.2rem 1rem;
+  margin: 1.2rem 0 0.5rem 0;
   font-weight: bold;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  border-radius: 3px;
+  text-shadow: none;
+  box-shadow: 0 0 12px var(--neon-cyan);
+  text-align: center;
+}
+
+/* Center the badges */
+.achievements-terminal .terminal-output {
+  text-align: center; /* center badges, lists will still be left */
+}
+
+.achievements-terminal .terminal-output p {
+  text-align: left; /* revert list alignment */
+  padding-left: 1rem;
+}
+
+.connect-box .terminal-output {
+  text-align: center;
 }
 
 .highlight {
@@ -217,14 +265,10 @@ body {
   text-shadow: 0 0 5px var(--neon-cyan);
 }
 
-.connect-box .terminal-output {
-  font-size: 1.1rem;
-}
-
 /* ===== MOBILE RESPONSIVE ===== */
 @media (max-width: 768px) {
   .navbar {
-    padding: 0.8rem 1rem;
+    padding: 0.7rem 1.2rem;
   }
 
   .nav-links {
@@ -236,8 +280,8 @@ body {
     width: 70%;
     height: 100vh;
     padding: 2rem;
-    gap: 1.5rem;
-    backdrop-filter: blur(15px);
+    gap: 2rem;
+    backdrop-filter: blur(20px);
     border-left: 1px solid var(--neon-green);
     transition: right 0.3s ease;
     z-index: 99;
@@ -259,12 +303,22 @@ body {
   }
 
   .profile-pic {
-    width: 150px;
-    height: 150px;
+    width: 140px;
+    height: 140px;
   }
 
   .section {
     padding: 3rem 1rem;
+  }
+
+  .terminal-box {
+    padding: 1.2rem;
+  }
+
+  .category-badge {
+    margin: 1rem 0 0.3rem;
+    font-size: 0.8rem;
+    padding: 0.15rem 0.8rem;
   }
 }
 
@@ -272,9 +326,7 @@ body {
   .nav-logo {
     font-size: 1.2rem;
   }
-
-  .terminal-box {
-    padding: 1rem;
-    font-size: 0.85rem;
+  .glitch {
+    font-size: 2.8rem;
   }
 }
