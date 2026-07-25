@@ -7,6 +7,7 @@
 :root {
   --neon-green: #0f0;
   --neon-cyan: #0ff;
+  --neon-purple: #b026ff;
   --dark-bg: #0a0a0a;
   --glow-green: 0 0 10px #0f0, 0 0 20px #0f0, 0 0 30px #0f0;
   --glow-cyan: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff;
@@ -98,15 +99,15 @@ body {
   width: 100%;
 }
 
-/* Hero – strict vertical stack, centred */
+/* Hero – vertical stack */
 .home-section {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  min-height: 70vh;
-  gap: 1.5rem;
+  min-height: 80vh;
+  gap: 0.8rem;
   padding-top: 5rem;
 }
 
@@ -139,28 +140,69 @@ body {
   96% { text-shadow: none; }
 }
 
-/* Motto carousel – NOT a single line */
-.motto-container {
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  min-height: 3rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.tagline {
+  font-family: var(--font-mono);
+  font-size: 1.2rem;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 5px var(--neon-cyan);
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
-.motto-text {
+.student {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--neon-green);
+  opacity: 0.8;
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
+
+/* Motto containers – shown/hidden by CSS media queries */
+.motto-desktop, .motto-mobile {
+  margin-top: 0.8rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 2rem;
+}
+
+.motto-desktop {
   font-family: var(--font-mono);
   font-size: clamp(1rem, 4vw, 1.3rem);
   color: var(--neon-cyan);
   text-shadow: 0 0 5px var(--neon-cyan);
-  margin: 0;
-  word-break: break-word;
-  text-align: center;
-  transition: opacity 0.4s ease;
+}
+
+.cursor {
+  animation: blink-caret 0.75s step-end infinite;
+  color: var(--neon-green);
+}
+
+@keyframes blink-caret {
+  50% { color: transparent; }
+}
+
+.motto-mobile {
+  font-family: var(--font-mono);
+  font-size: clamp(1rem, 4vw, 1.3rem);
+  color: var(--neon-cyan);
+  text-shadow: 0 0 5px var(--neon-cyan);
   opacity: 1;
-  padding: 0 1rem;
+  transition: opacity 0.5s ease;
+}
+
+/* Show desktop motto only on larger screens */
+@media (min-width: 769px) {
+  .motto-mobile { display: none; }
+  .motto-desktop { display: flex; }
+}
+
+/* Show mobile motto only on small screens */
+@media (max-width: 768px) {
+  .motto-desktop { display: none; }
+  .motto-mobile { display: flex; }
 }
 
 /* Achievements */
@@ -190,6 +232,38 @@ body {
   padding-left: 0.5rem;
 }
 
+/* Games */
+.games-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.game-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 5px var(--neon-cyan);
+  transition: transform 0.3s;
+}
+.game-item i {
+  font-size: 2.5rem;
+}
+.game-item span {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+.game-item:hover {
+  transform: scale(1.1);
+  color: var(--neon-green);
+  text-shadow: var(--glow-green);
+}
+
 /* Connect */
 .section-title {
   font-family: var(--font-mono);
@@ -207,6 +281,30 @@ body {
 .highlight {
   color: var(--neon-cyan);
   text-shadow: 0 0 5px var(--neon-cyan);
+}
+
+/* Button */
+.btn {
+  display: inline-block;
+  padding: 0.6rem 1.5rem;
+  background: transparent;
+  border: 2px solid var(--neon-green);
+  color: var(--neon-green);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  text-shadow: 0 0 5px var(--neon-green);
+  box-shadow: 0 0 10px rgba(0,255,0,0.4);
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.btn:hover {
+  background: var(--neon-green);
+  color: #000;
+  box-shadow: var(--glow-green);
+}
+.btn.small {
+  padding: 0.5rem 1.2rem;
+  font-size: 0.9rem;
 }
 
 /* Mobile */
@@ -244,5 +342,8 @@ body {
   }
   .terminal-box {
     padding: 1.2rem;
+  }
+  .games-grid {
+    gap: 1.5rem;
   }
 }
