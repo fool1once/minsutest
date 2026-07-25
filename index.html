@@ -1,73 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Your Name | Portfolio</title>
+<title>CIEL | Portfolio</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="style.css">
 
-<link
-href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;500&display=swap"
-rel="stylesheet">
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
 
 </head>
 
 <body>
 
+<!-- ================= LOADER ================= -->
+
+<div id="loader">
+
+<h1>CIEL.EXE</h1>
+
+<p>Initializing...</p>
+
+<div class="loader-bar">
+
+<span></span>
+
+</div>
+
+</div>
+
+<!-- ================= CURSOR ================= -->
+
+<div class="cursor"></div>
+
+<div class="cursor2"></div>
+
+<!-- ================= BACKGROUND ================= -->
+
+<div class="bg-grid"></div>
+
+<div class="gradient"></div>
+
 <div id="particles"></div>
+
+<!-- ================= NAVBAR ================= -->
 
 <header>
 
 <div class="logo">
-> SYSTEM.EXE
+
+<span>&lt;</span> CIEL <span>/&gt;</span>
+
+</div>
+
+<div id="menu">
+
+<i class="fa-solid fa-bars"></i>
+
 </div>
 
 <nav>
 
 <a href="#home">Home</a>
-<a href="#about">About</a>
-<a href="#skills">Skills</a>
-<a href="#projects">Projects</a>
+
+<a href="#achievement">Achievements</a>
+
 <a href="#contact">Contact</a>
 
 </nav>
 
 </header>
 
-<section class="hero" id="home">
+<!-- ================= HERO ================= -->
 
-<div class="left">
+<section id="home" class="hero">
 
-<h3>Hello, I'm</h3>
+<div class="hero-left">
 
-<h1>Your Name</h1>
+<p class="small">
 
-<h2>Cyber Security • Developer • Student</h2>
+WELCOME TO MY PROFILE
 
-<p>
-Welcome to my portfolio.
-I enjoy building websites, coding projects,
-automation tools and exploring cybersecurity.
+</p>
+
+<h1>
+
+CIEL
+
+</h1>
+
+<h2>
+
+BSIT Student
+
+</h2>
+
+<p class="description">
+
+Competitive tournament player focused on consistency,
+teamwork, and continuous improvement.
+This page showcases my tournament achievements and journey.
+
 </p>
 
 <div class="buttons">
 
-<a href="#projects">Projects</a>
+<a href="#achievement" class="btn">
 
-<a href="#contact" class="secondary">Contact</a>
+Achievements
+
+</a>
+
+<a href="#contact" class="btn2">
+
+Contact
+
+</a>
+
+</div>
+
+<div class="stats">
+
+<div>
+
+<h3 id="champions">
+
+0
+
+</h3>
+
+<p>Champion</p>
+
+</div>
+
+<div>
+
+<h3 id="first">
+
+0
+
+</h3>
+
+<p>First Place</p>
+
+</div>
+
+<div>
+
+<h3 id="second">
+
+0
+
+</h3>
+
+<p>Second Place</p>
+
+</div>
+
+<div>
+
+<h3 id="third">
+
+0
+
+</h3>
+
+<p>Third Place</p>
 
 </div>
 
 </div>
 
-<div class="right">
+</div>
+
+<div class="hero-right">
 
 <div class="profile">
 
-<img src="assets/profile.jpg">
+<img src="assets/profile.jpg" alt="Profile">
+
+<div class="ring"></div>
 
 </div>
 
@@ -75,106 +194,255 @@ automation tools and exploring cybersecurity.
 
 </section>
 
-<section id="about">
+<!-- ================= ACHIEVEMENTS ================= -->
 
-<h2>ABOUT ME</h2>
+<section id="achievement">
+
+<div class="title">
+
+<h1>
+
+ACHIEVEMENTS
+
+</h1>
 
 <p>
 
-I am passionate about technology,
-web development and ethical hacking.
-I love creating modern user interfaces,
-automation tools and learning new technologies.
+Tournament History
 
 </p>
 
+</div>
+
+<!-- MAJORS -->
+
+<div class="achievement-box">
+
+<div class="achievement-title">
+
+<i class="fa-solid fa-star"></i>
+
+Majors
+
+</div>
+
+<div class="achievement-list">
+
+<p>Gladiators Top 8</p>
+
+<p>GM11 Top 8</p>
+
+</div>
+
+</div>
+
+<!-- CHAMPION -->
+
+<div class="achievement-box">
+
+<div class="achievement-title champion">
+
+<i class="fa-solid fa-trophy"></i>
+
+Champion
+
+</div>
+
+<div class="achievement-list">
+
+<p>Wooze Elite Inter Scrim 5v5</p>
+
+<p>Sidra × Re × Soriux × Nan 5v5</p>
+
+<p>Elle's SZN 1 5v5</p>
+
+<p>Kize × Miz Tournament S1</p>
+
+<p>Kizy Tournament 5v5</p>
+
+<p>AIMS Tournament S2</p>
+
+<p>Hairi × Akuma's Tournament S2</p>
+
+<p>AVR Esports BFMT</p>
+
+<p>SIDRA Esports 1v1 SR</p>
+
+<p>Ziel Open Division SG</p>
+
+<p>AVR Esports SG</p>
+
+<p>Soriux × SIDRA 2v2</p>
+
+<p>SVT 1v1 Tournament SMG</p>
+
+<p>SVT 1v1 Tournament SR</p>
+
+<p>AIMS Tournament 5v5</p>
+
+<p>Kizy Tournament 5v5</p>
+
+<p>Xerina × Samii S1</p>
+
+<p>Cozi × Mika S1</p>
+
+<p>Savage²¹ BFMT</p>
+
+<p>T5 BFMT</p>
+
+<p>Kouvx Tournament 5v5</p>
+
+</div>
+
+</div>
+
+<!-- FIRST -->
+
+<div class="achievement-box">
+
+<div class="achievement-title first">
+
+<i class="fa-solid fa-medal"></i>
+
+First Place
+
+</div>
+
+<div class="achievement-list">
+
+<p>Maddy × Neko 5v5</p>
+
+<p>Navi's 5v5 S2</p>
+
+<p>Cozi 5v5 S2</p>
+
+<p>Elle × Mika 5v5</p>
+
+<p>Navis 5v5</p>
+
+<p>Elle × Mikko 5v5</p>
+
+<p>Joji's Tournament</p>
+
+<p>SIDRA Esports 1v1 SMG</p>
+
+<p>Wagas × Sinag SR</p>
+
+<p>Ziel Open Division SR</p>
+
+<p>Cozi Tournament S3</p>
+
+<p>Xerina × Soju S1</p>
+
+<p>Belle × Velox S1</p>
+
+<p>Cozi × Mika S1</p>
+
+</div>
+
+</div>
+
+<!-- SECOND -->
+
+<div class="achievement-box">
+
+<div class="achievement-title second">
+
+<i class="fa-solid fa-award"></i>
+
+Second Place
+
+</div>
+
+<div class="achievement-list">
+
+<p>Wagas × Sinag SG</p>
+
+<p>Hera's SZN 1</p>
+
+</div>
+
+</div>
+
+<!-- THIRD -->
+
+<div class="achievement-box">
+
+<div class="achievement-title third">
+
+<i class="fa-solid fa-ranking-star"></i>
+
+Third Place
+
+</div>
+
+<div class="achievement-list">
+
+<p>Hera S1 5v5</p>
+
+<p>Ziel × Gela 5v5 S1</p>
+
+</div>
+
+</div>
+
 </section>
 
-<section id="skills">
-
-<h2>SKILLS</h2>
-
-<div class="cards">
-
-<div class="card">
-HTML
-</div>
-
-<div class="card">
-CSS
-</div>
-
-<div class="card">
-JavaScript
-</div>
-
-<div class="card">
-Python
-</div>
-
-<div class="card">
-Cyber Security
-</div>
-
-<div class="card">
-Linux
-</div>
-
-</div>
-
-</section>
-
-<section id="projects">
-
-<h2>PROJECTS</h2>
-
-<div class="projects">
-
-<div class="project">
-
-<h3>Portfolio Website</h3>
-
-<p>Modern responsive hacker-themed portfolio.</p>
-
-</div>
-
-<div class="project">
-
-<h3>Discord Bot</h3>
-
-<p>Automation bot with moderation features.</p>
-
-</div>
-
-<div class="project">
-
-<h3>Python Projects</h3>
-
-<p>Utilities, automation and scripts.</p>
-
-</div>
-
-</div>
-
-</section>
+<!-- CONTACT -->
 
 <section id="contact">
 
-<h2>CONTACT</h2>
+<h1>
 
-<p>Email: your@email.com</p>
+CONNECT WITH ME
 
-<p>Discord: yourname</p>
+</h1>
 
-<p>GitHub: github.com/yourname</p>
+<div class="socials">
+
+<a href="#">
+
+<i class="fab fa-facebook-f"></i>
+
+Facebook
+
+</a>
+
+<a href="#">
+
+<i class="fab fa-discord"></i>
+
+Discord
+
+</a>
+
+<a href="#">
+
+<i class="fab fa-github"></i>
+
+GitHub
+
+</a>
+
+</div>
 
 </section>
 
 <footer>
 
-Made with ❤️ using HTML CSS JavaScript
+<p>
+
+© 2026 CIEL • BSIT Student
+
+</p>
 
 </footer>
+
+<button id="top">
+
+<i class="fa-solid fa-arrow-up"></i>
+
+</button>
 
 <script src="script.js"></script>
 
