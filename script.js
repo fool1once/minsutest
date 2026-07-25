@@ -73,20 +73,12 @@ function type() {
   }
   setTimeout(type, speed);
 }
-// Start typing only when the element is visible (desktop)
-if (window.innerWidth > 768) {
-  setTimeout(type, 800);
-} else {
-  // Optionally start typing later if screen resizes, but for simplicity we'll just start it always
-  // It won't be visible on mobile anyway, so no harm.
-  setTimeout(type, 800);
-}
-// Also restart if window resizes to desktop? Not needed, it runs continuously.
+setTimeout(type, 800);
 
 // ===== Mobile Fading Carousel =====
 const fadingEl = document.getElementById('fadingMotto');
 let mottoIndex = 0;
-const mottos = phrases; // same array
+const mottos = phrases;
 
 function changeMotto() {
   fadingEl.style.opacity = '0';
