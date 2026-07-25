@@ -34,31 +34,31 @@ window.addEventListener('resize', () => {
 function drawMatrix() {
   ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-
   ctx.fillStyle = '#0F0';
   ctx.font = fontSize + 'px monospace';
 
   for (let i = 0; i < rainDrops.length; i++) {
     const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
     ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
-
     if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
       rainDrops[i] = 0;
     }
     rainDrops[i]++;
   }
 }
-
 setInterval(drawMatrix, 40);
 
-// ===== TYPING ANIMATION (always starts with "Fool") =====
+// ===== TYPING ANIMATION (new phrases) =====
 const typingText = document.getElementById('typingText');
 const phrases = [
-  'Fool',
-  'Fool - Champion',
-  'Fool - First Place',
-  'Fool - Gladiator',
-  'Fool - Major Finalist'
+  'Aim to be the top.',
+  'Stay untouchable.',
+  'Outwork everyone.',
+  'Be the standard, not the competition.',
+  'Leave no room for doubt.',
+  'Win in silence, let results speak.',
+  'Become impossible to replace.',
+  'Dominate with discipline.'
 ];
 let phraseIndex = 0;
 let charIndex = 0;
@@ -70,25 +70,25 @@ function type() {
   if (isDeleting) {
     typingText.textContent = current.substring(0, charIndex - 1);
     charIndex--;
-    typingSpeed = 40;
+    typingSpeed = 30;
   } else {
     typingText.textContent = current.substring(0, charIndex + 1);
     charIndex++;
-    typingSpeed = 120;
+    typingSpeed = 100;
   }
 
   if (!isDeleting && charIndex === current.length) {
-    typingSpeed = 2000; // pause at end
+    typingSpeed = 1800; // pause at full phrase
     isDeleting = true;
   } else if (isDeleting && charIndex === 0) {
     isDeleting = false;
     phraseIndex = (phraseIndex + 1) % phrases.length;
-    typingSpeed = 400;
+    typingSpeed = 350;
   }
 
   setTimeout(type, typingSpeed);
 }
-setTimeout(type, 1000);
+setTimeout(type, 800);
 
 // ===== MOBILE HAMBURGER MENU =====
 const hamburger = document.getElementById('hamburger');
@@ -98,14 +98,13 @@ hamburger.addEventListener('click', () => {
   navLinks.classList.toggle('active');
 });
 
-// Close menu when a link is clicked
 navLinks.querySelectorAll('a').forEach(link => {
   link.addEventListener('click', () => {
     navLinks.classList.remove('active');
   });
 });
 
-// Close menu if clicked outside (optional)
+// Close menu if clicking outside
 document.addEventListener('click', (e) => {
   if (!hamburger.contains(e.target) && !navLinks.contains(e.target)) {
     navLinks.classList.remove('active');
