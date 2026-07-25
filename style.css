@@ -212,6 +212,14 @@ body {
   text-transform: uppercase;
 }
 
+.codm-sub {
+  color: var(--neon-green);
+  font-size: 0.8em;
+  text-shadow: var(--glow-green);
+  font-style: italic;
+  margin-left: 0.5rem;
+}
+
 .cat-label {
   color: var(--neon-green);
   font-weight: bold;
@@ -220,6 +228,14 @@ body {
   text-shadow: 0 0 8px var(--neon-green);
   letter-spacing: 1px;
   text-transform: uppercase;
+}
+
+/* Python logo inside Codes label */
+.python-logo {
+  color: var(--neon-cyan);
+  text-shadow: 0 0 8px var(--neon-cyan);
+  margin-right: 0.4rem;
+  font-size: 1.2rem;
 }
 
 .terminal-output p {
@@ -234,7 +250,7 @@ body {
   margin-right: 0.3rem;
 }
 
-/* Games */
+/* Games (now bottom) */
 .games-grid {
   display: flex;
   flex-wrap: wrap;
