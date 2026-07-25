@@ -13,9 +13,8 @@
   --font-mono: 'Courier New', monospace;
 }
 
-html, body {
-  width: 100%;
-  overflow-x: hidden;
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -23,6 +22,7 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #e0e0e0;
   line-height: 1.6;
+  overflow-x: hidden;
 }
 
 #matrixCanvas {
@@ -33,6 +33,43 @@ body {
   opacity: 0.12;
   pointer-events: none;
 }
+
+/* ===== FADE-IN UP ANIMATION ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.section {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+/* Stagger animations for multiple sections */
+#home.section { animation-delay: 0.1s; }
+#achievements.section { animation-delay: 0.3s; }
+#codes.section { animation-delay: 0.4s; }
+#connect.section { animation-delay: 0.5s; }
+#games.section { animation-delay: 0.6s; }
+
+/* Terminal boxes and games grid also animate */
+.terminal-box, .games-grid {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+#achievements .terminal-box { animation-delay: 0.4s; }
+#codes .terminal-box { animation-delay: 0.5s; }
+#connect .terminal-box { animation-delay: 0.6s; }
+#games .games-grid { animation-delay: 0.7s; }
 
 /* Navbar */
 .navbar {
@@ -202,7 +239,7 @@ body {
   box-shadow: inset 0 0 15px rgba(0,255,0,0.15), 0 0 20px rgba(0,255,0,0.2);
 }
 
-/* Plain achievements title – no glow, just green */
+/* Plain achievements title – no glow */
 .main-title {
   color: var(--neon-green);
   font-size: 1.8rem;
@@ -211,7 +248,7 @@ body {
   margin-bottom: 1.5rem;
   text-transform: uppercase;
   letter-spacing: 1px;
-  text-shadow: none;  /* <-- completely removed glow */
+  text-shadow: none;
 }
 
 .cat-label {
@@ -238,12 +275,7 @@ body {
   padding-left: 0.5rem;
 }
 
-.garena-icon {
-  color: var(--neon-cyan);
-  margin-right: 0.3rem;
-}
-
-/* Games (bottom) */
+/* Games */
 .games-grid {
   display: flex;
   flex-wrap: wrap;
