@@ -18,12 +18,17 @@
   --font-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   background: var(--dark-bg);
   font-family: var(--font-sans);
   color: #e0e0e0;
-  overflow-x: hidden;
   line-height: 1.6;
+  position: relative;
 }
 
 /* ===== MATRIX RAIN BACKGROUND CANVAS ===== */
@@ -35,6 +40,7 @@ body {
   height: 100%;
   z-index: -1;
   opacity: 0.15;
+  pointer-events: none;
 }
 
 /* ===== NAVBAR ===== */
@@ -43,13 +49,14 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--neon-green);
   position: sticky;
   top: 0;
   z-index: 100;
   box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+  max-width: 100vw;
 }
 
 .nav-logo {
@@ -73,6 +80,7 @@ body {
   font-size: 0.95rem;
   transition: all 0.3s;
   text-shadow: 0 0 5px var(--neon-cyan);
+  white-space: nowrap;
 }
 
 .nav-links a:hover {
@@ -96,9 +104,10 @@ body {
 
 /* ===== SECTIONS ===== */
 .section {
-  padding: 4rem 2rem;
-  max-width: 1200px;
+  padding: 4rem 1.5rem;
+  max-width: 1000px;
   margin: 0 auto;
+  width: 100%;
 }
 
 .home-section {
@@ -106,19 +115,22 @@ body {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 3rem;
-  min-height: 80vh;
+  gap: 2rem;
+  min-height: 70vh;
+  text-align: center;
 }
 
 /* Profile picture - neon border */
 .profile-pic {
-  width: 200px;
-  height: 200px;
+  width: 180px;
+  height: 180px;
+  max-width: 100%;
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid var(--neon-green);
   box-shadow: var(--glow-green);
   transition: transform 0.3s, box-shadow 0.3s;
+  flex-shrink: 0;
 }
 
 .profile-pic:hover {
@@ -128,25 +140,29 @@ body {
 
 .intro-text {
   font-family: var(--font-mono);
+  max-width: 100%;
 }
 
 .glitch {
-  font-size: 3rem;
+  font-size: clamp(2.5rem, 8vw, 4rem);
   color: var(--neon-green);
   text-shadow: var(--glow-green);
   position: relative;
   display: inline-block;
+  word-break: break-word;
 }
 
 .typing {
   border-right: 2px solid var(--neon-green);
   white-space: nowrap;
   overflow: hidden;
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 4vw, 1.3rem);
   color: var(--neon-cyan);
   text-shadow: 0 0 5px var(--neon-cyan);
   margin: 1rem 0;
   animation: blink-caret 0.75s step-end infinite;
+  max-width: 100%;
+  display: inline-block;
 }
 
 @keyframes blink-caret {
@@ -155,38 +171,18 @@ body {
   }
 }
 
-.btn {
-  display: inline-block;
-  margin-top: 1rem;
-  padding: 0.8rem 1.8rem;
-  background: transparent;
-  border: 2px solid var(--neon-green);
-  color: var(--neon-green);
-  text-decoration: none;
-  font-family: var(--font-mono);
-  text-shadow: 0 0 5px var(--neon-green);
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
-  transition: all 0.3s;
-  cursor: pointer;
-}
-
-.btn:hover {
-  background: var(--neon-green);
-  color: #000;
-  box-shadow: var(--glow-green);
-}
-
 /* Section headings */
 .section-title {
   font-family: var(--font-mono);
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 6vw, 2.5rem);
   color: var(--neon-green);
   text-shadow: var(--glow-green);
   text-align: center;
   margin-bottom: 2rem;
+  word-break: break-word;
 }
 
-/* About terminal box */
+/* Terminal box */
 .terminal-box {
   background: rgba(0, 0, 0, 0.85);
   border: 1px solid var(--neon-green);
@@ -194,116 +190,46 @@ body {
   border-radius: 5px;
   font-family: var(--font-mono);
   box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2);
-  max-width: 800px;
+  max-width: 100%;
   margin: 0 auto;
-  position: relative;
+  word-wrap: break-word;
+  overflow-x: auto;
 }
 
 .terminal-output {
   color: var(--neon-green);
-  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.7;
 }
 
-.command-line {
-  display: flex;
-  align-items: center;
-  color: var(--neon-green);
+.terminal-output p {
+  margin-bottom: 0.3rem;
 }
 
-.prompt {
-  margin-right: 0.5rem;
-}
-
-#terminalInput {
-  background: transparent;
-  border: none;
-  outline: none;
+.category {
   color: var(--neon-cyan);
-  font-family: var(--font-mono);
-  font-size: 1rem;
-  flex: 1;
-  caret-color: var(--neon-green);
-}
-
-/* Skills tags */
-.skills-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
-}
-
-.skill-tag {
-  padding: 0.5rem 1.2rem;
-  border: 1px solid var(--neon-cyan);
-  color: var(--neon-cyan);
-  font-family: var(--font-mono);
   text-shadow: 0 0 5px var(--neon-cyan);
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
-  border-radius: 3px;
-  transition: all 0.3s;
+  font-weight: bold;
 }
 
-.skill-tag:hover {
-  background: var(--neon-cyan);
-  color: #000;
-  box-shadow: var(--glow-cyan);
-}
-
-/* Project cards */
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.project-card {
-  background: rgba(0, 0, 0, 0.75);
-  border: 1px solid var(--neon-purple);
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 0 15px rgba(176, 38, 255, 0.4);
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.project-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0 30px rgba(176, 38, 255, 0.8);
-}
-
-.project-card h3 {
-  color: var(--neon-purple);
-  font-family: var(--font-mono);
-  margin-bottom: 0.8rem;
-}
-
-/* Contact icons */
-.contact-links {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  font-size: 2rem;
-}
-
-.contact-links a {
-  color: var(--neon-green);
-  text-shadow: var(--glow-green);
-  transition: all 0.3s;
-}
-
-.contact-links a:hover {
+.highlight {
   color: var(--neon-cyan);
-  text-shadow: var(--glow-cyan);
-  transform: scale(1.2);
+  text-shadow: 0 0 5px var(--neon-cyan);
+}
+
+.connect-box .terminal-output {
+  font-size: 1.1rem;
 }
 
 /* ===== MOBILE RESPONSIVE ===== */
 @media (max-width: 768px) {
+  .navbar {
+    padding: 0.8rem 1rem;
+  }
+
   .nav-links {
     position: fixed;
-    top: 70px;
+    top: 60px;
     right: -100%;
     flex-direction: column;
     background: rgba(0, 0, 0, 0.95);
@@ -314,6 +240,7 @@ body {
     backdrop-filter: blur(15px);
     border-left: 1px solid var(--neon-green);
     transition: right 0.3s ease;
+    z-index: 99;
   }
 
   .nav-links.active {
@@ -326,10 +253,28 @@ body {
 
   .home-section {
     flex-direction: column;
-    text-align: center;
+    gap: 1.5rem;
+    padding-top: 2rem;
+    min-height: auto;
   }
 
-  .glitch {
-    font-size: 2.2rem;
+  .profile-pic {
+    width: 150px;
+    height: 150px;
+  }
+
+  .section {
+    padding: 3rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-logo {
+    font-size: 1.2rem;
+  }
+
+  .terminal-box {
+    padding: 1rem;
+    font-size: 0.85rem;
   }
 }
