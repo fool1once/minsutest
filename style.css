@@ -192,7 +192,7 @@ body {
   .motto-mobile { display: flex; }
 }
 
-/* Terminal boxes (achievements & codes) */
+/* Terminal boxes */
 .terminal-box {
   background: rgba(0,0,0,0.8);
   border: 1px solid var(--neon-green);
@@ -202,7 +202,7 @@ body {
   box-shadow: inset 0 0 15px rgba(0,255,0,0.15), 0 0 20px rgba(0,255,0,0.2);
 }
 
-/* Plain achievements title */
+/* Plain achievements title – no glow, just green */
 .main-title {
   color: var(--neon-green);
   font-size: 1.8rem;
@@ -211,7 +211,7 @@ body {
   margin-bottom: 1.5rem;
   text-transform: uppercase;
   letter-spacing: 1px;
-  text-shadow: none;  /* removed glow */
+  text-shadow: none;  /* <-- completely removed glow */
 }
 
 .cat-label {
