@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Fool | Profile</title>
+  <title>Fool | Espada</title>
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -17,6 +17,7 @@
     <div class="nav-logo">~/Fool</div>
     <ul class="nav-links" id="navLinks">
       <li><a href="#achievements">achievements</a></li>
+      <li><a href="#games">games</a></li>
       <li><a href="#connect">connect</a></li>
     </ul>
     <div class="hamburger" id="hamburger">
@@ -24,7 +25,7 @@
     </div>
   </nav>
 
-  <!-- Hero – vertical: pic, name, motto -->
+  <!-- Hero Section -->
   <section id="home" class="section home-section">
     <img
       src="profile.jpg"
@@ -33,8 +34,16 @@
       onerror="this.src='https://via.placeholder.com/200x200.png?text=Fool'; this.onerror=null;"
     />
     <h1 class="glitch">Fool</h1>
-    <div class="motto-container" id="mottoContainer">
-      <p class="motto-text" id="mottoText">Win in silence, let results speak.</p>
+    <p class="tagline">Espada</p>
+    <p class="student">BSIT Student</p>
+
+    <!-- Desktop typing motto (hidden on mobile) -->
+    <div class="motto-desktop" id="mottoDesktop">
+      <span id="typingMotto"></span><span class="cursor">|</span>
+    </div>
+    <!-- Mobile fading motto (hidden on desktop) -->
+    <div class="motto-mobile" id="mottoMobile">
+      <span id="fadingMotto">Win in silence, let results speak.</span>
     </div>
   </section>
 
@@ -99,6 +108,33 @@
     </div>
   </section>
 
+  <!-- Games -->
+  <section id="games" class="section">
+    <h2 class="section-title">> games</h2>
+    <div class="games-grid">
+      <div class="game-item">
+        <i class="fas fa-mobile-screen-button"></i>
+        <span>COD Mobile</span>
+      </div>
+      <div class="game-item">
+        <i class="fas fa-gamepad"></i>
+        <span>ML</span>
+      </div>
+      <div class="game-item">
+        <i class="fas fa-cube"></i>
+        <span>Roblox</span>
+      </div>
+      <div class="game-item">
+        <i class="fab fa-steam"></i>
+        <span>Steam</span>
+      </div>
+      <div class="game-item">
+        <i class="fas fa-crosshairs"></i>
+        <span>Valorant</span>
+      </div>
+    </div>
+  </section>
+
   <!-- Connect -->
   <section id="connect" class="section">
     <h2 class="section-title">> connect</h2>
@@ -106,8 +142,13 @@
       <p class="terminal-output" style="text-align: center;">
         <i class="fab fa-discord"></i> DC: <span class="highlight">youngfool</span>
       </p>
-      <p class="terminal-output" style="text-align: center; margin-top:0.8rem;">
+      <p class="terminal-output" style="text-align: center; margin-top:0.6rem;">
         <i class="fab fa-instagram"></i> IG: <span class="highlight">Jhonchalant</span>
+      </p>
+      <p class="terminal-output" style="text-align: center; margin-top:1.2rem;">
+        <a href="https://discord.gg/XWnwhCrch" target="_blank" class="btn small">
+          <i class="fab fa-discord"></i> Join Server
+        </a>
       </p>
     </div>
   </section>
