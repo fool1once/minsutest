@@ -35,9 +35,9 @@ function draw() {
 }
 setInterval(draw, 40);
 
-// Typing effect (the 8 mottos)
-const typingEl = document.getElementById('typingText');
-const phrases = [
+// Fading motto carousel – never horizontal, always wraps
+const mottoEl = document.getElementById('mottoText');
+const mottos = [
   'Win in silence, let results speak.',
   'Aim to be the top.',
   'Stay untouchable.',
@@ -47,31 +47,23 @@ const phrases = [
   'Become impossible to replace.',
   'Dominate with discipline.'
 ];
-let phraseIndex = 0, charIndex = 0, isDeleting = false;
-let speed = 100;
 
-function type() {
-  const current = phrases[phraseIndex];
-  if (isDeleting) {
-    typingEl.textContent = current.substring(0, charIndex - 1);
-    charIndex--;
-    speed = 30;
-  } else {
-    typingEl.textContent = current.substring(0, charIndex + 1);
-    charIndex++;
-    speed = 100;
-  }
-  if (!isDeleting && charIndex === current.length) {
-    speed = 2000; // pause
-    isDeleting = true;
-  } else if (isDeleting && charIndex === 0) {
-    isDeleting = false;
-    phraseIndex = (phraseIndex + 1) % phrases.length;
-    speed = 400;
-  }
-  setTimeout(type, speed);
+let currentMotto = 0;
+
+function changeMotto() {
+  // Fade out
+  mottoEl.style.opacity = '0';
+  setTimeout(() => {
+    currentMotto = (currentMotto + 1) % mottos.length;
+    mottoEl.textContent = mottos[currentMotto];
+    // Fade in
+    mottoEl.style.opacity = '1';
+  }, 400);
 }
-setTimeout(type, 800);
+
+// Start with first motto already visible
+mottoEl.textContent = mottos[0];
+setInterval(changeMotto, 3500);
 
 // Mobile menu
 const hamburger = document.getElementById('hamburger');
