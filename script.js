@@ -2,8 +2,12 @@
 const canvas = document.getElementById('matrixCanvas');
 const ctx = canvas.getContext('2d');
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
 
 const katakana = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
 const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -11,12 +15,21 @@ const nums = '0123456789';
 const alphabet = katakana + latin + nums;
 
 const fontSize = 16;
-const columns = Math.floor(canvas.width / fontSize);
+let columns = Math.floor(canvas.width / fontSize);
+let rainDrops = [];
 
-const rainDrops = [];
-for (let x = 0; x < columns; x++) {
-  rainDrops[x] = 1;
+function initRain() {
+  columns = Math.floor(canvas.width / fontSize);
+  rainDrops = [];
+  for (let x = 0; x < columns; x++) {
+    rainDrops[x] = 1;
+  }
 }
+initRain();
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  initRain();
+});
 
 function drawMatrix() {
   ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
@@ -38,14 +51,15 @@ function drawMatrix() {
 
 setInterval(drawMatrix, 40);
 
-window.addEventListener('resize', () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
-
-// ===== TYPING ANIMATION =====
+// ===== TYPING ANIMATION (always starts with "Fool") =====
 const typingText = document.getElementById('typingText');
-const phrases = ['Full-Stack Developer', 'Cybersecurity Enthusiast', 'Open Source Contributor'];
+const phrases = [
+  'Fool',
+  'Fool - Champion',
+  'Fool - First Place',
+  'Fool - Gladiator',
+  'Fool - Major Finalist'
+];
 let phraseIndex = 0;
 let charIndex = 0;
 let isDeleting = false;
@@ -56,7 +70,7 @@ function type() {
   if (isDeleting) {
     typingText.textContent = current.substring(0, charIndex - 1);
     charIndex--;
-    typingSpeed = 50;
+    typingSpeed = 40;
   } else {
     typingText.textContent = current.substring(0, charIndex + 1);
     charIndex++;
@@ -64,7 +78,7 @@ function type() {
   }
 
   if (!isDeleting && charIndex === current.length) {
-    typingSpeed = 1500; // pause at end
+    typingSpeed = 2000; // pause at end
     isDeleting = true;
   } else if (isDeleting && charIndex === 0) {
     isDeleting = false;
@@ -91,46 +105,9 @@ navLinks.querySelectorAll('a').forEach(link => {
   });
 });
 
-// ===== INTERACTIVE TERMINAL =====
-const terminalInput = document.getElementById('terminalInput');
-const terminalOutput = document.getElementById('terminalOutput');
-
-const commands = {
-  help: 'Available commands: whoami, skills, projects, contact, clear, help',
-  whoami: 'I am a developer obsessed with clean code, dark themes, and neon aesthetics.',
-  skills: 'JavaScript, Python, React, Node.js, Docker, and more...',
-  projects: 'Project Alpha, DarkNet Monitor, NeonBot — check the projects section above.',
-  contact: 'Email: your.email@example.com | GitHub: @yourusername',
-  clear: 'CLEAR_SCREEN',
-};
-
-terminalInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    const cmd = terminalInput.value.trim().toLowerCase();
-    terminalInput.value = '';
-
-    // Add command to output
-    const cmdLine = document.createElement('p');
-    cmdLine.innerHTML = `<span style="color:#0ff;">visitor@profile:~$</span> ${cmd}`;
-    terminalOutput.appendChild(cmdLine);
-
-    if (cmd === 'clear') {
-      terminalOutput.innerHTML = '';
-      return;
-    }
-
-    const response = commands[cmd] || `command not found: ${cmd}. Type 'help' for options.`;
-    const resLine = document.createElement('p');
-    resLine.textContent = `> ${response}`;
-    resLine.style.color = '#0f0';
-    terminalOutput.appendChild(resLine);
-
-    // Auto-scroll
-    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+// Close menu if clicked outside (optional)
+document.addEventListener('click', (e) => {
+  if (!hamburger.contains(e.target) && !navLinks.contains(e.target)) {
+    navLinks.classList.remove('active');
   }
-});
-
-// Focus input on click anywhere in terminal box
-document.querySelector('.terminal-box').addEventListener('click', () => {
-  terminalInput.focus();
 });
