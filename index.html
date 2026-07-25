@@ -1,450 +1,596 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>// root@profile:~$</title>
+  <!-- Font Awesome for icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  />
+  <style>
+    /* ===== GLOBAL RESET & VARIABLES ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-<title>CIEL | Portfolio</title>
+    :root {
+      --neon-green: #0f0;
+      --neon-cyan: #0ff;
+      --neon-purple: #b026ff;
+      --dark-bg: #0a0a0a;
+      --card-bg: rgba(10, 10, 10, 0.85);
+      --glow-green: 0 0 10px #0f0, 0 0 20px #0f0, 0 0 30px #0f0;
+      --glow-cyan: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff;
+      --border-neon: 1px solid var(--neon-green);
+      --font-mono: 'Courier New', monospace;
+      --font-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    body {
+      background: var(--dark-bg);
+      font-family: var(--font-sans);
+      color: #e0e0e0;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    /* ===== MATRIX RAIN BACKGROUND CANVAS ===== */
+    #matrixCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.15;
+    }
 
-<link rel="stylesheet" href="style.css">
+    /* ===== NAVBAR ===== */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--neon-green);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+    }
 
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+    .nav-logo {
+      font-family: var(--font-mono);
+      color: var(--neon-green);
+      font-size: 1.5rem;
+      text-shadow: var(--glow-green);
+      font-weight: bold;
+    }
 
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--neon-cyan);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      transition: all 0.3s;
+      text-shadow: 0 0 5px var(--neon-cyan);
+    }
+
+    .nav-links a:hover {
+      color: var(--neon-green);
+      text-shadow: var(--glow-green);
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      gap: 5px;
+    }
+
+    .hamburger span {
+      width: 25px;
+      height: 2px;
+      background: var(--neon-green);
+      box-shadow: 0 0 5px var(--neon-green);
+    }
+
+    /* ===== SECTIONS ===== */
+    .section {
+      padding: 4rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .home-section {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 3rem;
+      min-height: 80vh;
+    }
+
+    /* Profile picture - neon border */
+    .profile-pic {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--neon-green);
+      box-shadow: var(--glow-green);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .profile-pic:hover {
+      transform: scale(1.05) rotate(2deg);
+      box-shadow: 0 0 25px var(--neon-cyan), 0 0 50px var(--neon-cyan);
+    }
+
+    .intro-text {
+      font-family: var(--font-mono);
+    }
+
+    .glitch {
+      font-size: 3rem;
+      color: var(--neon-green);
+      text-shadow: var(--glow-green);
+      position: relative;
+      display: inline-block;
+    }
+
+    .typing {
+      border-right: 2px solid var(--neon-green);
+      white-space: nowrap;
+      overflow: hidden;
+      font-size: 1.2rem;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 5px var(--neon-cyan);
+      margin: 1rem 0;
+      animation: blink-caret 0.75s step-end infinite;
+    }
+
+    @keyframes blink-caret {
+      50% {
+        border-color: transparent;
+      }
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.8rem 1.8rem;
+      background: transparent;
+      border: 2px solid var(--neon-green);
+      color: var(--neon-green);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      text-shadow: 0 0 5px var(--neon-green);
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: var(--neon-green);
+      color: #000;
+      box-shadow: var(--glow-green);
+    }
+
+    /* Section headings */
+    .section-title {
+      font-family: var(--font-mono);
+      font-size: 2.5rem;
+      color: var(--neon-green);
+      text-shadow: var(--glow-green);
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    /* About terminal box */
+    .terminal-box {
+      background: rgba(0, 0, 0, 0.85);
+      border: 1px solid var(--neon-green);
+      padding: 1.5rem;
+      border-radius: 5px;
+      font-family: var(--font-mono);
+      box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2);
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .terminal-output {
+      color: var(--neon-green);
+      margin-bottom: 0.5rem;
+    }
+
+    .command-line {
+      display: flex;
+      align-items: center;
+      color: var(--neon-green);
+    }
+
+    .prompt {
+      margin-right: 0.5rem;
+    }
+
+    #terminalInput {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--neon-cyan);
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      flex: 1;
+      caret-color: var(--neon-green);
+    }
+
+    /* Skills tags */
+    .skills-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .skill-tag {
+      padding: 0.5rem 1.2rem;
+      border: 1px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+      font-family: var(--font-mono);
+      text-shadow: 0 0 5px var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+      border-radius: 3px;
+      transition: all 0.3s;
+    }
+
+    .skill-tag:hover {
+      background: var(--neon-cyan);
+      color: #000;
+      box-shadow: var(--glow-cyan);
+    }
+
+    /* Project cards */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .project-card {
+      background: rgba(0, 0, 0, 0.75);
+      border: 1px solid var(--neon-purple);
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 0 15px rgba(176, 38, 255, 0.4);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .project-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 30px rgba(176, 38, 255, 0.8);
+    }
+
+    .project-card h3 {
+      color: var(--neon-purple);
+      font-family: var(--font-mono);
+      margin-bottom: 0.8rem;
+    }
+
+    /* Contact icons */
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      font-size: 2rem;
+    }
+
+    .contact-links a {
+      color: var(--neon-green);
+      text-shadow: var(--glow-green);
+      transition: all 0.3s;
+    }
+
+    .contact-links a:hover {
+      color: var(--neon-cyan);
+      text-shadow: var(--glow-cyan);
+      transform: scale(1.2);
+    }
+
+    /* ===== MOBILE RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .nav-links {
+        position: fixed;
+        top: 70px;
+        right: -100%;
+        flex-direction: column;
+        background: rgba(0, 0, 0, 0.95);
+        width: 70%;
+        height: 100vh;
+        padding: 2rem;
+        gap: 1.5rem;
+        backdrop-filter: blur(15px);
+        border-left: 1px solid var(--neon-green);
+        transition: right 0.3s ease;
+      }
+
+      .nav-links.active {
+        right: 0;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      .home-section {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .glitch {
+        font-size: 2.2rem;
+      }
+    }
+  </style>
 </head>
-
 <body>
-
-<!-- ================= LOADER ================= -->
-
-<div id="loader">
-
-<h1>CIEL.EXE</h1>
-
-<p>Initializing...</p>
-
-<div class="loader-bar">
-
-<span></span>
-
-</div>
-
-</div>
-
-<!-- ================= CURSOR ================= -->
-
-<div class="cursor"></div>
-
-<div class="cursor2"></div>
-
-<!-- ================= BACKGROUND ================= -->
-
-<div class="bg-grid"></div>
-
-<div class="gradient"></div>
-
-<div id="particles"></div>
-
-<!-- ================= NAVBAR ================= -->
-
-<header>
-
-<div class="logo">
-
-<span>&lt;</span> CIEL <span>/&gt;</span>
-
-</div>
-
-<div id="menu">
-
-<i class="fa-solid fa-bars"></i>
-
-</div>
-
-<nav>
-
-<a href="#home">Home</a>
-
-<a href="#achievement">Achievements</a>
-
-<a href="#contact">Contact</a>
-
-</nav>
-
-</header>
-
-<!-- ================= HERO ================= -->
-
-<section id="home" class="hero">
-
-<div class="hero-left">
-
-<p class="small">
-
-WELCOME TO MY PROFILE
-
-</p>
-
-<h1>
-
-CIEL
-
-</h1>
-
-<h2>
-
-BSIT Student
-
-</h2>
-
-<p class="description">
-
-Competitive tournament player focused on consistency,
-teamwork, and continuous improvement.
-This page showcases my tournament achievements and journey.
-
-</p>
-
-<div class="buttons">
-
-<a href="#achievement" class="btn">
-
-Achievements
-
-</a>
-
-<a href="#contact" class="btn2">
-
-Contact
-
-</a>
-
-</div>
-
-<div class="stats">
-
-<div>
-
-<h3 id="champions">
-
-0
-
-</h3>
-
-<p>Champion</p>
-
-</div>
-
-<div>
-
-<h3 id="first">
-
-0
-
-</h3>
-
-<p>First Place</p>
-
-</div>
-
-<div>
-
-<h3 id="second">
-
-0
-
-</h3>
-
-<p>Second Place</p>
-
-</div>
-
-<div>
-
-<h3 id="third">
-
-0
-
-</h3>
-
-<p>Third Place</p>
-
-</div>
-
-</div>
-
-</div>
-
-<div class="hero-right">
-
-<div class="profile">
-
-<img src="assets/profile.jpg" alt="Profile">
-
-<div class="ring"></div>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- ================= ACHIEVEMENTS ================= -->
-
-<section id="achievement">
-
-<div class="title">
-
-<h1>
-
-ACHIEVEMENTS
-
-</h1>
-
-<p>
-
-Tournament History
-
-</p>
-
-</div>
-
-<!-- MAJORS -->
-
-<div class="achievement-box">
-
-<div class="achievement-title">
-
-<i class="fa-solid fa-star"></i>
-
-Majors
-
-</div>
-
-<div class="achievement-list">
-
-<p>Gladiators Top 8</p>
-
-<p>GM11 Top 8</p>
-
-</div>
-
-</div>
-
-<!-- CHAMPION -->
-
-<div class="achievement-box">
-
-<div class="achievement-title champion">
-
-<i class="fa-solid fa-trophy"></i>
-
-Champion
-
-</div>
-
-<div class="achievement-list">
-
-<p>Wooze Elite Inter Scrim 5v5</p>
-
-<p>Sidra × Re × Soriux × Nan 5v5</p>
-
-<p>Elle's SZN 1 5v5</p>
-
-<p>Kize × Miz Tournament S1</p>
-
-<p>Kizy Tournament 5v5</p>
-
-<p>AIMS Tournament S2</p>
-
-<p>Hairi × Akuma's Tournament S2</p>
-
-<p>AVR Esports BFMT</p>
-
-<p>SIDRA Esports 1v1 SR</p>
-
-<p>Ziel Open Division SG</p>
-
-<p>AVR Esports SG</p>
-
-<p>Soriux × SIDRA 2v2</p>
-
-<p>SVT 1v1 Tournament SMG</p>
-
-<p>SVT 1v1 Tournament SR</p>
-
-<p>AIMS Tournament 5v5</p>
-
-<p>Kizy Tournament 5v5</p>
-
-<p>Xerina × Samii S1</p>
-
-<p>Cozi × Mika S1</p>
-
-<p>Savage²¹ BFMT</p>
-
-<p>T5 BFMT</p>
-
-<p>Kouvx Tournament 5v5</p>
-
-</div>
-
-</div>
-
-<!-- FIRST -->
-
-<div class="achievement-box">
-
-<div class="achievement-title first">
-
-<i class="fa-solid fa-medal"></i>
-
-First Place
-
-</div>
-
-<div class="achievement-list">
-
-<p>Maddy × Neko 5v5</p>
-
-<p>Navi's 5v5 S2</p>
-
-<p>Cozi 5v5 S2</p>
-
-<p>Elle × Mika 5v5</p>
-
-<p>Navis 5v5</p>
-
-<p>Elle × Mikko 5v5</p>
-
-<p>Joji's Tournament</p>
-
-<p>SIDRA Esports 1v1 SMG</p>
-
-<p>Wagas × Sinag SR</p>
-
-<p>Ziel Open Division SR</p>
-
-<p>Cozi Tournament S3</p>
-
-<p>Xerina × Soju S1</p>
-
-<p>Belle × Velox S1</p>
-
-<p>Cozi × Mika S1</p>
-
-</div>
-
-</div>
-
-<!-- SECOND -->
-
-<div class="achievement-box">
-
-<div class="achievement-title second">
-
-<i class="fa-solid fa-award"></i>
-
-Second Place
-
-</div>
-
-<div class="achievement-list">
-
-<p>Wagas × Sinag SG</p>
-
-<p>Hera's SZN 1</p>
-
-</div>
-
-</div>
-
-<!-- THIRD -->
-
-<div class="achievement-box">
-
-<div class="achievement-title third">
-
-<i class="fa-solid fa-ranking-star"></i>
-
-Third Place
-
-</div>
-
-<div class="achievement-list">
-
-<p>Hera S1 5v5</p>
-
-<p>Ziel × Gela 5v5 S1</p>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- CONTACT -->
-
-<section id="contact">
-
-<h1>
-
-CONNECT WITH ME
-
-</h1>
-
-<div class="socials">
-
-<a href="#">
-
-<i class="fab fa-facebook-f"></i>
-
-Facebook
-
-</a>
-
-<a href="#">
-
-<i class="fab fa-discord"></i>
-
-Discord
-
-</a>
-
-<a href="#">
-
-<i class="fab fa-github"></i>
-
-GitHub
-
-</a>
-
-</div>
-
-</section>
-
-<footer>
-
-<p>
-
-© 2026 CIEL • BSIT Student
-
-</p>
-
-</footer>
-
-<button id="top">
-
-<i class="fa-solid fa-arrow-up"></i>
-
-</button>
-
-<script src="script.js"></script>
-
+  <!-- Matrix rain canvas -->
+  <canvas id="matrixCanvas"></canvas>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-logo">~/root@profile</div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home">home</a></li>
+      <li><a href="#about">whoami</a></li>
+      <li><a href="#skills">skills</a></li>
+      <li><a href="#projects">projects</a></li>
+      <li><a href="#contact">connect</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </nav>
+
+  <!-- Home Section -->
+  <section id="home" class="section home-section">
+    <!-- 
+      ***** IMPORTANT: Replace the src below with your own picture *****
+      Place your image (e.g., profile.jpg) in the same folder as this HTML file,
+      then change src to "profile.jpg". Or use a direct URL.
+    -->
+    <img
+      src="profile.jpg"
+      alt="Profile Picture"
+      class="profile-pic"
+      onerror="this.src='https://via.placeholder.com/200x200.png?text=Your+Photo'; this.onerror=null;"
+    />
+    <div class="intro-text">
+      <h1 class="glitch">Your Name</h1>
+      <p class="typing" id="typingText"></p>
+      <a href="#projects" class="btn">View Projects</a>
+    </div>
+  </section>
+
+  <!-- About Section with live terminal -->
+  <section id="about" class="section">
+    <h2 class="section-title">> whoami</h2>
+    <div class="terminal-box">
+      <div class="terminal-output" id="terminalOutput">
+        <p>> Welcome to my digital realm. I'm a passionate developer who loves building
+        things that live on the web. I turn caffeine into code and bugs into features.
+        Type <span style="color:#0ff;">help</span> below.</p>
+      </div>
+      <div class="command-line">
+        <span class="prompt">visitor@profile:~$</span>
+        <input type="text" id="terminalInput" autofocus placeholder="type help..." />
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Section -->
+  <section id="skills" class="section">
+    <h2 class="section-title">> skills --list</h2>
+    <div class="skills-grid">
+      <span class="skill-tag">JavaScript</span>
+      <span class="skill-tag">Python</span>
+      <span class="skill-tag">React</span>
+      <span class="skill-tag">Node.js</span>
+      <span class="skill-tag">HTML/CSS</span>
+      <span class="skill-tag">Git</span>
+      <span class="skill-tag">Docker</span>
+      <span class="skill-tag">SQL</span>
+    </div>
+  </section>
+
+  <!-- Projects Section -->
+  <section id="projects" class="section">
+    <h2 class="section-title">> projects --show</h2>
+    <div class="projects-grid">
+      <div class="project-card">
+        <h3>Project Alpha</h3>
+        <p>A full-stack web app with real-time data streaming and neon UI.</p>
+      </div>
+      <div class="project-card">
+        <h3>DarkNet Monitor</h3>
+        <p>Network intrusion detection dashboard built with Python and React.</p>
+      </div>
+      <div class="project-card">
+        <h3>NeonBot</h3>
+        <p>Discord bot with custom slash commands and glitch-text responses.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="section">
+    <h2 class="section-title">> contact --send</h2>
+    <div class="contact-links">
+      <a href="mailto:your.email@example.com" target="_blank" aria-label="Email">
+        <i class="fas fa-envelope"></i>
+      </a>
+      <a href="https://github.com/yourusername" target="_blank" aria-label="GitHub">
+        <i class="fab fa-github"></i>
+      </a>
+      <a href="https://linkedin.com/in/yourprofile" target="_blank" aria-label="LinkedIn">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </div>
+  </section>
+
+  <script>
+    // ===== Matrix Rain Effect =====
+    const canvas = document.getElementById('matrixCanvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const katakana = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+    const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const nums = '0123456789';
+    const alphabet = katakana + latin + nums;
+
+    const fontSize = 16;
+    const columns = Math.floor(canvas.width / fontSize);
+
+    const rainDrops = [];
+    for (let x = 0; x < columns; x++) {
+      rainDrops[x] = 1;
+    }
+
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#0F0';
+      ctx.font = fontSize + 'px monospace';
+
+      for (let i = 0; i < rainDrops.length; i++) {
+        const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+        ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+        if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          rainDrops[i] = 0;
+        }
+        rainDrops[i]++;
+      }
+    }
+
+    setInterval(drawMatrix, 40);
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    // ===== TYPING ANIMATION =====
+    const typingText = document.getElementById('typingText');
+    const phrases = ['Full-Stack Developer', 'Cybersecurity Enthusiast', 'Open Source Contributor'];
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let typingSpeed = 100;
+
+    function type() {
+      const current = phrases[phraseIndex];
+      if (isDeleting) {
+        typingText.textContent = current.substring(0, charIndex - 1);
+        charIndex--;
+        typingSpeed = 50;
+      } else {
+        typingText.textContent = current.substring(0, charIndex + 1);
+        charIndex++;
+        typingSpeed = 120;
+      }
+
+      if (!isDeleting && charIndex === current.length) {
+        typingSpeed = 1500; // pause at end
+        isDeleting = true;
+      } else if (isDeleting && charIndex === 0) {
+        isDeleting = false;
+        phraseIndex = (phraseIndex + 1) % phrases.length;
+        typingSpeed = 400;
+      }
+
+      setTimeout(type, typingSpeed);
+    }
+    setTimeout(type, 1000);
+
+    // ===== MOBILE HAMBURGER MENU =====
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+
+    // Close menu when a link is clicked
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+      });
+    });
+
+    // ===== INTERACTIVE TERMINAL =====
+    const terminalInput = document.getElementById('terminalInput');
+    const terminalOutput = document.getElementById('terminalOutput');
+
+    const commands = {
+      help: 'Available commands: whoami, skills, projects, contact, clear, help',
+      whoami: 'I am a developer obsessed with clean code, dark themes, and neon aesthetics.',
+      skills: 'JavaScript, Python, React, Node.js, Docker, and more...',
+      projects: 'Project Alpha, DarkNet Monitor, NeonBot — check the projects section above.',
+      contact: 'Email: your.email@example.com | GitHub: @yourusername',
+      clear: 'CLEAR_SCREEN',
+    };
+
+    terminalInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const cmd = terminalInput.value.trim().toLowerCase();
+        terminalInput.value = '';
+
+        // Add command to output
+        const cmdLine = document.createElement('p');
+        cmdLine.innerHTML = `<span style="color:#0ff;">visitor@profile:~$</span> ${cmd}`;
+        terminalOutput.appendChild(cmdLine);
+
+        if (cmd === 'clear') {
+          terminalOutput.innerHTML = '';
+          return;
+        }
+
+        const response = commands[cmd] || `command not found: ${cmd}. Type 'help' for options.`;
+        const resLine = document.createElement('p');
+        resLine.textContent = `> ${response}`;
+        resLine.style.color = '#0f0';
+        terminalOutput.appendChild(resLine);
+
+        // Auto-scroll
+        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+      }
+    });
+
+    // Focus input on click anywhere in terminal box
+    document.querySelector('.terminal-box').addEventListener('click', () => {
+      terminalInput.focus();
+    });
+  </script>
 </body>
 </html>
