@@ -2,14 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>// root@profile:~$</title>
-  <!-- Font Awesome for icons -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>// root@Fool:~$</title>
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
   />
-  <!-- External CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -18,13 +16,10 @@
 
   <!-- Navigation -->
   <nav class="navbar">
-    <div class="nav-logo">~/root@profile</div>
+    <div class="nav-logo">~/Fool</div>
     <ul class="nav-links" id="navLinks">
-      <li><a href="#home">home</a></li>
-      <li><a href="#about">whoami</a></li>
-      <li><a href="#skills">skills</a></li>
-      <li><a href="#projects">projects</a></li>
-      <li><a href="#contact">connect</a></li>
+      <li><a href="#achievements">achievements</a></li>
+      <li><a href="#connect">connect</a></li>
     </ul>
     <div class="hamburger" id="hamburger">
       <span></span>
@@ -33,89 +28,95 @@
     </div>
   </nav>
 
-  <!-- Home Section -->
+  <!-- Hero Section -->
   <section id="home" class="section home-section">
-    <!-- Replace src with your picture filename or URL -->
     <img
       src="profile.jpg"
-      alt="Profile Picture"
+      alt="Fool"
       class="profile-pic"
-      onerror="this.src='https://via.placeholder.com/200x200.png?text=Your+Photo'; this.onerror=null;"
+      onerror="this.src='https://via.placeholder.com/200x200.png?text=Fool'; this.onerror=null;"
     />
     <div class="intro-text">
-      <h1 class="glitch">Your Name</h1>
+      <h1 class="glitch">Fool</h1>
       <p class="typing" id="typingText"></p>
-      <a href="#projects" class="btn">View Projects</a>
     </div>
   </section>
 
-  <!-- About Section with live terminal -->
-  <section id="about" class="section">
-    <h2 class="section-title">> whoami</h2>
-    <div class="terminal-box">
-      <div class="terminal-output" id="terminalOutput">
-        <p>> Welcome to my digital realm. I'm a passionate developer who loves building
-        things that live on the web. I turn caffeine into code and bugs into features.
-        Type <span style="color:#0ff;">help</span> below.</p>
-      </div>
-      <div class="command-line">
-        <span class="prompt">visitor@profile:~$</span>
-        <input type="text" id="terminalInput" autofocus placeholder="type help..." />
+  <!-- Achievements Section -->
+  <section id="achievements" class="section">
+    <h2 class="section-title">> achievements --list</h2>
+    <div class="terminal-box achievements-terminal">
+      <div class="terminal-output">
+        <p><span class="category">// UID</span></p>
+        <p>6838532770206056449</p>
+        <p>6751632828758228993</p>
+
+        <p><span class="category">// Majors</span></p>
+        <p>- Gladiators top 8</p>
+        <p>- Gm11 top 8</p>
+
+        <p><span class="category">// Champion</span></p>
+        <p>- Wooze Elite inter scrim 5v5</p>
+        <p>- sidra x re x soriux x nan 5v5</p>
+        <p>- elle's szn 1 5v5</p>
+        <p>- kize x miz 5v5 tourna s1</p>
+        <p>- Kizy tourna 5v5 aims 5v5 tournament hairi x akuma's 5v5: s2</p>
+        <p>- AVR Esports bfmt</p>
+        <p>- SIDRA Esports 1v1 sr</p>
+        <p>- ziel 1v1 open div sg</p>
+        <p>- AVR Esports 1v1 sg</p>
+        <p>- 2v2 Soriux x sidra</p>
+        <p>- SVT 1v1 Tournament smg</p>
+        <p>- SVT 1v1 Tournament sr</p>
+        <p>- Aims 5v5 tourna</p>
+        <p>- Kizy 5v5 tourna</p>
+        <p>- Xerina x samii 5v5 s1</p>
+        <p>- Cozi x Mika 5v5 s1</p>
+        <p>- savage²¹ 5v5 bfmt</p>
+        <p>- T5 5v5 bfmt</p>
+        <p>- kouvx tournament 5v5</p>
+
+        <p><span class="category">// First Place</span></p>
+        <p>- maddy x neko 5v5</p>
+        <p>- navi's 5v5 s2</p>
+        <p>- cozi 5v5 s2</p>
+        <p>- elle x mika 5v5</p>
+        <p>- navis 5V5</p>
+        <p>- maddy X neko 5v5</p>
+        <p>- elle X mikko 5v5</p>
+        <p>- joji's tourna 5v5</p>
+        <p>- SIDRA Esports 1v1 smg</p>
+        <p>- wagas x sinag 1v1 sr</p>
+        <p>- ziel 1v1 open div sr</p>
+        <p>- cozi 5v5 tourna s3</p>
+        <p>- xerina x soju 5v5 s1</p>
+        <p>- belle's and velox 5v5 s1</p>
+        <p>- cozi x mika 5v5 s1</p>
+
+        <p><span class="category">// Second Place</span></p>
+        <p>- Wagas x sinag 1v1 sg</p>
+        <p>- hera's szn 1</p>
+
+        <p><span class="category">// Third Place</span></p>
+        <p>- hera s1 5v5</p>
+        <p>- ziel x gela 5v5 s1</p>
       </div>
     </div>
   </section>
 
-  <!-- Skills Section -->
-  <section id="skills" class="section">
-    <h2 class="section-title">> skills --list</h2>
-    <div class="skills-grid">
-      <span class="skill-tag">JavaScript</span>
-      <span class="skill-tag">Python</span>
-      <span class="skill-tag">React</span>
-      <span class="skill-tag">Node.js</span>
-      <span class="skill-tag">HTML/CSS</span>
-      <span class="skill-tag">Git</span>
-      <span class="skill-tag">Docker</span>
-      <span class="skill-tag">SQL</span>
+  <!-- Connect Section -->
+  <section id="connect" class="section">
+    <h2 class="section-title">> connect --send</h2>
+    <div class="terminal-box connect-box">
+      <p class="terminal-output">
+        <i class="fab fa-discord"></i> DC: <span class="highlight">youngfool</span>
+      </p>
+      <p class="terminal-output" style="margin-top:0.5rem;">
+        <i class="fas fa-envelope"></i> Email: your.email@example.com (optional)
+      </p>
     </div>
   </section>
 
-  <!-- Projects Section -->
-  <section id="projects" class="section">
-    <h2 class="section-title">> projects --show</h2>
-    <div class="projects-grid">
-      <div class="project-card">
-        <h3>Project Alpha</h3>
-        <p>A full-stack web app with real-time data streaming and neon UI.</p>
-      </div>
-      <div class="project-card">
-        <h3>DarkNet Monitor</h3>
-        <p>Network intrusion detection dashboard built with Python and React.</p>
-      </div>
-      <div class="project-card">
-        <h3>NeonBot</h3>
-        <p>Discord bot with custom slash commands and glitch-text responses.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Contact Section -->
-  <section id="contact" class="section">
-    <h2 class="section-title">> contact --send</h2>
-    <div class="contact-links">
-      <a href="mailto:your.email@example.com" target="_blank" aria-label="Email">
-        <i class="fas fa-envelope"></i>
-      </a>
-      <a href="https://github.com/yourusername" target="_blank" aria-label="GitHub">
-        <i class="fab fa-github"></i>
-      </a>
-      <a href="https://linkedin.com/in/yourprofile" target="_blank" aria-label="LinkedIn">
-        <i class="fab fa-linkedin"></i>
-      </a>
-    </div>
-  </section>
-
-  <!-- External JavaScript -->
   <script src="script.js"></script>
 </body>
 </html>
