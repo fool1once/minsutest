@@ -1,7 +1,6 @@
-// ===== Matrix Rain Effect =====
+// Matrix rain
 const canvas = document.getElementById('matrixCanvas');
 const ctx = canvas.getContext('2d');
-
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -9,102 +8,78 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-const katakana = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
-const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-const nums = '0123456789';
-const alphabet = katakana + latin + nums;
-
+const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 const fontSize = 16;
 let columns = Math.floor(canvas.width / fontSize);
-let rainDrops = [];
+let drops = [];
 
 function initRain() {
   columns = Math.floor(canvas.width / fontSize);
-  rainDrops = [];
-  for (let x = 0; x < columns; x++) {
-    rainDrops[x] = 1;
-  }
+  drops = [];
+  for (let i = 0; i < columns; i++) drops[i] = 1;
 }
 initRain();
-window.addEventListener('resize', () => {
-  resizeCanvas();
-  initRain();
-});
+window.addEventListener('resize', () => { resizeCanvas(); initRain(); });
 
-function drawMatrix() {
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+function draw() {
+  ctx.fillStyle = 'rgba(0,0,0,0.05)';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
   ctx.fillStyle = '#0F0';
   ctx.font = fontSize + 'px monospace';
-
-  for (let i = 0; i < rainDrops.length; i++) {
-    const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-    ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
-    if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-      rainDrops[i] = 0;
-    }
-    rainDrops[i]++;
+  for (let i = 0; i < drops.length; i++) {
+    const text = chars[Math.floor(Math.random() * chars.length)];
+    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
   }
 }
-setInterval(drawMatrix, 40);
+setInterval(draw, 40);
 
-// ===== TYPING ANIMATION (new phrases) =====
-const typingText = document.getElementById('typingText');
+// Typing effect (the 8 mottos)
+const typingEl = document.getElementById('typingText');
 const phrases = [
+  'Win in silence, let results speak.',
   'Aim to be the top.',
   'Stay untouchable.',
   'Outwork everyone.',
   'Be the standard, not the competition.',
   'Leave no room for doubt.',
-  'Win in silence, let results speak.',
   'Become impossible to replace.',
   'Dominate with discipline.'
 ];
-let phraseIndex = 0;
-let charIndex = 0;
-let isDeleting = false;
-let typingSpeed = 100;
+let phraseIndex = 0, charIndex = 0, isDeleting = false;
+let speed = 100;
 
 function type() {
   const current = phrases[phraseIndex];
   if (isDeleting) {
-    typingText.textContent = current.substring(0, charIndex - 1);
+    typingEl.textContent = current.substring(0, charIndex - 1);
     charIndex--;
-    typingSpeed = 30;
+    speed = 30;
   } else {
-    typingText.textContent = current.substring(0, charIndex + 1);
+    typingEl.textContent = current.substring(0, charIndex + 1);
     charIndex++;
-    typingSpeed = 100;
+    speed = 100;
   }
-
   if (!isDeleting && charIndex === current.length) {
-    typingSpeed = 1800; // pause at full phrase
+    speed = 2000; // pause
     isDeleting = true;
   } else if (isDeleting && charIndex === 0) {
     isDeleting = false;
     phraseIndex = (phraseIndex + 1) % phrases.length;
-    typingSpeed = 350;
+    speed = 400;
   }
-
-  setTimeout(type, typingSpeed);
+  setTimeout(type, speed);
 }
 setTimeout(type, 800);
 
-// ===== MOBILE HAMBURGER MENU =====
+// Mobile menu
 const hamburger = document.getElementById('hamburger');
 const navLinks = document.getElementById('navLinks');
-
-hamburger.addEventListener('click', () => {
-  navLinks.classList.toggle('active');
-});
-
+hamburger.addEventListener('click', () => navLinks.classList.toggle('active'));
 navLinks.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', () => {
-    navLinks.classList.remove('active');
-  });
+  link.addEventListener('click', () => navLinks.classList.remove('active'));
 });
-
-// Close menu if clicking outside
 document.addEventListener('click', (e) => {
   if (!hamburger.contains(e.target) && !navLinks.contains(e.target)) {
     navLinks.classList.remove('active');
