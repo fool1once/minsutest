@@ -1,4 +1,4 @@
-// Matrix rain
+// ===== Matrix Rain =====
 const canvas = document.getElementById('matrixCanvas');
 const ctx = canvas.getContext('2d');
 function resizeCanvas() {
@@ -12,7 +12,6 @@ const chars = 'アイウエオカキクケコサシスセソタチツテトナ�
 const fontSize = 16;
 let columns = Math.floor(canvas.width / fontSize);
 let drops = [];
-
 function initRain() {
   columns = Math.floor(canvas.width / fontSize);
   drops = [];
@@ -35,9 +34,9 @@ function draw() {
 }
 setInterval(draw, 40);
 
-// Fading motto carousel – never horizontal, always wraps
-const mottoEl = document.getElementById('mottoText');
-const mottos = [
+// ===== Desktop Typing Animation =====
+const typingEl = document.getElementById('typingMotto');
+const phrases = [
   'Win in silence, let results speak.',
   'Aim to be the top.',
   'Stay untouchable.',
@@ -47,25 +46,59 @@ const mottos = [
   'Become impossible to replace.',
   'Dominate with discipline.'
 ];
+let phraseIndex = 0;
+let charIndex = 0;
+let isDeleting = false;
+let speed = 100;
 
-let currentMotto = 0;
+function type() {
+  const current = phrases[phraseIndex];
+  if (isDeleting) {
+    typingEl.textContent = current.substring(0, charIndex - 1);
+    charIndex--;
+    speed = 30;
+  } else {
+    typingEl.textContent = current.substring(0, charIndex + 1);
+    charIndex++;
+    speed = 100;
+  }
+
+  if (!isDeleting && charIndex === current.length) {
+    speed = 2000;
+    isDeleting = true;
+  } else if (isDeleting && charIndex === 0) {
+    isDeleting = false;
+    phraseIndex = (phraseIndex + 1) % phrases.length;
+    speed = 400;
+  }
+  setTimeout(type, speed);
+}
+// Start typing only when the element is visible (desktop)
+if (window.innerWidth > 768) {
+  setTimeout(type, 800);
+} else {
+  // Optionally start typing later if screen resizes, but for simplicity we'll just start it always
+  // It won't be visible on mobile anyway, so no harm.
+  setTimeout(type, 800);
+}
+// Also restart if window resizes to desktop? Not needed, it runs continuously.
+
+// ===== Mobile Fading Carousel =====
+const fadingEl = document.getElementById('fadingMotto');
+let mottoIndex = 0;
+const mottos = phrases; // same array
 
 function changeMotto() {
-  // Fade out
-  mottoEl.style.opacity = '0';
+  fadingEl.style.opacity = '0';
   setTimeout(() => {
-    currentMotto = (currentMotto + 1) % mottos.length;
-    mottoEl.textContent = mottos[currentMotto];
-    // Fade in
-    mottoEl.style.opacity = '1';
-  }, 400);
+    mottoIndex = (mottoIndex + 1) % mottos.length;
+    fadingEl.textContent = mottos[mottoIndex];
+    fadingEl.style.opacity = '1';
+  }, 500);
 }
-
-// Start with first motto already visible
-mottoEl.textContent = mottos[0];
 setInterval(changeMotto, 3500);
 
-// Mobile menu
+// ===== Mobile Menu =====
 const hamburger = document.getElementById('hamburger');
 const navLinks = document.getElementById('navLinks');
 hamburger.addEventListener('click', () => navLinks.classList.toggle('active'));
