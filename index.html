@@ -1,185 +1,1057 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>Fool | Espada</title>
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-  />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<style>
+:root {
+  --g: #00ff88;
+  --c: #00e5ff;
+  --r: #ff003c;
+  --p: #7b2fff;
+  --bg: #030308;
+  --bg2: #07070f;
+  --mono: 'Share Tech Mono', monospace;
+  --head: 'Rajdhani', sans-serif;
+  --glow-g: 0 0 8px #00ff88, 0 0 24px #00ff8855, 0 0 60px #00ff8822;
+  --glow-c: 0 0 8px #00e5ff, 0 0 24px #00e5ff55;
+  --glow-r: 0 0 8px #ff003c, 0 0 24px #ff003c55;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; height: 100%; }
+
+body {
+  background: var(--bg);
+  color: #c8d8e0;
+  font-family: var(--mono);
+  overflow-x: hidden;
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+}
+
+/* ── CANVAS BG ─────────────────────────── */
+#bg-canvas {
+  position: fixed; inset: 0;
+  width: 100%; height: 100%;
+  z-index: 0; pointer-events: none;
+}
+
+/* ── SCAN LINE OVERLAY ──────────────────── */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── NAV ────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2.5rem;
+  height: 60px;
+  background: rgba(3,3,8,0.85);
+  backdrop-filter: blur(18px) saturate(180%);
+  border-bottom: 1px solid rgba(0,255,136,0.18);
+  box-shadow: 0 1px 40px rgba(0,255,136,0.06);
+}
+nav::before {
+  content: '';
+  position: absolute; bottom: 0; left: 0;
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--g), var(--c), transparent);
+  opacity: 0.6;
+}
+
+.nav-logo {
+  font-family: var(--head);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--g);
+  text-shadow: var(--glow-g);
+  letter-spacing: 2px;
+}
+.nav-logo span {
+  color: var(--c);
+  font-size: 0.8rem;
+  font-family: var(--mono);
+  letter-spacing: 4px;
+  margin-left: 6px;
+  text-shadow: var(--glow-c);
+  vertical-align: middle;
+}
+
+.nav-links {
+  display: flex; gap: 2.4rem; list-style: none;
+}
+.nav-links a {
+  color: rgba(200,216,224,0.65);
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  transition: color .2s, text-shadow .2s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute; bottom: -4px; left: 0; right: 0;
+  height: 1px;
+  background: var(--g);
+  box-shadow: var(--glow-g);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .25s ease;
+}
+.nav-links a:hover { color: var(--g); text-shadow: var(--glow-g); }
+.nav-links a:hover::after { transform: scaleX(1); }
+
+.hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; }
+.hamburger span { width:24px; height:2px; background:var(--g); box-shadow:0 0 5px var(--g); transition:.3s; }
+
+/* ── SECTIONS BASE ──────────────────────── */
+section {
+  position: relative; z-index: 10;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 7rem 2rem 4rem;
+  width: 100%;
+}
+
+/* ── HERO ───────────────────────────────── */
+#home {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding-top: 80px;
+  gap: 0;
+}
+
+/* 3D rotating ring */
+.avatar-wrap {
+  position: relative;
+  width: 200px; height: 200px;
+  margin: 0 auto 2rem;
+  perspective: 600px;
+}
+.ring-3d {
+  position: absolute; inset: -20px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: conic-gradient(from 0deg, var(--g), var(--c), var(--p), var(--r), var(--g)) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+  animation: spin3d 4s linear infinite;
+  transform-style: preserve-3d;
+}
+.ring-3d-2 {
+  position: absolute; inset: -10px;
+  border-radius: 50%;
+  border: 1px solid var(--c);
+  opacity: 0.4;
+  animation: spin3d 8s linear infinite reverse;
+}
+@keyframes spin3d {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.profile-pic {
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(0,255,136,0.25);
+  box-shadow: 0 0 0 6px rgba(0,255,136,0.06), 0 0 60px rgba(0,255,136,0.2);
+  display: block;
+  position: relative; z-index: 2;
+  transition: transform .4s ease, box-shadow .4s ease;
+}
+.avatar-wrap:hover .profile-pic {
+  transform: scale(1.04);
+  box-shadow: 0 0 0 8px rgba(0,229,255,0.1), 0 0 80px rgba(0,229,255,0.3);
+}
+
+/* 3D glitch name */
+.hero-name {
+  font-family: var(--head);
+  font-size: clamp(5rem, 15vw, 9rem);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--g);
+  letter-spacing: -2px;
+  position: relative;
+  margin-bottom: 0.6rem;
+  text-shadow:
+    0 0 20px rgba(0,255,136,0.6),
+    0 0 60px rgba(0,255,136,0.25),
+    4px 4px 0 rgba(0,229,255,0.15),
+    -4px -4px 0 rgba(123,47,255,0.15);
+  animation: name-flicker 6s infinite;
+}
+.hero-name::before, .hero-name::after {
+  content: attr(data-text);
+  position: absolute; inset: 0;
+  background: none;
+}
+.hero-name::before {
+  color: var(--c);
+  clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+  transform: translate(-3px, 0);
+  opacity: 0;
+  animation: glitch-top 4s infinite;
+}
+.hero-name::after {
+  color: var(--r);
+  clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+  transform: translate(3px, 0);
+  opacity: 0;
+  animation: glitch-bot 4s infinite 0.3s;
+}
+@keyframes name-flicker {
+  0%,95%,100% { opacity:1; }
+  96% { opacity:0.85; }
+  97% { opacity:1; }
+  98% { opacity:0.6; }
+  99% { opacity:1; }
+}
+@keyframes glitch-top {
+  0%,88%,100% { opacity:0; transform:translate(0); }
+  90% { opacity:0.8; transform:translate(-4px,0) skewX(-3deg); }
+  92% { opacity:0; transform:translate(0); }
+  94% { opacity:0.6; transform:translate(3px,0); }
+  96% { opacity:0; }
+}
+@keyframes glitch-bot {
+  0%,85%,100% { opacity:0; transform:translate(0); }
+  87% { opacity:0.7; transform:translate(4px,0) skewX(2deg); }
+  89% { opacity:0; }
+  91% { opacity:0.5; transform:translate(-3px,0); }
+  93% { opacity:0; }
+}
+
+.hero-tag {
+  font-family: var(--mono);
+  font-size: clamp(0.7rem, 2vw, 0.85rem);
+  color: var(--c);
+  letter-spacing: 6px;
+  text-shadow: var(--glow-c);
+  margin-bottom: 1.5rem;
+  opacity: 0.8;
+}
+
+.hero-motto {
+  font-family: var(--mono);
+  font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+  color: rgba(200,216,224,0.7);
+  min-height: 2em;
+  letter-spacing: 1px;
+}
+.hero-motto .cursor {
+  color: var(--g);
+  animation: blink .7s step-end infinite;
+  text-shadow: var(--glow-g);
+}
+@keyframes blink { 50% { opacity:0; } }
+
+/* scroll indicator */
+.scroll-hint {
+  position: absolute;
+  bottom: 2.5rem; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  opacity: 0.4; font-size: 0.7rem; letter-spacing: 3px;
+  color: var(--g); text-shadow: var(--glow-g);
+  animation: bounce 2s ease-in-out infinite;
+}
+.scroll-hint i { font-size: 1rem; }
+@keyframes bounce {
+  0%,100% { transform: translateX(-50%) translateY(0); }
+  50%      { transform: translateX(-50%) translateY(8px); }
+}
+
+/* ── SECTION HEADING ────────────────────── */
+.sec-head {
+  font-family: var(--head);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--g);
+  text-shadow: var(--glow-g);
+  margin-bottom: 2.5rem;
+  display: flex; align-items: center; gap: 1rem;
+}
+.sec-head::before {
+  content: attr(data-n);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--c);
+  letter-spacing: 2px;
+  background: rgba(0,229,255,0.08);
+  border: 1px solid rgba(0,229,255,0.25);
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+.sec-head::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(0,255,136,0.3), transparent);
+}
+
+/* ── TERMINAL CARD ──────────────────────── */
+.t-card {
+  background: rgba(7,7,15,0.9);
+  border: 1px solid rgba(0,255,136,0.15);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    inset 0 0 40px rgba(0,255,136,0.03),
+    0 0 0 1px rgba(0,255,136,0.05),
+    0 20px 60px rgba(0,0,0,0.5);
+  transform: translateZ(0);
+  transition: border-color .3s, box-shadow .3s;
+}
+.t-card:hover {
+  border-color: rgba(0,255,136,0.3);
+  box-shadow:
+    inset 0 0 60px rgba(0,255,136,0.05),
+    0 0 0 1px rgba(0,255,136,0.12),
+    0 30px 80px rgba(0,0,0,0.6),
+    0 0 40px rgba(0,255,136,0.06);
+}
+.t-card-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 16px;
+  background: rgba(0,255,136,0.04);
+  border-bottom: 1px solid rgba(0,255,136,0.1);
+}
+.t-dot { width:10px; height:10px; border-radius:50%; }
+.t-dot.r { background:#ff5f57; box-shadow: 0 0 6px #ff5f57; }
+.t-dot.y { background:#febc2e; box-shadow: 0 0 6px #febc2e; }
+.t-dot.g { background:#28c840; box-shadow: 0 0 6px #28c840; }
+.t-card-title {
+  margin-left: 6px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: rgba(200,216,224,0.35);
+  letter-spacing: 2px;
+}
+.t-card-body { padding: 2rem; }
+
+/* achievements grid */
+.ach-main-title {
+  font-family: var(--head);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--g);
+  letter-spacing: 4px;
+  text-align: center;
+  margin-bottom: 2rem;
+  text-shadow: var(--glow-g);
+  text-transform: uppercase;
+}
+
+.uid-row {
+  display: flex; flex-wrap: wrap; gap: 0.6rem;
+  margin-bottom: 2rem; justify-content: center;
+}
+.uid-chip {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--c);
+  border: 1px solid rgba(0,229,255,0.25);
+  background: rgba(0,229,255,0.05);
+  padding: 4px 10px;
+  border-radius: 3px;
+  letter-spacing: 1px;
+}
+
+.ach-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+.ach-col {}
+.ach-label {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 4px;
+  color: var(--c);
+  text-shadow: var(--glow-c);
+  border-bottom: 1px solid rgba(0,229,255,0.15);
+  padding-bottom: 6px;
+  margin-bottom: 0.8rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.ach-label::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--c);
+  box-shadow: var(--glow-c);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.ach-label.gold { color: #ffd700; text-shadow: 0 0 8px #ffd700; border-color: rgba(255,215,0,0.2); }
+.ach-label.gold::before { background: #ffd700; box-shadow: 0 0 8px #ffd700; }
+.ach-label.silver { color: #b0b8c0; text-shadow: 0 0 8px #b0b8c0; border-color: rgba(176,184,192,0.2); }
+.ach-label.silver::before { background: #b0b8c0; box-shadow: 0 0 6px #b0b8c0; }
+.ach-label.bronze { color: #cd7f32; text-shadow: 0 0 8px #cd7f32; border-color: rgba(205,127,50,0.2); }
+.ach-label.bronze::before { background: #cd7f32; box-shadow: 0 0 6px #cd7f32; }
+.ach-label.red { color: var(--r); text-shadow: var(--glow-r); border-color: rgba(255,0,60,0.2); }
+.ach-label.red::before { background: var(--r); box-shadow: var(--glow-r); }
+
+.ach-item {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: rgba(200,216,224,0.7);
+  padding: 5px 0;
+  border-left: 2px solid rgba(0,255,136,0.1);
+  padding-left: 10px;
+  margin-bottom: 3px;
+  transition: color .2s, border-color .2s;
+  line-height: 1.5;
+}
+.ach-item:hover {
+  color: rgba(200,216,224,0.95);
+  border-left-color: var(--g);
+}
+
+/* ── CODES ──────────────────────────────── */
+.code-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+.code-item {
+  background: rgba(0,255,136,0.03);
+  border: 1px solid rgba(0,255,136,0.12);
+  border-radius: 5px;
+  padding: 1.2rem 1.4rem;
+  display: flex; align-items: center; gap: 1rem;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: rgba(200,216,224,0.75);
+  transition: all .25s;
+  cursor: default;
+  position: relative; overflow: hidden;
+}
+.code-item::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(0,255,136,0.05) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity .3s;
+}
+.code-item:hover {
+  border-color: rgba(0,255,136,0.35);
+  color: var(--g);
+  transform: translateY(-2px) translateZ(0);
+  box-shadow: 0 8px 30px rgba(0,255,136,0.08);
+}
+.code-item:hover::before { opacity: 1; }
+.code-icon {
+  font-size: 1.3rem;
+  color: var(--g);
+  text-shadow: var(--glow-g);
+  flex-shrink: 0;
+}
+
+/* ── CONNECT ────────────────────────────── */
+.connect-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.connect-item {
+  background: rgba(7,7,15,0.8);
+  border: 1px solid rgba(0,229,255,0.1);
+  border-radius: 5px;
+  padding: 1rem 1.4rem;
+  display: flex; align-items: center; gap: 0.9rem;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  transition: all .25s;
+  text-decoration: none;
+}
+.connect-item:hover {
+  border-color: rgba(0,229,255,0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0,229,255,0.07);
+}
+.connect-item i {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.connect-item .ci-label { color: rgba(200,216,224,0.4); font-size:0.68rem; letter-spacing:2px; display:block; }
+.connect-item .ci-val   { color: var(--c); text-shadow: var(--glow-c); display:block; margin-top:2px; }
+.ci-discord i { color: #5865f2; }
+.ci-ig      i { color: #e1306c; }
+.ci-tt      i { color: #69c9d0; }
+.ci-rb      i { color: var(--r); }
+.ci-fb      i { color: #1877f2; }
+
+.btn-server {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  padding: 0.75rem 2rem;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  color: var(--bg);
+  background: var(--g);
+  border: none; border-radius: 4px;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 0 0 1px var(--g), var(--glow-g);
+  transition: all .25s;
+  font-weight: 700;
+}
+.btn-server:hover {
+  background: transparent;
+  color: var(--g);
+  box-shadow: 0 0 0 1px var(--g), var(--glow-g), 0 0 40px rgba(0,255,136,0.2);
+  transform: translateY(-1px);
+}
+
+/* ── GAMES ──────────────────────────────── */
+.games-row {
+  display: flex; flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.2rem;
+}
+.game-card {
+  width: 130px;
+  background: rgba(7,7,15,0.9);
+  border: 1px solid rgba(0,255,136,0.1);
+  border-radius: 8px;
+  padding: 1.5rem 1rem;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 2px;
+  color: rgba(200,216,224,0.55);
+  text-transform: uppercase;
+  cursor: default;
+  transition: all .3s;
+  position: relative; overflow: hidden;
+}
+.game-card::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--g), var(--c));
+  opacity: 0;
+  transition: opacity .3s;
+}
+.game-card:hover {
+  border-color: rgba(0,255,136,0.25);
+  color: var(--g);
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 12px 40px rgba(0,255,136,0.1);
+}
+.game-card:hover::after { opacity: 1; }
+.game-card i {
+  font-size: 2rem;
+  color: var(--c);
+  text-shadow: var(--glow-c);
+  transition: color .3s, text-shadow .3s;
+}
+.game-card:hover i {
+  color: var(--g);
+  text-shadow: var(--glow-g);
+}
+
+/* ── PARTICLES / GRID LINES bg canvas 3D ── */
+/* handled by JS THREE-style canvas */
+
+/* ── MOBILE ─────────────────────────────── */
+@media (max-width: 768px) {
+  nav { padding: 0 1rem; }
+  .nav-links {
+    position: fixed;
+    top: 60px; right: -100%;
+    flex-direction: column;
+    background: rgba(3,3,8,0.97);
+    width: 70%; height: 100vh;
+    padding: 2.5rem 2rem;
+    gap: 2rem;
+    border-left: 1px solid rgba(0,255,136,0.15);
+    backdrop-filter: blur(20px);
+    transition: right .3s ease;
+    z-index: 199;
+  }
+  .nav-links.open { right: 0; }
+  .hamburger { display: flex; }
+  section { padding: 5rem 1.2rem 3rem; }
+  .hero-name { font-size: clamp(4rem, 20vw, 7rem); }
+  .ach-grid { grid-template-columns: 1fr; }
+  .code-grid { grid-template-columns: 1fr 1fr; }
+  .connect-grid { grid-template-columns: 1fr 1fr; }
+  .game-card { width: 100px; padding: 1.2rem 0.8rem; }
+  .avatar-wrap { width: 160px; height: 160px; }
+  .profile-pic { width: 160px; height: 160px; }
+}
+@media (max-width: 420px) {
+  .code-grid    { grid-template-columns: 1fr; }
+  .connect-grid { grid-template-columns: 1fr; }
+}
+
+/* ── REVEAL ANIMATIONS ──────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
 </head>
 <body>
-  <canvas id="matrixCanvas"></canvas>
 
-  <nav class="navbar">
-    <div class="nav-logo">
-      ~/Fool <span class="espada-tag">Espada</span>
+<canvas id="bg-canvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">~/Fool <span>ESPADA</span></div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#achievements">achievements</a></li>
+    <li><a href="#codes">codes</a></li>
+    <li><a href="#connect">connect</a></li>
+    <li><a href="#games">games</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="home">
+  <div class="avatar-wrap">
+    <div class="ring-3d"></div>
+    <div class="ring-3d-2"></div>
+    <img src="profile.jpg" alt="Fool" class="profile-pic"
+         onerror="this.src='https://via.placeholder.com/200?text=F';this.onerror=null;"/>
+  </div>
+  <h1 class="hero-name" data-text="Fool">Fool</h1>
+  <div class="hero-tag">ESPADA &nbsp;/&nbsp; CODM &nbsp;/&nbsp; PRO</div>
+  <div class="hero-motto"><span id="typing"></span><span class="cursor">|</span></div>
+  <div class="scroll-hint">
+    <span>scroll</span>
+    <i class="fa fa-angle-down"></i>
+  </div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements">
+  <h2 class="sec-head" data-n="01">ACHIEVEMENTS</h2>
+  <div class="t-card reveal">
+    <div class="t-card-bar">
+      <div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div>
+      <span class="t-card-title">fool@espada ~ achievements.log</span>
     </div>
-    <ul class="nav-links" id="navLinks">
-      <li><a href="#achievements">achievements</a></li>
-      <li><a href="#codes">codes</a></li>
-      <li><a href="#connect">connect</a></li>
-      <li><a href="#games">games</a></li>
-    </ul>
-    <div class="hamburger" id="hamburger">
-      <span></span><span></span><span></span>
-    </div>
-  </nav>
+    <div class="t-card-body">
+      <div class="ach-main-title">CODM Career</div>
 
-  <!-- Hero -->
-  <section id="home" class="section home-section">
-    <img
-      src="profile.jpg"
-      alt="Fool"
-      class="profile-pic"
-      onerror="this.src='https://via.placeholder.com/200x200.png?text=Fool'; this.onerror=null;"
-    />
-    <h1 class="glitch">Fool</h1>
-    <div class="motto-desktop" id="mottoDesktop">
-      <span id="typingMotto"></span><span class="cursor">|</span>
-    </div>
-    <div class="motto-mobile" id="mottoMobile">
-      <span id="fadingMotto">Win in silence, let results speak.</span>
-    </div>
-  </section>
-
-  <!-- Achievements -->
-  <section id="achievements" class="section">
-    <div class="terminal-box">
-      <div class="terminal-output">
-        <div class="main-title">Achievements Codm</div>
-
-        <div class="cat-label">UID</div>
-        <p>6838532770206056449</p>
-        <p>6751632828758228993</p>
-
-        <div class="cat-label">Majors</div>
-        <p>- Gladiators top 8</p>
-        <p>- CMO Battleground S1 Champion</p>
-        <p>- Garena Masters 11 Top 8</p>
-
-        <div class="cat-label">Champion</div>
-        <p>- Wooze Elite inter scrim 5v5</p>
-        <p>- sidra x re x soriux x nan 5v5</p>
-        <p>- elle's szn 1 5v5</p>
-        <p>- kize x miz 5v5 tourna s1</p>
-        <p>- Kizy tourna 5v5 aims 5v5 tournament hairi x akuma's 5v5: s2</p>
-        <p>- AVR Esports bfmt</p>
-        <p>- SIDRA Esports 1v1 sr</p>
-        <p>- ziel 1v1 open div sg</p>
-        <p>- AVR Esports 1v1 sg</p>
-        <p>- 2v2 Soriux x sidra</p>
-        <p>- SVT 1v1 Tournament smg</p>
-        <p>- SVT 1v1 Tournament sr</p>
-        <p>- Aims 5v5 tourna</p>
-        <p>- Kizy 5v5 tourna</p>
-        <p>- Xerina x samii 5v5 s1</p>
-        <p>- Cozi x Mika 5v5 s1</p>
-        <p>- savage²¹ 5v5 bfmt</p>
-        <p>- T5 5v5 bfmt</p>
-        <p>- kouvx tournament 5v5</p>
-
-        <div class="cat-label">First Place</div>
-        <p>- maddy x neko 5v5</p>
-        <p>- navi's 5v5 s2</p>
-        <p>- cozi 5v5 s2</p>
-        <p>- elle x mika 5v5</p>
-        <p>- navis 5V5</p>
-        <p>- maddy X neko 5v5</p>
-        <p>- elle X mikko 5v5</p>
-        <p>- joji's tourna 5v5</p>
-        <p>- SIDRA Esports 1v1 smg</p>
-        <p>- wagas x sinag 1v1 sr</p>
-        <p>- ziel 1v1 open div sr</p>
-        <p>- cozi 5v5 tourna s3</p>
-        <p>- xerina x soju 5v5 s1</p>
-        <p>- belle's and velox 5v5 s1</p>
-        <p>- cozi x mika 5v5 s1</p>
-
-        <div class="cat-label">Second Place</div>
-        <p>- Wagas x sinag 1v1 sg</p>
-        <p>- hera's szn 1</p>
-
-        <div class="cat-label">Third Place</div>
-        <p>- hera s1 5v5</p>
-        <p>- ziel x gela 5v5 s1</p>
+      <div class="uid-row">
+        <div class="uid-chip">UID: 6838532770206056449</div>
+        <div class="uid-chip">UID: 6751632828758228993</div>
       </div>
-    </div>
-  </section>
 
-  <!-- Codes (with heading) -->
-  <section id="codes" class="section">
-    <h2 class="section-title">> codes</h2>
-    <div class="terminal-box">
-      <div class="terminal-output">
-        <div class="cat-label">
-          <i class="fab fa-python python-logo"></i> Codes
+      <div class="ach-grid">
+        <!-- col 1 -->
+        <div class="ach-col">
+          <div class="ach-label red">MAJORS</div>
+          <div class="ach-item">Gladiators — Top 8</div>
+          <div class="ach-item">CMO Battleground S1 Champion</div>
+          <div class="ach-item">Garena Masters 11 — Top 8</div>
+
+          <div class="ach-label" style="margin-top:1.5rem;">SECOND PLACE</div>
+          <div class="ach-item">Wagas x Sinag 1v1 sg</div>
+          <div class="ach-item">Hera's Szn 1</div>
+
+          <div class="ach-label bronze" style="margin-top:1.5rem;">THIRD PLACE</div>
+          <div class="ach-item">Hera S1 5v5</div>
+          <div class="ach-item">Ziel x Gela 5v5 S1</div>
         </div>
-        <p>- 100% Humanizer</p>
-        <p>- Ai tool</p>
-        <p>- SMS Bomb</p>
-        <p>- Autochat (Desktop)</p>
-        <p>- Auto Nickname (spam)</p>
+
+        <!-- col 2 -->
+        <div class="ach-col">
+          <div class="ach-label gold">CHAMPION</div>
+          <div class="ach-item">Wooze Elite Inter Scrim 5v5</div>
+          <div class="ach-item">Sidra x Re x Soriux x Nan 5v5</div>
+          <div class="ach-item">Elle's Szn 1 5v5</div>
+          <div class="ach-item">Kize x Miz 5v5 Tourna S1</div>
+          <div class="ach-item">Kizy Tourna / Aims 5v5 / Hairi x Akuma S2</div>
+          <div class="ach-item">AVR Esports BFMT</div>
+          <div class="ach-item">SIDRA Esports 1v1 SR</div>
+          <div class="ach-item">Ziel 1v1 Open Div SG</div>
+          <div class="ach-item">AVR Esports 1v1 SG</div>
+          <div class="ach-item">2v2 Soriux x Sidra</div>
+          <div class="ach-item">SVT 1v1 Tourna SMG &amp; SR</div>
+          <div class="ach-item">Aims 5v5 / Kizy 5v5</div>
+          <div class="ach-item">Xerina x Samii 5v5 S1</div>
+          <div class="ach-item">Cozi x Mika 5v5 S1</div>
+          <div class="ach-item">Savage²¹ 5v5 BFMT</div>
+          <div class="ach-item">T5 5v5 BFMT / Kouvx 5v5</div>
+        </div>
+
+        <!-- col 3 -->
+        <div class="ach-col">
+          <div class="ach-label silver">FIRST PLACE</div>
+          <div class="ach-item">Maddy x Neko 5v5 (×2)</div>
+          <div class="ach-item">Navi's 5v5 S2 &amp; Open</div>
+          <div class="ach-item">Cozi 5v5 S2 &amp; S3</div>
+          <div class="ach-item">Elle x Mika 5v5</div>
+          <div class="ach-item">Elle x Mikko 5v5</div>
+          <div class="ach-item">Joji's Tourna 5v5</div>
+          <div class="ach-item">SIDRA Esports 1v1 SMG</div>
+          <div class="ach-item">Wagas x Sinag 1v1 SR</div>
+          <div class="ach-item">Ziel 1v1 Open Div SR</div>
+          <div class="ach-item">Xerina x Soju 5v5 S1</div>
+          <div class="ach-item">Belle's &amp; Velox 5v5 S1</div>
+          <div class="ach-item">Cozi x Mika 5v5 S1</div>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Connect -->
-  <section id="connect" class="section">
-    <h2 class="section-title">> connect</h2>
-    <div class="terminal-box connect-box">
-      <p class="terminal-output" style="text-align: center;">
-        <i class="fab fa-discord"></i> DC: <span class="highlight">youngfool</span>
-      </p>
-      <p class="terminal-output" style="text-align: center; margin-top:0.6rem;">
-        <i class="fab fa-instagram"></i> IG: <span class="highlight">jhonchalant</span>
-      </p>
-      <p class="terminal-output" style="text-align: center; margin-top:0.6rem;">
-        <i class="fab fa-tiktok"></i> TikTok: <span class="highlight">fool1once</span>
-      </p>
-      <p class="terminal-output" style="text-align: center; margin-top:0.6rem;">
-        <i class="fas fa-cube"></i> Roblox: <span class="highlight">FooIxl</span>
-      </p>
-      <p class="terminal-output" style="text-align: center; margin-top:0.6rem;">
-        <i class="fab fa-facebook"></i> FB: <span class="highlight">Oisin Jhon</span>
-      </p>
-      <p class="terminal-output" style="text-align: center; margin-top:1.2rem;">
-        <a href="https://discord.gg/XWnwhCrch" target="_blank" class="btn small">
-          <i class="fab fa-discord"></i> Join Server
+<!-- CODES -->
+<section id="codes">
+  <h2 class="sec-head" data-n="02">CODES</h2>
+  <div class="t-card reveal">
+    <div class="t-card-bar">
+      <div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div>
+      <span class="t-card-title">fool@espada ~ ls -la ./projects</span>
+    </div>
+    <div class="t-card-body">
+      <div class="code-grid">
+        <div class="code-item">
+          <i class="fab fa-python code-icon"></i>
+          <div>
+            <div style="color:var(--g);font-size:0.78rem;letter-spacing:1px;margin-bottom:2px;">Humanizer</div>
+            <div style="font-size:0.72rem;opacity:0.5;">100% bypass rate</div>
+          </div>
+        </div>
+        <div class="code-item">
+          <i class="fas fa-robot code-icon"></i>
+          <div>
+            <div style="color:var(--g);font-size:0.78rem;letter-spacing:1px;margin-bottom:2px;">AI Tool</div>
+            <div style="font-size:0.72rem;opacity:0.5;">custom utility</div>
+          </div>
+        </div>
+        <div class="code-item">
+          <i class="fas fa-bomb code-icon"></i>
+          <div>
+            <div style="color:var(--g);font-size:0.78rem;letter-spacing:1px;margin-bottom:2px;">SMS Bomb</div>
+            <div style="font-size:0.72rem;opacity:0.5;">blast utility</div>
+          </div>
+        </div>
+        <div class="code-item">
+          <i class="fas fa-desktop code-icon"></i>
+          <div>
+            <div style="color:var(--g);font-size:0.78rem;letter-spacing:1px;margin-bottom:2px;">Autochat</div>
+            <div style="font-size:0.72rem;opacity:0.5;">desktop automation</div>
+          </div>
+        </div>
+        <div class="code-item">
+          <i class="fas fa-at code-icon"></i>
+          <div>
+            <div style="color:var(--g);font-size:0.78rem;letter-spacing:1px;margin-bottom:2px;">Nickname Spam</div>
+            <div style="font-size:0.72rem;opacity:0.5;">auto nickname loop</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONNECT -->
+<section id="connect">
+  <h2 class="sec-head" data-n="03">CONNECT</h2>
+  <div class="t-card reveal">
+    <div class="t-card-bar">
+      <div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div>
+      <span class="t-card-title">fool@espada ~ whoami</span>
+    </div>
+    <div class="t-card-body">
+      <div class="connect-grid">
+        <div class="connect-item ci-discord">
+          <i class="fab fa-discord"></i>
+          <div><span class="ci-label">DISCORD</span><span class="ci-val">youngfool</span></div>
+        </div>
+        <div class="connect-item ci-ig">
+          <i class="fab fa-instagram"></i>
+          <div><span class="ci-label">INSTAGRAM</span><span class="ci-val">jhonchalant</span></div>
+        </div>
+        <div class="connect-item ci-tt">
+          <i class="fab fa-tiktok"></i>
+          <div><span class="ci-label">TIKTOK</span><span class="ci-val">fool1once</span></div>
+        </div>
+        <div class="connect-item ci-rb">
+          <i class="fas fa-cube"></i>
+          <div><span class="ci-label">ROBLOX</span><span class="ci-val">FooIxl</span></div>
+        </div>
+        <div class="connect-item ci-fb">
+          <i class="fab fa-facebook"></i>
+          <div><span class="ci-label">FACEBOOK</span><span class="ci-val">Oisin Jhon</span></div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:1.5rem;">
+        <a href="https://discord.gg/XWnwhCrch" target="_blank" class="btn-server">
+          <i class="fab fa-discord"></i> JOIN SERVER
         </a>
-      </p>
-    </div>
-  </section>
-
-  <!-- Games (bottom) -->
-  <section id="games" class="section">
-    <h2 class="section-title">> games</h2>
-    <div class="games-grid">
-      <div class="game-item">
-        <i class="fas fa-mobile-screen-button"></i>
-        <span>COD Mobile</span>
-      </div>
-      <div class="game-item">
-        <i class="fas fa-gamepad"></i>
-        <span>ML</span>
-      </div>
-      <div class="game-item">
-        <i class="fas fa-cube"></i>
-        <span>Roblox</span>
-      </div>
-      <div class="game-item">
-        <i class="fab fa-steam"></i>
-        <span>Steam</span>
-      </div>
-      <div class="game-item">
-        <i class="fas fa-crosshairs"></i>
-        <span>Valorant</span>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <script src="script.js"></script>
+<!-- GAMES -->
+<section id="games">
+  <h2 class="sec-head" data-n="04">GAMES</h2>
+  <div class="games-row reveal">
+    <div class="game-card">
+      <i class="fas fa-mobile-screen-button"></i>
+      <span>COD Mobile</span>
+    </div>
+    <div class="game-card">
+      <i class="fas fa-gamepad"></i>
+      <span>ML</span>
+    </div>
+    <div class="game-card">
+      <i class="fas fa-cube"></i>
+      <span>Roblox</span>
+    </div>
+    <div class="game-card">
+      <i class="fab fa-steam"></i>
+      <span>Steam</span>
+    </div>
+    <div class="game-card">
+      <i class="fas fa-crosshairs"></i>
+      <span>Valorant</span>
+    </div>
+  </div>
+</section>
+
+<script>
+/* ============================================================
+   3D PARTICLE / GRID BACKGROUND
+   ============================================================ */
+(function() {
+  const canvas = document.getElementById('bg-canvas');
+  const ctx    = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', () => { resize(); initParticles(); initRain(); });
+
+  /* ---- matrix rain ---- */
+  const CHARS = 'アイウエオカキクケコサシスセソABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%';
+  const FONT  = 14;
+  let drops   = [];
+
+  function initRain() {
+    const cols = Math.ceil(canvas.width / FONT);
+    drops = Array.from({length: cols}, () => -Math.random() * 40);
+  }
+  initRain();
+
+  /* ---- particles ---- */
+  const PARTICLE_COUNT = 80;
+  let particles = [];
+
+  function initParticles() {
+    particles = Array.from({length: PARTICLE_COUNT}, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.5 + 0.3,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      alpha: Math.random() * 0.5 + 0.1,
+    }));
+  }
+  initParticles();
+
+  /* ---- mouse parallax ---- */
+  let mx = canvas.width  / 2;
+  let my = canvas.height / 2;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+  /* ---- hex grid overlay ---- */
+  function drawHexGrid(t) {
+    const size   = 40;
+    const w      = size * 2;
+    const h      = Math.sqrt(3) * size;
+    const cols2  = Math.ceil(canvas.width  / w)  + 2;
+    const rows2  = Math.ceil(canvas.height / h)  + 2;
+    const pulse  = 0.04 + 0.02 * Math.sin(t * 0.0008);
+
+    ctx.strokeStyle = `rgba(0,255,136,${pulse})`;
+    ctx.lineWidth   = 0.5;
+
+    for (let r = -1; r < rows2; r++) {
+      for (let c = -1; c < cols2; c++) {
+        const ox   = (r % 2 === 0) ? 0 : w * 0.5;
+        const cx2  = c * w + ox + (mx - canvas.width  / 2) * 0.015;
+        const cy2  = r * h       + (my - canvas.height / 2) * 0.015;
+        hexPath(ctx, cx2, cy2, size - 2);
+        ctx.stroke();
+      }
+    }
+  }
+
+  function hexPath(ctx, x, y, s) {
+    ctx.beginPath();
+    for (let i = 0; i < 6; i++) {
+      const a  = (Math.PI / 180) * (60 * i - 30);
+      const px = x + s * Math.cos(a);
+      const py = y + s * Math.sin(a);
+      i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+  }
+
+  /* ---- draw loop ---- */
+  let t = 0;
+  function draw() {
+    t++;
+    /* clear */
+    ctx.fillStyle = 'rgba(3,3,8,0.18)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    /* hex grid */
+    drawHexGrid(t);
+
+    /* particles + connections */
+    particles.forEach(p => {
+      p.x += p.vx + (mx - canvas.width  / 2) * 0.00015;
+      p.y += p.vy + (my - canvas.height / 2) * 0.00015;
+      if (p.x < 0) p.x = canvas.width;
+      if (p.x > canvas.width)  p.x = 0;
+      if (p.y < 0) p.y = canvas.height;
+      if (p.y > canvas.height) p.y = 0;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(0,229,255,${p.alpha})`;
+      ctx.fill();
+    });
+
+    /* connections */
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx   = particles[i].x - particles[j].x;
+        const dy   = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 120) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(0,229,255,${0.12 * (1 - dist/120)})`;
+          ctx.lineWidth   = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+
+    /* matrix rain */
+    ctx.fillStyle = 'rgba(0,255,136,0.55)';
+    ctx.font      = `${FONT}px monospace`;
+    drops.forEach((y, i) => {
+      if (y > 0) {
+        const ch = CHARS[Math.floor(Math.random() * CHARS.length)];
+        ctx.fillText(ch, i * FONT, y * FONT);
+      }
+      if (y * FONT > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      else drops[i] += 0.5;
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ============================================================
+   TYPING ANIMATION
+   ============================================================ */
+(function() {
+  const el   = document.getElementById('typing');
+  const list = [
+    'Win in silence, let results speak.',
+    'Aim to be the top.',
+    'Stay untouchable.',
+    'Outwork everyone.',
+    'Be the standard, not the competition.',
+    'Leave no room for doubt.',
+    'Become impossible to replace.',
+    'Dominate with discipline.'
+  ];
+  let pi = 0, ci = 0, del = false, speed = 100;
+
+  function tick() {
+    const cur = list[pi];
+    if (del) {
+      el.textContent = cur.substring(0, --ci);
+      speed = 30;
+    } else {
+      el.textContent = cur.substring(0, ++ci);
+      speed = 100;
+    }
+    if (!del && ci === cur.length) { speed = 2200; del = true; }
+    else if (del && ci === 0)      { del = false; pi = (pi+1) % list.length; speed = 500; }
+    setTimeout(tick, speed);
+  }
+  setTimeout(tick, 900);
+})();
+
+/* ============================================================
+   HAMBURGER
+   ============================================================ */
+(function() {
+  const btn   = document.getElementById('hamburger');
+  const links = document.getElementById('navLinks');
+  btn.addEventListener('click', () => links.classList.toggle('open'));
+  links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => links.classList.remove('open')));
+  document.addEventListener('click', e => {
+    if (!btn.contains(e.target) && !links.contains(e.target)) links.classList.remove('open');
+  });
+})();
+
+/* ============================================================
+   REVEAL ON SCROLL
+   ============================================================ */
+(function() {
+  const items = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  items.forEach(i => io.observe(i));
+})();
+</script>
 </body>
 </html>
