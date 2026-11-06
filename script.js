@@ -1,10 +1,10 @@
 (() => {
   const D = window.PORTFOLIO;
+  if (!D) { console.error('data.js did not load. Make sure data.js is in the same folder as index.html.'); return; }
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  document.documentElement.classList.remove('no-js');
   $('#yr').textContent = new Date().getFullYear();
 
   /* ---------- render content from data.js ---------- */
@@ -75,6 +75,7 @@
     }
   }), { rootMargin: '-25% 0px -25% 0px' });
   slides.forEach(s => io.observe(s));
+  document.documentElement.classList.remove('no-js'); // only hide-then-reveal once everything above worked
 
   const burger = $('#burger'), menu = $('#menu');
   const setMenu = o => { burger.setAttribute('aria-expanded', o); menu.classList.toggle('open', o); };
