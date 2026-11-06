@@ -1,3 +1,53 @@
+/* Built-in fallback content (used only if data.js is not found). */
+/* Edit this file to update the site. No build step needed. */
+window.PORTFOLIO = window.PORTFOLIO || {
+  uids: ["6838532770206056449", "6751632828758228993"],
+
+  socials: [
+    { k: "tt", name: "TikTok", icon: "fab fa-tiktok", handle: "fool1once", url: "https://www.tiktok.com/@fool1once?_r=1&_t=ZS-9B6CuabyM7w", c: "#69c9d0" },
+    { k: "fb", name: "Facebook", icon: "fab fa-facebook", handle: "Jhon F. Zenin", url: "https://www.facebook.com/share/19vGAKCmXk/", c: "#1877f2" },
+    { k: "ig", name: "Instagram", icon: "fab fa-instagram", handle: "jhonchalant", url: "https://www.instagram.com/jhonchalant?xtok=ZXM3MHg5MDBzbWsz", c: "#e1306c" },
+    { k: "dc", name: "Discord", icon: "fab fa-discord", handle: "youngfool", url: "https://discord.com/invite/rKvgk97K8Y", c: "#5865f2", copy: true },
+    { k: "rb", name: "Roblox", icon: "fas fa-cube", handle: "FooIxl", url: "https://www.roblox.com/users/2918118693/profile", c: "#ff3e3e" }
+  ],
+
+  tiers: [
+    { k: "majors", label: "Majors", cls: "red", items: ["Gladiators: Top 8", "CMO Battleground S1 Champion", "Garena Masters 11: Top 8"] },
+    { k: "champion", label: "Champion", cls: "gold", items: [
+      "Wooze Elite Inter Scrim 5v5", "Sidra x Re x Soriux x Nan 5v5", "Elle's Szn 1 5v5", "Kize x Miz 5v5 Tourna S1",
+      "Kizy Tourna / Aims 5v5 / Hairi x Akuma S2", "AVR Esports BFMT", "SIDRA Esports 1v1 SR", "Ziel 1v1 Open Div SG",
+      "AVR Esports 1v1 SG", "2v2 Soriux x Sidra", "SVT 1v1 Tourna SMG & SR", "Aims 5v5 / Kizy 5v5",
+      "Xerina x Samii 5v5 S1", "Cozi x Mika 5v5 S1", "Savage²¹ 5v5 BFMT", "T5 5v5 BFMT / Kouvx 5v5"] },
+    { k: "first", label: "First place", cls: "silver", items: [
+      "Maddy x Neko 5v5 (×2)", "Navi's 5v5 S2 & Open", "Cozi 5v5 S2 & S3", "Elle x Mika 5v5", "Elle x Mikko 5v5",
+      "Joji's Tourna 5v5", "SIDRA Esports 1v1 SMG", "Wagas x Sinag 1v1 SR", "Ziel 1v1 Open Div SR",
+      "Xerina x Soju 5v5 S1", "Belle's & Velox 5v5 S1", "Cozi x Mika 5v5 S1"] },
+    { k: "second", label: "Second place", cls: "silver", items: ["Wagas x Sinag 1v1 SG", "Hera's Szn 1"] },
+    { k: "third", label: "Third place", cls: "bronze", items: ["Hera S1 5v5", "Ziel x Gela 5v5 S1"] }
+  ],
+
+  projects: [
+    { icon: "fab fa-python", name: "Humanizer", tag: "Python · Text", desc: "Rewrites AI-generated text so it reads like natural human writing." },
+    { icon: "fas fa-robot", name: "AI Tool", tag: "Custom utility", desc: "A custom AI-powered utility with workflows built from scratch." },
+    { icon: "fas fa-message", name: "SMS Dispatch", tag: "Messaging utility", desc: "Automated bulk messaging dispatch for your own numbers and opted-in lists." },
+    { icon: "fas fa-desktop", name: "Autochat", tag: "Desktop automation", desc: "Desktop tool that runs repeated chat flows automatically." },
+    { icon: "fas fa-at", name: "Nickname Loop", tag: "Auto loop", desc: "Cycles through nicknames in a continuous loop with no input." }
+  ],
+
+  games: [
+    { icon: "fas fa-mobile-screen-button", name: "COD Mobile" },
+    { icon: "fas fa-gamepad", name: "ML" },
+    { icon: "fas fa-cube", name: "Roblox" },
+    { icon: "fab fa-steam", name: "Steam" },
+    { icon: "fas fa-crosshairs", name: "Valorant" }
+  ],
+
+  motto: [
+    "Win in silence, let results speak.", "Aim to be the top.", "Stay untouchable.", "Outwork everyone.",
+    "Be the standard, not the competition.", "Leave no room for doubt.", "Dominate with discipline."
+  ]
+};
+
 (() => {
   const D = window.PORTFOLIO;
   if (!D) { console.error('data.js did not load. Make sure data.js is in the same folder as index.html.'); return; }
