@@ -29,9 +29,12 @@ window.PORTFOLIO = window.PORTFOLIO || {
   projects: [
     { icon: "fab fa-python", name: "Humanizer", tag: "Python · Text", desc: "Rewrites AI-generated text so it reads like natural human writing." },
     { icon: "fas fa-robot", name: "AI Tool", tag: "Custom utility", desc: "A custom AI-powered utility with workflows built from scratch." },
-    { icon: "fas fa-message", name: "SMS Dispatch", tag: "Messaging utility", desc: "Automated bulk messaging dispatch for your own numbers and opted-in lists." },
-    { icon: "fas fa-desktop", name: "Autochat", tag: "Desktop automation", desc: "Desktop tool that runs repeated chat flows automatically." },
-    { icon: "fas fa-at", name: "Nickname Loop", tag: "Auto loop", desc: "Cycles through nicknames in a continuous loop with no input." }
+    { icon: "fas fa-phone-volume", name: "SMS + Call", tag: "Messaging utility", desc: "Automated SMS and call dispatch utility." },
+    { icon: "fas fa-desktop", name: "Auto Chat", tag: "Desktop automation", desc: "Desktop tool that runs repeated chat flows automatically." },
+    { icon: "fas fa-at", name: "Nickname Loop", tag: "Auto loop", desc: "Cycles through nicknames in a continuous loop with no input." },
+    { icon: "fas fa-network-wired", name: "IP Grabber", tag: "Network utility", desc: "Network utility for looking up IP details." },
+    { icon: "fas fa-unlock-keyhole", name: "Jailbreaks", tag: "AI research", desc: "Prompt experiments on how AI models handle edge cases." },
+    { icon: "fas fa-link", name: "Hooker", tag: "Utility", desc: "Hook-based automation utility project." }
   ],
 
   games: [
@@ -202,28 +205,44 @@ window.PORTFOLIO = window.PORTFOLIO || {
   const slot = () => { const root = new THREE.Group(), inner = new THREE.Group(); root.add(inner); anchor.add(root); return { root, inner }; };
   const slots = [slot(), slot(), slot(), slot(), slot()];
 
-  /* 0 · hand + orbit rings */
+  /* 0 · holographic chrome hand */
   const hand = slots[0].inner;
-  part(new THREE.BoxGeometry(1.3, 1.4, .45), hand);
-  part(new THREE.CylinderGeometry(.42, .5, .8, 8), hand, [0, -1.05, 0]);
+  const hm = new THREE.MeshStandardMaterial({ color: 0x0a1512, metalness: .92, roughness: .18, emissive: 0x00552f, emissiveIntensity: .85 });
+  const shellM = new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: .13, side: THREE.BackSide, blending: THREE.AdditiveBlending, depthWrite: false });
+  const hpart = (geo, parent, pos) => {
+    const o = new THREE.Mesh(geo, hm), sh = new THREE.Mesh(geo, shellM); sh.scale.setScalar(1.15);
+    o.add(sh); o.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), edge));
+    if (pos) o.position.set(...pos); parent.add(o); return o;
+  };
+  const palm = hpart(new THREE.SphereGeometry(1, 18, 12), hand); palm.scale.set(.76, .8, .3);
+  hpart(new THREE.CylinderGeometry(.4, .5, .9, 12), hand, [0, -1.1, 0]);
+  [-.8, -1.4].forEach(y => { const b = new THREE.Mesh(new THREE.TorusGeometry(.46, .03, 8, 32), solid(0x00e5ff, .9)); b.rotation.x = Math.PI / 2; b.position.y = y; hand.add(b); });
+  const core = new THREE.Mesh(new THREE.CircleGeometry(.26, 6), solid(0x00ff88, .95)); core.position.z = .31; hand.add(core);
+  const coreRing = new THREE.Mesh(new THREE.TorusGeometry(.4, .02, 6, 6), solid(0x00e5ff, .9)); coreRing.position.z = .31; hand.add(coreRing);
   const makeFinger = (x, y, segs, rad) => {
     const base = new THREE.Group(); base.position.set(x, y, 0); hand.add(base);
-    const joints = []; let parent = base;
+    const joints = []; let parent = base, tip;
     segs.forEach((L, i) => {
       const j = new THREE.Group(); if (i) j.position.y = segs[i - 1]; parent.add(j);
-      const r = rad * (1 - i * .09);
-      part(new THREE.CylinderGeometry(r, r * 1.05, L, 8), j, [0, L / 2, 0]);
-      part(new THREE.SphereGeometry(r * 1.1, 10, 8), j);
+      const r = rad * (1 - i * .12);
+      hpart(new THREE.CylinderGeometry(r * .88, r, L, 10), j, [0, L / 2, 0]);
+      hpart(new THREE.SphereGeometry(r * 1.12, 12, 10), j);
+      if (i === segs.length - 1) { tip = new THREE.Mesh(new THREE.SphereGeometry(r * .8, 10, 8), solid(0x00e5ff, 1)); tip.position.y = L; j.add(tip); }
       joints.push(j); parent = j;
     });
-    return { base, joints };
+    return { base, joints, tip };
   };
-  const thumb = makeFinger(-.72, -.3, [.5, .42], .12);
-  const fingers = [[-.48, 1.1], [-.16, 1.12], [.16, 1.05], [.48, .85]].map(([x, s]) => makeFinger(x, .7, [.46 * s, .34 * s, .28 * s], .105));
+  const thumb = makeFinger(-.72, -.3, [.5, .42], .125);
+  const fingers = [[-.48, 1.1], [-.16, 1.18], [.16, 1.1], [.48, .88]].map(([x, s]) => makeFinger(x, .62, [.46 * s, .34 * s, .28 * s], .108));
   const bend = [1.35, 1.5, 1.2];
   const ring = (r, c, tilt) => { const m = new THREE.Mesh(new THREE.TorusGeometry(r, .012, 8, 96), solid(c, .7)); m.rotation.x = tilt; slots[0].root.add(m); return m; };
   const rA = ring(2.4, 0x00ff88, 1.25), rB = ring(3, 0x00e5ff, .45);
-  const POSES = [[0, 0, 0, 0, 0], [.9, 0, 1, 1, 1], [1, 1, 1, 1, 1], [1, 0, 1, 1, 0], [0, 1, 1, 1, 1]];
+  /* fingertip light trails (world space) */
+  const TL = 14, tips = [thumb.tip, ...fingers.map(f => f.tip)], tv = new THREE.Vector3();
+  const tpos = new Float32Array(tips.length * TL * 3), tg = new THREE.BufferGeometry(); tg.setAttribute('position', new THREE.BufferAttribute(tpos, 3));
+  const trail = new THREE.Points(tg, new THREE.PointsMaterial({ color: 0x00e5ff, size: .07, transparent: true, opacity: .85, blending: THREE.AdditiveBlending, depthWrite: false }));
+  trail.frustumCulled = false; scene.add(trail);
+  const POSES = [[0, 0, 0, 0, 0], [.9, 0, 1, 1, 1], [1, 1, 1, 1, 1], [1, 0, 1, 1, 0], [0, 1, 1, 1, 1], [1, 0, 0, 1, 1]];
   let curl = [0, 0, 0, 0, 0];
 
   /* 1 · trophy */
@@ -322,13 +341,22 @@ window.PORTFOLIO = window.PORTFOLIO || {
       s.root.rotation.x = -.12 + my * .25 + (reduce ? 0 : d * .6);
     });
 
-    /* hand cycles through poses */
-    const tp = POSES[idle ? Math.floor(t / 2.2) % POSES.length : 0], kc = 1 - Math.exp(-dt * 5);
+    /* hand: poses (open, point, fist, rock, thumbs-up, peace) then a finger wave */
+    const pi = idle ? Math.floor(t / 2.4) % (POSES.length + 1) : 0;
+    const tp = pi === POSES.length ? [0, 1, 2, 3, 4].map(n => n ? .45 + .45 * Math.sin(t * 6 - n * .9) : 0) : POSES[pi], kc = 1 - Math.exp(-dt * 5);
     curl = curl.map((v, n) => lerp(v, tp[n], kc));
     thumb.base.rotation.z = .95 - .85 * curl[0];
     thumb.joints.forEach((j, n) => { j.rotation.x = curl[0] * (n ? 1.2 : .8); });
     fingers.forEach((f, n) => f.joints.forEach((j, m) => { j.rotation.x = Math.max(0, curl[n + 1] + Math.sin(t * 2 + n) * .05 * idle) * bend[m]; }));
-    hand.position.y = Math.sin(t * .9) * .1 * idle;
+    hand.position.y = Math.sin(t * .9) * .1 * idle; hand.rotation.z = Math.sin(t * .7) * .1 * idle;
+    core.scale.setScalar(1 + .18 * Math.sin(t * 4) * idle); coreRing.rotation.z += di * 1.6;
+    trail.visible = slots[0].root.visible;
+    if (trail.visible) tips.forEach((tp2, n) => {
+      const o = n * TL * 3;
+      tpos.copyWithin(o + 3, o, o + (TL - 1) * 3);
+      tp2.getWorldPosition(tv); tpos[o] = tv.x; tpos[o + 1] = tv.y; tpos[o + 2] = tv.z;
+    });
+    tg.attributes.position.needsUpdate = true;
     rA.rotation.z += di * .6; rB.rotation.z -= di * .4;
 
     /* trophy */
