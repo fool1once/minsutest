@@ -165,3 +165,32 @@ h2{font:900 clamp(2.2rem,5vw,4rem)/1 var(--head);letter-spacing:.06em;text-trans
   .name::before,.name::after,.hint,.caret{animation:none}
   .pc-i{transition-duration:.01ms}
 }
+
+/* ticker */
+.ticker{position:absolute;left:0;right:0;bottom:72px;overflow:hidden;white-space:nowrap;font:.7rem var(--mono);letter-spacing:.25em;text-transform:uppercase;color:var(--mute);border-block:1px solid var(--line);padding:.7rem 0;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.ticker div{display:inline-flex;gap:2.4rem;padding-right:2.4rem;animation:mq 50s linear infinite;will-change:transform}
+.ticker b{color:var(--g);font-weight:400}
+@keyframes mq{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.ticker div{animation:none}}
+
+/* mobile: object up top, calm content below */
+@media (max-width:860px){
+  #stage{opacity:1}
+  .slide{padding:40svh var(--pad) 56px;align-items:flex-start}
+  #home{padding-top:42svh;padding-bottom:64px}
+  .name{font-size:clamp(4rem,22vw,6rem);margin-bottom:1rem}
+  .lead{font-size:1.05rem;margin-bottom:1rem}
+  .motto{margin-bottom:1.2rem}
+  .socials,.hint,.uids,.ticker{display:none}
+  h2{margin-bottom:1rem}
+  .stats{grid-template-columns:repeat(3,1fr);gap:.5rem}
+  .stat{padding:.7rem}.stat b{font-size:1.4rem}
+  .tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:calc(var(--pad) * -1);padding-inline:var(--pad)}
+  .tab{flex:none}
+  .ach{grid-template-columns:1fr;max-height:46svh;padding:.6rem 1rem}
+  .grid{grid-template-columns:1fr 1fr;gap:.8rem}
+  .pc{height:150px}.pc small{display:none}.pc-f,.pc-b{padding:1rem}.pc-f i{font-size:1.8rem}.pc h3{font-size:.7rem}.pc p{font-size:.68rem}
+  .lk{padding:.8rem 1rem}
+  .gm{padding:1.2rem .6rem}
+}
