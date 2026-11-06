@@ -28,9 +28,12 @@ window.PORTFOLIO = {
   projects: [
     { icon: "fab fa-python", name: "Humanizer", tag: "Python · Text", desc: "Rewrites AI-generated text so it reads like natural human writing." },
     { icon: "fas fa-robot", name: "AI Tool", tag: "Custom utility", desc: "A custom AI-powered utility with workflows built from scratch." },
-    { icon: "fas fa-message", name: "SMS Dispatch", tag: "Messaging utility", desc: "Automated bulk messaging dispatch for your own numbers and opted-in lists." },
-    { icon: "fas fa-desktop", name: "Autochat", tag: "Desktop automation", desc: "Desktop tool that runs repeated chat flows automatically." },
-    { icon: "fas fa-at", name: "Nickname Loop", tag: "Auto loop", desc: "Cycles through nicknames in a continuous loop with no input." }
+    { icon: "fas fa-phone-volume", name: "SMS + Call", tag: "Messaging utility", desc: "Automated SMS and call dispatch utility." },
+    { icon: "fas fa-desktop", name: "Auto Chat", tag: "Desktop automation", desc: "Desktop tool that runs repeated chat flows automatically." },
+    { icon: "fas fa-at", name: "Nickname Loop", tag: "Auto loop", desc: "Cycles through nicknames in a continuous loop with no input." },
+    { icon: "fas fa-network-wired", name: "IP Grabber", tag: "Network utility", desc: "Network utility for looking up IP details." },
+    { icon: "fas fa-unlock-keyhole", name: "Jailbreaks", tag: "AI research", desc: "Prompt experiments on how AI models handle edge cases." },
+    { icon: "fas fa-link", name: "Hooker", tag: "Utility", desc: "Hook-based automation utility project." }
   ],
 
   games: [
