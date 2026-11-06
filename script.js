@@ -121,6 +121,7 @@ window.PORTFOLIO = window.PORTFOLIO || {
       const i = slides.indexOf(e.target);
       dots.forEach((d, k) => d.classList.toggle('on', k === i));
       links.forEach(l => l.classList.toggle('on', l.hash === '#' + e.target.id));
+      $$('h2', e.target).forEach(scramble);
       if (e.target.id === 'achievements') $$('[data-count]').forEach(countUp);
     }
   }), { rootMargin: '-25% 0px -25% 0px' });
@@ -131,6 +132,26 @@ window.PORTFOLIO = window.PORTFOLIO || {
   const setMenu = o => { burger.setAttribute('aria-expanded', o); menu.classList.toggle('open', o); };
   burger.addEventListener('click', () => setMenu(burger.getAttribute('aria-expanded') !== 'true'));
   links.forEach(a => a.addEventListener('click', () => setMenu(false)));
+
+  /* ticker */
+  (() => {
+    const items = [...D.tiers[0].items, ...D.tiers[1].items.slice(0, 5)].map(esc);
+    const row = items.map(t => `<span>${t}</span><b>◆</b>`).join('');
+    $('#ticker').innerHTML = `<div>${row}${row}</div>`;
+  })();
+
+  /* heading scramble on enter */
+  const scramble = el => {
+    const txt = el.dataset.t || (el.dataset.t = el.textContent);
+    if (reduce) return;
+    const ch = 'ABCDEF0123456789#<>/', t0 = performance.now(), d = 650;
+    const step = now => {
+      const p = Math.min((now - t0) / d, 1), n = Math.floor(p * txt.length);
+      el.textContent = txt.slice(0, n) + [...txt.slice(n)].map(c => c === ' ' ? ' ' : ch[Math.random() * ch.length | 0]).join('');
+      if (p < 1) requestAnimationFrame(step); else el.textContent = txt;
+    };
+    requestAnimationFrame(step);
+  };
 
   /* typing motto */
   (() => {
@@ -152,37 +173,44 @@ window.PORTFOLIO = window.PORTFOLIO || {
   const prog = () => bar.style.setProperty('--p', scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight));
   addEventListener('scroll', prog, { passive: true }); prog();
 
-  /* ---------- 3D hand (three.js) ---------- */
+  /* ---------- 3D world: one hero object per slide ---------- */
   const cv = $('#stage');
   if (!window.THREE) { cv.hidden = true; return; }
   let R;
   try { R = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true }); } catch (e) { cv.hidden = true; return; }
   R.setPixelRatio(Math.min(devicePixelRatio, 2));
   const scene = new THREE.Scene();
-  const cam = new THREE.PerspectiveCamera(38, 1, .1,60); cam.position.z = 7.5;
-  scene.add(new THREE.AmbientLight(0x8899aa, .55));
-  const l1 = new THREE.PointLight(0x00ff88, 2.4, 40); l1.position.set(4, 3, 5); scene.add(l1);
-  const l2 = new THREE.PointLight(0x00e5ff, 2, 40); l2.position.set(-4, -2, 4); scene.add(l2);
+  const cam = new THREE.PerspectiveCamera(38, 1, .1, 80); cam.position.set(0, 0, 7.5);
+  scene.add(new THREE.AmbientLight(0x8899aa, .6));
+  const l1 = new THREE.PointLight(0x00ff88, 2.6, 40); l1.position.set(4, 3, 5); scene.add(l1);
+  const l2 = new THREE.PointLight(0x00e5ff, 2.2, 40); l2.position.set(-4, -2, 4); scene.add(l2);
 
   const body = new THREE.MeshStandardMaterial({ color: 0x0c1814, metalness: .85, roughness: .28, emissive: 0x003a22, emissiveIntensity: .7 });
   const edge = new THREE.LineBasicMaterial({ color: 0x00ff88, transparent: true, opacity: .7 });
-  const part = (geo, parent, pos) => {
-    const m = new THREE.Mesh(geo, body);
-    m.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo, 20), edge));
-    if (pos) m.position.set(...pos);
-    parent.add(m); return m;
+  const gold = new THREE.MeshStandardMaterial({ color: 0x2a2208, metalness: .9, roughness: .25, emissive: 0x6b5200, emissiveIntensity: .7, side: THREE.DoubleSide });
+  const goldL = new THREE.LineBasicMaterial({ color: 0xffd36b, transparent: true, opacity: .8 });
+  const wire = (c, o = .5) => new THREE.MeshBasicMaterial({ color: c, wireframe: true, transparent: true, opacity: o });
+  const solid = (c, o = .8) => new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: o });
+  const part = (geo, parent, pos, m = body, lm = edge) => {
+    const o = new THREE.Mesh(geo, m);
+    o.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo, 20), lm));
+    if (pos) o.position.set(...pos);
+    parent.add(o); return o;
   };
 
-  const hand = new THREE.Group(); scene.add(hand);
+  const anchor = new THREE.Group(); scene.add(anchor);
+  const slot = () => { const root = new THREE.Group(), inner = new THREE.Group(); root.add(inner); anchor.add(root); return { root, inner }; };
+  const slots = [slot(), slot(), slot(), slot(), slot()];
+
+  /* 0 · hand + orbit rings */
+  const hand = slots[0].inner;
   part(new THREE.BoxGeometry(1.3, 1.4, .45), hand);
   part(new THREE.CylinderGeometry(.42, .5, .8, 8), hand, [0, -1.05, 0]);
-
   const makeFinger = (x, y, segs, rad) => {
     const base = new THREE.Group(); base.position.set(x, y, 0); hand.add(base);
     const joints = []; let parent = base;
     segs.forEach((L, i) => {
-      const j = new THREE.Group(); if (i) j.position.y = segs[i - 1];
-      parent.add(j);
+      const j = new THREE.Group(); if (i) j.position.y = segs[i - 1]; parent.add(j);
       const r = rad * (1 - i * .09);
       part(new THREE.CylinderGeometry(r, r * 1.05, L, 8), j, [0, L / 2, 0]);
       part(new THREE.SphereGeometry(r * 1.1, 10, 8), j);
@@ -191,27 +219,65 @@ window.PORTFOLIO = window.PORTFOLIO || {
     return { base, joints };
   };
   const thumb = makeFinger(-.72, -.3, [.5, .42], .12);
-  const fingers = [[-.48, 1.1], [-.16, 1.12], [.16, 1.05], [.48, .85]].map(([x, s]) =>
-    makeFinger(x, .7, [.46 * s, .34 * s, .28 * s], .105));
+  const fingers = [[-.48, 1.1], [-.16, 1.12], [.16, 1.05], [.48, .85]].map(([x, s]) => makeFinger(x, .7, [.46 * s, .34 * s, .28 * s], .105));
   const bend = [1.35, 1.5, 1.2];
+  const ring = (r, c, tilt) => { const m = new THREE.Mesh(new THREE.TorusGeometry(r, .012, 8, 96), solid(c, .7)); m.rotation.x = tilt; slots[0].root.add(m); return m; };
+  const rA = ring(2.4, 0x00ff88, 1.25), rB = ring(3, 0x00e5ff, .45);
+  const POSES = [[0, 0, 0, 0, 0], [.9, 0, 1, 1, 1], [1, 1, 1, 1, 1], [1, 0, 1, 1, 0], [0, 1, 1, 1, 1]];
+  let curl = [0, 0, 0, 0, 0];
 
-  const pts = new Float32Array(900);
-  for (let i = 0; i < 900; i += 3) {
-    const r = 5 + Math.random() * 6, a = Math.random() * 6.283, b = Math.acos(2 * Math.random() - 1);
+  /* 1 · trophy */
+  const T = slots[1].inner; T.position.y = -.2;
+  const prof = [[.01, -.5], [.3, -.45], [.55, -.1], [.95, .5], [1.1, 1.3], [.01, 1.3]].map(([x, y]) => new THREE.Vector2(x, y));
+  part(new THREE.LatheGeometry(prof, 24), T, [0, -.2, 0], gold, goldL);
+  part(new THREE.CylinderGeometry(.16, .24, .7, 10), T, [0, -.95, 0], gold, goldL);
+  part(new THREE.BoxGeometry(1.5, .22, 1.5), T, [0, -1.4, 0], gold, goldL);
+  const hL = part(new THREE.TorusGeometry(.42, .07, 8, 24, Math.PI), T, [-1.05, .55, 0], gold, goldL); hL.rotation.z = Math.PI / 2;
+  const hR = part(new THREE.TorusGeometry(.42, .07, 8, 24, Math.PI), T, [1.05, .55, 0], gold, goldL); hR.rotation.z = -Math.PI / 2;
+  const star = part(new THREE.OctahedronGeometry(.38), T, [0, 1.85, 0], gold, goldL);
+
+  /* 2 · cube cluster (projects) */
+  const C = slots[2].inner;
+  C.add(new THREE.Mesh(new THREE.IcosahedronGeometry(.75, 1), wire(0x00e5ff, .6)));
+  const cubes = D.projects.map((_, n) => {
+    const a = n / D.projects.length * Math.PI * 2, m = part(new THREE.BoxGeometry(.65, .65, .65), C);
+    m.userData = { a, y: (n % 2 ? .5 : -.5) }; C.add(m); return m;
+  });
+
+  /* 3 · globe with satellites (connect) */
+  const G = slots[3].inner;
+  G.add(new THREE.Mesh(new THREE.SphereGeometry(1.3, 22, 14), wire(0x00e5ff, .45)));
+  G.add(new THREE.Mesh(new THREE.SphereGeometry(1.25, 20, 12), solid(0x041014, .9)));
+  const sats = [[.3, 0, 1.9, .9, 0x00ff88], [1.1, .8, 2.3, -.6, 0x00e5ff], [-.5, 1.6, 2.7, .45, 0xff3c5a]].map(([rx, ry, r, sp, col]) => {
+    const g = new THREE.Group(); g.rotation.set(rx, ry, 0); G.add(g);
+    g.add(new THREE.Mesh(new THREE.TorusGeometry(r, .008, 6, 90), solid(col, .5)));
+    const m = new THREE.Mesh(new THREE.SphereGeometry(.09, 10, 8), solid(col, 1)); g.add(m);
+    return { m, r, sp, a: Math.random() * 6 };
+  });
+
+  /* 4 · crosshair (games) */
+  const X = slots[4].inner;
+  const xa = new THREE.Group(), xb = new THREE.Group(); X.add(xa, xb);
+  xa.add(new THREE.Mesh(new THREE.TorusGeometry(1.6, .03, 8, 80), solid(0x00ff88, .9)));
+  xb.add(new THREE.Mesh(new THREE.TorusGeometry(1, .02, 8, 64), solid(0x00e5ff, .8)));
+  [[0, 1.9, .1, .6], [0, -1.9, .1, .6], [1.9, 0, .6, .1], [-1.9, 0, .6, .1]].forEach(([x, y, w, h]) => {
+    const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, .08), solid(0xff3c5a, .95)); b.position.set(x, y, 0); xa.add(b);
+  });
+  X.add(new THREE.Mesh(new THREE.SphereGeometry(.12, 12, 8), solid(0xff3c5a, 1)));
+
+  /* world: moving floor grid + dust */
+  const grid = new THREE.GridHelper(60, 60, 0x00ff88, 0x0b4a33);
+  grid.material.transparent = true; grid.material.opacity = .22; grid.position.y = -3.4; scene.add(grid);
+  const pts = new Float32Array(1200);
+  for (let i = 0; i < 1200; i += 3) {
+    const r = 5 + Math.random() * 8, a = Math.random() * 6.283, b = Math.acos(2 * Math.random() - 1);
     pts[i] = r * Math.sin(b) * Math.cos(a); pts[i + 1] = r * Math.cos(b); pts[i + 2] = r * Math.sin(b) * Math.sin(a) - 3;
   }
-  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pts, 3));
-  const dust = new THREE.Points(g, new THREE.PointsMaterial({ color: 0x00e5ff, size: .035, transparent: true, opacity: .6 }));
+  const pg = new THREE.BufferGeometry(); pg.setAttribute('position', new THREE.BufferAttribute(pts, 3));
+  const dust = new THREE.Points(pg, new THREE.PointsMaterial({ color: 0x00e5ff, size: .04, transparent: true, opacity: .65 }));
   scene.add(dust);
 
-  /* one pose per slide: curl of [thumb, index, middle, ring, pinky], side, yaw */
-  const POSES = [
-    { c: [0, 0, 0, 0, 0], side: 1, yaw: -.35 },        // home: open hello
-    { c: [1, 1, 1, 1, 1], side: -1, yaw: .4 },         // achievements: fist
-    { c: [.9, 0, 1, 1, 1], side: 1, yaw: -.5 },        // projects: pointing
-    { c: [0, 1, 1, 1, 1], side: -1, yaw: .35 },        // connect: thumbs up
-    { c: [1, 0, 1, 1, 0], side: 0, yaw: 0 }            // games: rock sign
-  ];
+  const SIDES = [1, -1, 1, -1, 0], SCALE = [1.35, 1.05, 1.05, 1.15, 1.05];
   const N = slides.length, TAU = Math.PI * 2;
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const sm = (a, b, v) => { const t = clamp((v - a) / (b - a)); return t * t * (3 - 2 * t); };
@@ -229,43 +295,62 @@ window.PORTFOLIO = window.PORTFOLIO || {
   new ResizeObserver(measure).observe($('main'));
   document.fonts?.ready.then(measure);
 
-  const cur = { c: [0, 0, 0, 0, 0], x: 0, y: 0, rot: 0, s: 1 };
+  const cur = { pf: 0, x: 0 };
   let mx = 0, my = 0, last = performance.now();
   addEventListener('pointermove', e => { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; }, { passive: true });
 
   const frame = now => {
     requestAnimationFrame(frame);
     const dt = Math.min((now - last) / 1000, .05); last = now;
-    const t = now / 1000, y = scrollY + innerHeight * .5;
+    const t = now / 1000, idle = reduce ? 0 : 1, di = dt * idle;
+    const y = scrollY + innerHeight * .5;
 
     let i = 0; tops.forEach((tp, k) => { if (y >= tp) i = k; });
     const a = tops[i], b = tops[i + 1] ?? a + innerHeight;
-    const gT = i < N - 1 ? sm(.55, 1, (y - a) / (b - a)) : 0;
-    const P0 = POSES[i], P1 = POSES[Math.min(i + 1, N - 1)];
+    const gT = i < N - 1 ? sm(.5, 1, (y - a) / (b - a)) : 0;
+    const k = reduce ? 1 : 1 - Math.exp(-dt * 6);
+    cur.pf = lerp(cur.pf, i + gT, k);
+    cur.x = lerp(cur.x, lerp(SIDES[i], SIDES[Math.min(i + 1, N - 1)], gT) * (wide ? visW * .22 : 0), k);
+    anchor.position.set(cur.x, wide ? 0 : 1.55, 0);
+    const sc = wide ? 1 : .6;
 
-    const tgt = {
-      c: P0.c.map((v, k) => lerp(v, P1.c[k], gT)),
-      x: lerp(P0.side, P1.side, gT) * (wide ? visW * .22 : 0),
-      y: wide ? 0 : 1.3,
-      rot: lerp(P0.yaw, P1.yaw, gT) + (reduce ? 0 : (i + gT) * TAU),
-      s: wide ? 1.45 : 1.05
-    };
-    const k = reduce ? 1 : 1 - Math.exp(-dt * 7);
-    cur.c = cur.c.map((v, n) => lerp(v, tgt.c[n], k));
-    cur.x = lerp(cur.x, tgt.x, k); cur.y = lerp(cur.y, tgt.y, k);
-    cur.rot = lerp(cur.rot, tgt.rot, k); cur.s = lerp(cur.s, tgt.s, k);
+    slots.forEach((s, n) => {
+      const d = cur.pf - n, w = sm(0, 1, 1 - Math.abs(d) * 1.2);
+      s.root.visible = w > .01;
+      s.root.scale.setScalar(Math.max(w, .0001) * SCALE[n] * sc);
+      s.root.rotation.y = (reduce ? 0 : -d * 2.8) + mx * .5;
+      s.root.rotation.x = -.12 + my * .25 + (reduce ? 0 : d * .6);
+    });
 
-    const idle = reduce ? 0 : 1;
-    thumb.base.rotation.z = .95 - .85 * cur.c[0];
-    thumb.joints.forEach((j, n) => { j.rotation.x = (cur.c[0] + Math.sin(t * 2) * .04 * idle) * (n ? 1.2 : .8); });
-    fingers.forEach((f, n) => f.joints.forEach((j, m) => {
-      j.rotation.x = Math.max(0, cur.c[n + 1] + Math.sin(t * 2 + n) * .05 * idle) * bend[m];
-    }));
+    /* hand cycles through poses */
+    const tp = POSES[idle ? Math.floor(t / 2.2) % POSES.length : 0], kc = 1 - Math.exp(-dt * 5);
+    curl = curl.map((v, n) => lerp(v, tp[n], kc));
+    thumb.base.rotation.z = .95 - .85 * curl[0];
+    thumb.joints.forEach((j, n) => { j.rotation.x = curl[0] * (n ? 1.2 : .8); });
+    fingers.forEach((f, n) => f.joints.forEach((j, m) => { j.rotation.x = Math.max(0, curl[n + 1] + Math.sin(t * 2 + n) * .05 * idle) * bend[m]; }));
+    hand.position.y = Math.sin(t * .9) * .1 * idle;
+    rA.rotation.z += di * .6; rB.rotation.z -= di * .4;
 
-    hand.position.set(cur.x, cur.y + Math.sin(t * .9) * .1 * idle, 0);
-    hand.rotation.set(-.15 + my * .3, cur.rot + mx * .5, -mx * .1);
-    hand.scale.setScalar(cur.s);
-    dust.rotation.y = t * .03 * idle + cur.rot * .05;
+    /* trophy */
+    slots[1].inner.rotation.y = t * .5 * idle; star.rotation.y = t * 1.4 * idle; star.position.y = 1.85 + Math.sin(t * 2) * .08 * idle;
+    /* cubes */
+    slots[2].inner.rotation.y = t * .4 * idle;
+    cubes.forEach((m, n) => {
+      const u = m.userData, r = 1.9;
+      m.position.set(Math.cos(u.a) * r, u.y + Math.sin(t + n) * .2 * idle, Math.sin(u.a) * r);
+      m.rotation.x += di * (.5 + n * .2); m.rotation.y += di * .7;
+    });
+    /* globe */
+    slots[3].inner.rotation.y = t * .25 * idle;
+    sats.forEach(s => { s.a += di * s.sp; s.m.position.set(Math.cos(s.a) * s.r, Math.sin(s.a) * s.r, 0); });
+    /* crosshair */
+    xa.rotation.z += di * .5; xb.rotation.z -= di * .9;
+
+    /* world motion tied to scroll */
+    grid.position.z = (scrollY * .004) % 1;
+    dust.rotation.y = t * .03 * idle; dust.rotation.x = scrollY * .0002;
+    cam.position.x += (mx * .6 - cam.position.x) * k; cam.position.y += (-my * .4 - cam.position.y) * k;
+    cam.lookAt(0, 0, 0);
     R.render(scene, cam);
   };
   requestAnimationFrame(frame);
