@@ -6,9 +6,7 @@ window.PORTFOLIO = window.PORTFOLIO || {
   socials: [
     { k: "tt", name: "TikTok", icon: "fab fa-tiktok", handle: "fool1once", url: "https://www.tiktok.com/@fool1once?_r=1&_t=ZS-9B6CuabyM7w", c: "#69c9d0" },
     { k: "fb", name: "Facebook", icon: "fab fa-facebook", handle: "Jhon F. Zenin", url: "https://www.facebook.com/share/19vGAKCmXk/", c: "#1877f2" },
-    { k: "ig", name: "Instagram", icon: "fab fa-instagram", handle: "jhonchalant", url: "https://www.instagram.com/jhonchalant?xtok=ZXM3MHg5MDBzbWsz", c: "#e1306c" },
     { k: "dc", name: "Discord", icon: "fab fa-discord", handle: "youngfool", url: "https://discord.com/invite/rKvgk97K8Y", c: "#5865f2", copy: true },
-    { k: "rb", name: "Roblox", icon: "fas fa-cube", handle: "FooIxl", url: "https://www.roblox.com/users/2918118693/profile", c: "#ff3e3e" }
   ],
 
   tiers: [
